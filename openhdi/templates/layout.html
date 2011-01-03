@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:py="http://genshi.edgewall.org/" 
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  >
+
+<head>
+  <title>${page_title()} - WorldTopia</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="shortcut icon" href="http://assets.okfn.org/gfx/logo/favicon.ico" type="image/x-icon" />
+  <link rel="stylesheet" href="http://wheredoesmymoneygo.org/wp-content/themes/wdmmg/style.css" media="screen, print" title="Master stylesheet" charset="utf-8" />
+  <py:if test="defined('optional_head')">
+    ${optional_head()}
+  </py:if>
+</head>
+
+<body>
+
+<div id="wrapper" class="hfeed"> 
+  <div id="header">
+  <div id="masthead">
+    <div id="branding" role="banner">
+       <h1 id="site-title">
+       <a href="${url_for('home')}" title="Home">
+         <img src="http://eutopia.guoxu.org/logo.jpg" alt="logo" />
+        </a>
+      </h1>
+      <div id="site-description">
+        European development beyond GDP
+      </div>
+    </div> <!-- /branding -->
+
+  <div id="access" role="navigation">
+    <div class="menu">
+    <ul>
+    <li class="menu-item"><a href="${url_for('home')}">Home</a></li> 
+    <li class="menu-item"><a href="http://bitbucket.org/okfn/openhdi">Source code</a></li> 
+    </ul>
+    </div> <!-- .menu -->
+  </div> <!-- #access -->
+  </div><!-- #masthead -->
+  </div><!-- #header -->  
+
+  <div id="main"> 
+    <div id="container"> 
+      <div id="content" role="main"> 
+        <div class="page type-page hentry">
+          <div class="entry-content">
+            ${content()}
+          </div><!-- .entry-content -->
+        </div>
+
+        <div id="comments">
+        </div><!-- #comments -->
+
+      </div> <!-- #content -->
+    </div> <!-- #container -->
+
+    <div id="primary" class="widget-area" role="complementary">
+      <ul class="xoxo">
+      <py:if test="defined('primary_sidebar_extras')">
+        ${primary_sidebar_extras()}
+      </py:if>
+        <li class="widget-container widget_text">
+          <h3 class="widget-title">About</h3>
+          <div class="textwidget">
+          </div>
+        </li>
+      </ul>
+    </div><!-- #primary .widget-area -->
+
+  </div><!-- #main -->
+  
+    <!-- footer -->
+  <div id="footer" role="contentinfo"> 
+    <div id="colophon">
+      <div id="footer-widget-area" role="complementary">
+
+        <div id="first" class="widget-area">
+          <ul class="xoxo">
+            <li id="text-12" class="widget-container widget_text">
+            <h3 class="widget-title">About</h3>
+            <div class="textwidget">
+              <ul>
+            </ul>
+          </div>
+          </li>
+        </ul>
+        </div><!-- #first .widget-area -->
+
+        <div id="fourth" class="widget-area">
+          <ul class="xoxo">
+            <li id="text-10" class="widget-container widget_text">
+            <h3 class="widget-title">Credits</h3>
+            <div class="textwidget">
+              <ul>
+                <li>
+                  <img src="http://assets.okfn.org/images/logo/okf_logo_white_and_green.png" id="footer-okf-logo" style="height: 20px; margin-bottom: -5px;" />
+                  An
+                  <a href="http://www.okfn.org/">Open Knowledge Foundation</a> Project
+                </li>
+                <li>
+                  &copy; <a href="http://www.okfn.org/">Open Knowledge Foundation</a>
+                </li>
+                <li>
+                  <a href="http://opendefinition.org/okd/">
+                  <img alt="This Content and Data is Open" src="http://assets.okfn.org/images/ok_buttons/oc_80x15_blue.png" style="border: none ; margin-bottom: -4px;"/>
+                  </a>
+                </li>
+                <li>
+                  <a href="http://www.opendefinition.org/okd/">
+                  <img alt="This Content and Data is Open" src="http://assets.okfn.org/images/ok_buttons/od_80x15_blue.png" style="border: none ; margin-bottom: -4px;"/>
+                  </a>
+                </li>
+            </ul>
+          </div>
+          </li>
+        </ul>
+        </div><!-- #fourth .widget-area -->
+
+      </div><!-- #footer-widget-area -->
+
+      <div id="site-info">
+      </div><!-- #site-info -->
+
+      <div id="site-generator">
+      </div><!-- #site-generator -->
+    </div><!-- #colophon -->
+  </div><!-- #footer --> 
+ 
+</div><!-- #wrapper -->
+</body>
+</html>
+

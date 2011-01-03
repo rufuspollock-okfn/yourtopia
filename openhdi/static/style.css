@@ -1,0 +1,41 @@
+#question-listing {
+  list-style-type: none;
+}
+
+#question-listing li {
+  margin-bottom: 20px;
+}
+
+div.ui-slider {
+  margin-top: 10px;
+  height: 0.2em;
+  width: 200px;
+} 
+
+.ui-slider-horizontal .ui-slider-handle {
+  height: 0.6em;
+  width: 0.6em;
+}
+
+#pie {
+  float: right;
+  height: 200px;
+  width: 200px;
+}
+
+#div-question-list {
+  margin-right: 220px;
+}
+
+h3 {
+  clear: none;
+}
+
+#notification {
+  background: #333;
+}
+
+#notification.alert {
+  display: block;
+}
+
