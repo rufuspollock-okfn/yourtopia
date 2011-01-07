@@ -1,6 +1,27 @@
 var OpenHDI = (function($, my) {
 
-   my.getWeightings = function() {
+  var User = Backbone.Model.extend({});
+  var WeightingSet = Backbone.Model.extend({});
+  var UserList = Backbone.Collection.extend({
+    model: User,
+    initialize: function () {
+    }
+  });
+  var WeightingSetList = Backbone.Collection.extend({
+    model: WeightingSet,
+    url: '/api/weighting',
+    initialize: function () {
+    }
+  });
+
+  my.Users = new UserList();
+  my.WeightingSets = new WeightingSetList();
+
+  // Backbone.sync = function(method, model) {
+  //  alert(method + ": " + JSON.stringify(model));
+  // };
+
+  my.getWeightings = function() {
     var weightingsList = $('.weighting').map(function(idx, div) {
       var div = $(div);
       return { id: div.attr('id').split('-')[1], weighting: div.slider('value') }
@@ -48,7 +69,7 @@ var OpenHDI = (function($, my) {
   my.setupApp = function() {
     $('.weighting').slider({
       value: 50,
-      min: 0,
+      min: 1,
       max: 100,
       step: 1,
       slide: function( event, ui ) {
@@ -62,13 +83,11 @@ var OpenHDI = (function($, my) {
       e.preventDefault();
       var weightings = my.getWeightings();
       $.cookie('worldtopia', $.toJSON(weightings));
+      my.WeightingSets.create({
+        weightings: weightings
+        });
       my.showNotification('alert', 'Saved your weightings');
-      });
-
-    var userData = $.parseJSON($.cookie('worldtopia'));
-    for(questionId in userData) {
-      $('#weighting-' + questionId).slider('value', userData[questionId]);
-    }
+    });
   }
   return my;
 }(jQuery, OpenHDI || {}));

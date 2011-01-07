@@ -11,8 +11,8 @@
   <!--[if IE]><script language="javascript" type="text/javascript" src="http://assets.okfn.org/ext/flot/0.6/excanvas.min.js"></script><![endif]-->
     <script src="http://assets.okfn.org/ext/flot/0.6/jquery.flot.min.js"></script>
     <script src="/static/vendor/jquery.flot.pie.js"></script>
-
-    <link rel="stylesheet" href="/static/style.css" media="screen, print" title="Master stylesheet" charset="utf-8" />
+    <script src="/static/vendor/underscore-1.1.3.js"></script>
+    <script src="/static/vendor/backbone-0.3.3.js"></script>
 
     <script src="/static/app.js"></script>
     <script type="text/javascript">
@@ -27,10 +27,10 @@ jQuery(function() {
     <div id="pie"></div>
 
     <div id="div-question-list">
-      <p>Please assign your weighting on each of the following:</p>
+      <p>How important are each of the following items to your ideal country?</p>
       <ul id="question-listing">
         <li py:for="question in questions" class="question" id="question-${question['id']}">
-          <h3>${question['title']}</h3>
+          <h3>${question['label']}</h3>
           Current weighting: <span id="weighting-${question['id']}-percent"></span>%
           <div id="weighting-${question['id']}" class="weighting"></div>
         </li>
