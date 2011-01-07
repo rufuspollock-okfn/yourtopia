@@ -1,15 +1,12 @@
 from flask import Flask, request
 from flaskext.genshi import Genshi, render_response
 
-from mongo import get_db, jsonify
-
 app = Flask(__name__)
 genshi = Genshi(app)
 
-
-
 @app.route('/api/questions')
 def questions():
+    from mongo import get_db, jsonify
     db = get_db() 
     indicators = [] 
     for i in db.indicator.find():
@@ -19,6 +16,10 @@ def questions():
 
 @app.route('/')
 def home():
+    return render_response('index.html')
+
+@app.route('/quiz')
+def quiz():
     questions = [
         {
             'id': 'noise',
@@ -33,7 +34,7 @@ def home():
             'title': 'Inequality'
         }
     ]
-    return render_response('index.html', dict(questions=questions))
+    return render_response('quiz.html', dict(questions=questions))
 
 
 if __name__ == '__main__':
