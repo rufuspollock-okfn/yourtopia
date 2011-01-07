@@ -3,7 +3,7 @@ import sys
 
 from mongo import get_db, DBRef
 
-INDICATOR_CATEGORIES = {
+CATEGORIES = {
     'economy': {'label': 'Economy', 'is_hdi': True},
     'health': {'label': 'Health', 'is_hdi': True},
     'education': {'label': 'Education', 'is_hdi': True},
@@ -20,7 +20,7 @@ def load_indicator_from_file(file_name):
     db = get_db()
     reader = csv.DictReader(fh) 
     for row in reader: 
-        category = INDICATOR_CATEGORIES.get(row.get('category'), {})
+        category = CATEGORIES.get(row.get('category'), {})
         indicator =  {
             'id': row.get('name'),
             'label': row.get('label'),
@@ -59,7 +59,7 @@ def load_dataset_from_file(file_name):
              dataset['normalized_value'] = float(row.get('normalized_value'))
         else: 
             dataset['normalized_value'] = dataset['value'] 
-        indicator = db.indicator.find_one({'id': row.get('indicator_name')})
+        indicator = db.indicator.find_one({'id': row.get('indicator_name').strip()})
         assert indicator, "Indicator %s could not be found!" % row.get('indicator_name') 
         query = {'indicator': indicator.get('_id'), 
                  'country': row.get('country'), 
