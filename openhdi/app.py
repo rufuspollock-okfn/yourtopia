@@ -10,7 +10,6 @@ app = Flask(__name__)
 app.secret_key = "harry" 
 genshi = Genshi(app)
 
-
 def get_questions():
     db = get_db()
     user_id = unicode(session.get('id'))
@@ -66,13 +65,13 @@ def submit():
             indicator = db.indicator.find_one({'id': key})
             if not indicator:
                 abort(400)
-            category = indicator.get('_category').get('id')
+            category = indicator.get('category').get('id')
         else:
             category = 'meta'
         if '_category' in weighting and \
-            weighting['_category'] != category:
+            weighting['category'] != category:
             abort(400)
-        weighting['_category'] = category
+        weighting['category'] = category
         try: 
             weight = float(value)
             assert weight >=0.0, "Too small"
