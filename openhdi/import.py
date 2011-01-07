@@ -59,7 +59,7 @@ def load_dataset_from_file(file_name):
              dataset['normalized_value'] = float(row.get('normalized_value'))
         else: 
             dataset['normalized_value'] = dataset['value'] 
-        indicator = db.indicator.find_one({'id': row.get('indicator_name')})
+        indicator = db.indicator.find_one({'id': row.get('indicator_name').strip()})
         assert indicator, "Indicator %s could not be found!" % row.get('indicator_name') 
         query = {'indicator': indicator.get('_id'), 
                  'country': row.get('country'), 
