@@ -4,7 +4,7 @@ from datetime import datetime
 from flaskext.genshi import Genshi, render_response
 from mongo import get_db, jsonify
 from importer import CATEGORIES
-from random import choice 
+from random import choice, shuffle
     
 app = Flask(__name__)
 app.secret_key = "harry" 
@@ -29,11 +29,13 @@ def get_questions():
                     'label': data.get('label'),
                     }
                 })
-        return questions
-    unanswered = [c for c, v in CATEGORIES.items() if c not in done and v.get('is_hdi')]
-    if not len(unanswered):
-        return []
-    return db.indicator.find({'category.id': choice(unanswered), 'select': True})
+    else:
+        unanswered = [c for c, v in CATEGORIES.items() if c not in done and v.get('is_hdi')]
+        if not len(unanswered):
+            return []
+        questions = list(db.indicator.find({'category.id': choice(unanswered), 'select': True}))
+    shuffle(questions)
+    return questions
 
 
 @app.before_request
@@ -57,7 +59,7 @@ def submit():
     if not request.json or not isinstance(request.json, dict): 
         return jsonify(app, {'status': 'error', 
                              'message': 'No data given'})
-    
+       
     weighting = {}
     def validate_weight(key, value):
         if key not in CATEGORIES.keys():
@@ -79,11 +81,8 @@ def submit():
             abort(400)
         return (key, weight)
     
-    items = dict([validate_weight(k, v) for k,v \
-        in request.json.items()])
-    if sum(items.values()) > 101.0:
-        abort(400)
-    weighting.update(items)
+    items = [validate_weight(d.get('id'),d.get('weighting')) for d in request.json.get('weightings')]
+    weighting['items'] = items
     user_id = unicode(session.get('id'))
     db.user.update({'user_id': user_id}, 
                    {'$addToSet': {'weightings': weighting}},
