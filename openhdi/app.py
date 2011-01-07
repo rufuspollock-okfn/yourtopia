@@ -2,8 +2,6 @@ from flask import Flask, request, session
 from uuid import uuid4
 from flaskext.genshi import Genshi, render_response
 
-from mongo import get_db, jsonify
-
 app = Flask(__name__)
 app.secret_key = "harry" 
 genshi = Genshi(app)
@@ -15,6 +13,7 @@ def make_session():
 
 @app.route('/api/questions')
 def questions():
+    from mongo import get_db, jsonify
     db = get_db() 
     indicators = db.indicator.find().limit(100)
     return jsonify(app, indicators)
@@ -52,21 +51,12 @@ def submit():
 
 @app.route('/')
 def home():
-    questions = [
-        {
-            'id': 'noise',
-            'title': 'Level of noise in your ideal country?',
-        },
-        {
-            'id': 'education',
-            'title': 'Investment in a high standard of education?'
-        },
-        {
-            'id': 'inequality',
-            'title': 'Inequality'
-        }
-    ]
-    return render_response('index.html', dict(questions=questions))
+    return render_response('index.html')
+
+@app.route('/quiz')
+def quiz(): 
+    indicators = db.indicator.find().limit(100)
+    return render_response('quiz.html', dict(questions=indicators))
 
 
 if __name__ == '__main__':

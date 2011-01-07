@@ -3,36 +3,11 @@
 
   <py:def function="page_title">Home</py:def>
 
-  <py:def function="optional_head">
-    <script src=" https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js"></script>
-    <script src="/static/vendor/jquery.json-2.2.min.js"></script>
-    <script src="http://assets.okfn.org/ext/jquery.cookie/jquery.cookie.min.js"></script>
-  <!--[if IE]><script language="javascript" type="text/javascript" src="http://assets.okfn.org/ext/flot/0.6/excanvas.min.js"></script><![endif]-->
-    <script src="http://assets.okfn.org/ext/flot/0.6/jquery.flot.min.js"></script>
-    <script src="/static/vendor/jquery.flot.pie.js"></script>
-
-    <script src="/static/app.js"></script>
-    <link rel="stylesheet" href="/static/style.css" media="screen, print" title="Master stylesheet" charset="utf-8" />
-  </py:def>
-
   <div py:def="content">
-    <div id="notification" class="" style="display:none"></div>
-    <div id="pie"></div>
-
-    <div id="div-question-list">
-      <p>Please assign your weighting on each of the following:</p>
-      <ul id="question-listing">
-        <li py:for="question in questions" class="question" id="question-${question['id']}">
-          <h3>${question['title']}</h3>
-          Current weighting: <span id="weighting-${question['id']}-percent"></span>%
-          <div id="weighting-${question['id']}" class="weighting"></div>
-        </li>
-      </ul>
-      <button id="save">Save</button>
-    </div>
+    <p>Put some content here.</p>
   </div>
 
   <xi:include href="layout.html" />
 </html>
+
 
