@@ -3,18 +3,35 @@ import sys
 
 from mongo import get_db, DBRef
 
+INDICATOR_CATEGORIES = {
+    'economy': {'label': 'Economy', 'is_hdi': True},
+    'health': {'label': 'Health', 'is_hdi': True},
+    'education': {'label': 'Education', 'is_hdi': True},
+    'inequality': {'label': 'Inequality', 'is_hdi': True},
+    'social_cap': {'label': 'Social capital', 'is_hdi': False},
+    'environ': {'label': 'Environment', 'is_hdi': False},
+    'institutions': {'label': 'Institutions', 'is_hdi': False},
+    'security': {'label': 'Security', 'is_hdi': False},
+    'governance': {'label': 'Governance', 'is_hdi': False}
+}
+
 def load_indicator_from_file(file_name):
     fh = open(file_name, 'rb') 
     db = get_db()
     reader = csv.DictReader(fh) 
     for row in reader: 
+        category = INDICATOR_CATEGORIES.get(row.get('category'), {})
         indicator =  {
             'name': row.get('name'),
             'label': row.get('label'),
             'question': row.get('question'),
             'description': row.get('description').decode('iso-8859-1'), 
             'source': row.get('source').decode('iso-8859-1'),
-            'category': row.get('category'), 
+            'category': {
+                'name': row.get('category'), 
+                'label': category.get('label'),
+                'is_hdi': category.get('is_hdi')
+            }, 
             'hdi_weight': 0.0}
         if row.get('hdi_weight'): 
             indicator['hdi_weight'] = float(row.get('hdi_weight')) 
