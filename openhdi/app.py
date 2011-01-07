@@ -1,8 +1,5 @@
 from flask import Flask, request
 from flaskext.genshi import Genshi, render_response
-from pymongo import Connection as MongoConnection
-
-from mongo import get_db
 
 app = Flask(__name__)
 genshi = Genshi(app)
