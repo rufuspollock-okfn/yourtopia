@@ -12,8 +12,8 @@ def load_indicator_from_file(file_name):
             'name': row.get('name'),
             'label': row.get('label'),
             'question': row.get('question'),
-            'description': row.get('description'), 
-            'source': row.get('source'),
+            'description': row.get('description').decode('iso-8859-1'), 
+            'source': row.get('source').decode('iso-8859-1'),
             'category': row.get('category'), 
             'hdi_weight': 0.0}
         if row.get('hdi_weight'): 
