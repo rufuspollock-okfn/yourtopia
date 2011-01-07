@@ -59,7 +59,8 @@ def home():
     return render_response('index.html')
 
 @app.route('/quiz')
-def quiz(): 
+def quiz():
+    db = get_db()
     indicators = db.indicator.find().limit(100)
     return render_response('quiz.html', dict(questions=indicators))
 
