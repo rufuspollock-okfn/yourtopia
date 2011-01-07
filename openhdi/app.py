@@ -1,5 +1,6 @@
-from flask import Flask, request, session
+from flask import Flask, request, session, abort
 from uuid import uuid4
+from datetime import datetime
 from flaskext.genshi import Genshi, render_response
 from mongo import get_db, jsonify
     
@@ -12,7 +13,7 @@ def make_session():
     if not 'id' in session:
         session['id'] = uuid4()
 
-@app.route('/api/questions')
+@app.route('/api/indicators')
 def questions():
     db = get_db() 
     indicators = db.indicator.find().limit(100)
@@ -27,30 +28,31 @@ def get_profile():
 @app.route('/api/weighting', methods=['POST'])
 def submit():
     db = get_db()
-    user_id = unicode(session.get('id'))
-    def set_indicator(key, value):
-        indicator = db.indicator.find_one({'name': key})
+    if not request.json or not isinstance(request.json, dict): 
+        return jsonify(app, {'status': 'error', 
+                             'message': 'No data given'})
+    
+    def validate_weight(key, value):
+        indicator = db.indicator.find_one({'id': key})
         if not indicator:
-            return jsonify(app, {'status': 'error', 
-                                 'message': "No such indicator: %s" % key})
+            abort(400)
         try: 
             weight = float(value)
             assert weight >=0.0, "Too small"
-            assert weight <=1.0, "Too big"
+            assert weight <=100.0, "Too big"
         except Exception, e:
-            return jsonify(app, {'status': 'error', 
-                                 'message': unicode(e)})
-            db.user.update({'user_id': user_id}, 
-                           {'votes': {key: weight},
-                            'user_id': user_id},
-                            upsert=True)
+            abort(400)
+        return (key, weight)
     
-    for key, value in request.args.items():
-        set_indicator(key, value)
-
-    for key, value in request.form.items():
-        set_indicator(key, value)
-
+    weighting = dict([validate_weight(k, v) for k,v \
+        in request.json.items()])
+    if sum(weighting.values()) > 101.0:
+        abort(400)
+    weighting['_date'] = datetime.now() 
+    user_id = unicode(session.get('id'))
+    db.user.update({'user_id': user_id}, 
+                   {'$addToSet': {'weightings': weighting}},
+                    upsert=True)
     return jsonify(app, {'status': 'ok', 'message': 'saved'})
 
 

@@ -22,20 +22,22 @@ def load_indicator_from_file(file_name):
     for row in reader: 
         category = INDICATOR_CATEGORIES.get(row.get('category'), {})
         indicator =  {
-            'name': row.get('name'),
+            'id': row.get('name'),
             'label': row.get('label'),
             'question': row.get('question'),
+            'good': row.get('good').strip()=='1', 
+            'select': row.get('select').strip()=='1',
             'description': row.get('description').decode('iso-8859-1'), 
             'source': row.get('source').decode('iso-8859-1'),
             'category': {
-                'name': row.get('category'), 
+                'id': row.get('category'), 
                 'label': category.get('label'),
                 'is_hdi': category.get('is_hdi')
             }, 
             'hdi_weight': 0.0}
         if row.get('hdi_weight'): 
             indicator['hdi_weight'] = float(row.get('hdi_weight')) 
-        query = {'name': row.get('name')}
+        query = {'id': row.get('name')}
         indicator.update(query)
         db.indicator.update(query, indicator, upsert=True)
     fh.close() 
@@ -57,13 +59,13 @@ def load_dataset_from_file(file_name):
              dataset['normalized_value'] = float(row.get('normalized_value'))
         else: 
             dataset['normalized_value'] = dataset['value'] 
-        indicator = db.indicator.find_one({'name': row.get('indicator_name')})
+        indicator = db.indicator.find_one({'id': row.get('indicator_name')})
         assert indicator, "Indicator %s could not be found!" % row.get('indicator_name') 
         query = {'indicator': indicator.get('_id'), 
                  'country': row.get('country'), 
                  'time': row.get('time')}
         dataset.update(query)
-        dataset['indicator_name'] = indicator.get('name')
+        dataset['indicator_id'] = indicator.get('id')
         db.datum.update(query, dataset, upsert=True) 
     fh.close() 
    
