@@ -10,12 +10,14 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <link rel="shortcut icon" href="http://assets.okfn.org/gfx/logo/favicon.ico" type="image/x-icon" />
   <link rel="stylesheet" href="http://wheredoesmymoneygo.org/wp-content/themes/wdmmg/style.css" media="screen, print" title="Master stylesheet" charset="utf-8" />
+  <link rel="stylesheet" href="/static/style.css" media="screen, print" title="Master stylesheet" charset="utf-8" />
+
   <py:if test="defined('optional_head')">
     ${optional_head()}
   </py:if>
 </head>
 
-<body>
+<body class="${page_title()}">
 <div id="inline-notification" class="notification" style="display:none;">
   <button>X</button>
   <div class="message">&nbsp;</div>
@@ -38,6 +40,8 @@
     <div class="menu">
     <ul>
     <li class="menu-item"><a href="${url_for('home')}">Home</a></li> 
+    <li class="menu-item"><a href="${url_for('quiz')}">Quiz</a></li> 
+    <li class="menu-item"><a href="${url_for('about')}">About</a></li> 
     <li class="menu-item"><a href="http://bitbucket.org/okfn/openhdi">Source code</a></li> 
     </ul>
     </div> <!-- .menu -->
@@ -86,6 +90,7 @@
             <h3 class="widget-title">About</h3>
             <div class="textwidget">
               <ul>
+                <li>Created by Guo Xu and Dirk Heine with help from Rufus Pollock, Friedrich Lindenberg and Hannes Bretschneider</li>
             </ul>
           </div>
           </li>

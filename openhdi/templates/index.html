@@ -4,7 +4,35 @@
   <py:def function="page_title">Home</py:def>
 
   <div py:def="content">
-    <p>Put some content here.</p>
+    <div class="row top">
+      <div class="box left">
+        <div class="startquiz">
+        <h3>Ever wanted to find out which European country suits you best?</h3>
+        <p><a href="${url_for('quiz')}">Start the quiz &raquo;</a></p>
+        </div>
+      </div>
+
+      <div class="box">
+        <p>Find out how we calculate your personal development index!</p>
+        <img src="http://eutopia.guoxu.org/gfx/goal1_sm.gif" width="50" height="50" />
+        <img src="http://eutopia.guoxu.org/gfx/goal2_sm.gif" width="50" height="50" />
+        <img src="http://eutopia.guoxu.org/gfx/goal3_sm.gif" width="50" height="50" />
+        <img src="http://eutopia.guoxu.org/gfx/goal4_sm.gif" width="50" height="50" />
+        <br />
+
+        <img src="http://eutopia.guoxu.org/gfx/goal5_sm.gif" width="50" height="50" />
+        <img src="http://eutopia.guoxu.org/gfx/goal6_act.gif" width="50" height="50" />
+        <img src="http://eutopia.guoxu.org/gfx/goal7_sm.gif" width="50" height="50" />
+        <img src="http://eutopia.guoxu.org/gfx/goal8_sm.gif" width="50" height="50" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="box idea">
+        <strong>The idea: </strong>Constructing an innovative and scientific measure of human development without GDP. Measuring <strong>8</strong> dimensions of development using <strong>24</strong> indicators and an individual preference based aggregation algorithm. Find out <a href="${url_for('about')}">more &raquo;</a>.
+      </div>
+    </div>
+
   </div>
 
   <xi:include href="layout.html" />

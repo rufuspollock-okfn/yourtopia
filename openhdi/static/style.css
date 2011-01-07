@@ -1,3 +1,11 @@
+#wrapper {
+  width: 800px;
+}
+
+/*************************
+  * Quiz
+  ************************/
+
 #question-listing {
   list-style-type: none;
 }
@@ -59,4 +67,54 @@ div#inline-notification button {
   margin-top: -0.2em;
   padding-top: 0;
   font-size: 90%;
+}
+
+/*************************
+  * Home Page
+  ************************/
+
+.Home #primary {
+  display: none;
+}
+
+.Home #content {
+  margin-right: 0;
+}
+
+.Home .row {
+  clear: both;
+  margin: auto;
+}
+
+.Home .box {
+  padding: 2%;
+}
+
+.Home .top .box {
+  background-color: #E2E2E2;
+  border: thin dashed #666;
+  text-align: center;
+  vertical-align: center;
+  width: 43%;
+  height: 200px;
+  float: right;
+  margin-bottom: 20px;
+}
+
+.Home .top .left {
+  float: left;
+}
+
+.Home .startquiz {
+  font-weight: bold;
+  padding-top: 40px;
+}
+
+.Home .startquiz h3 {
+  font-weight: bold;
+}
+
+.Home .idea {
+  background-color: #D5DFFF;
+  border: thin dashed #666;
 }
