@@ -1,4 +1,5 @@
 from pymongo import Connection as MongoConnection
+from pymongo.dbref import DBRef
 
 conn = MongoConnection() 
 

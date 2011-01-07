@@ -1,7 +1,7 @@
 import csv 
 import sys
 
-from mongo import get_db 
+from mongo import get_db, DBRef
 
 def load_indicator_from_file(file_name):
     fh = open(file_name, 'rb') 
@@ -14,11 +14,36 @@ def load_indicator_from_file(file_name):
             'question': row.get('question'),
             'description': row.get('description'), 
             'source': row.get('source'),
-            'category': row.get('category'),
-            'base_weight': row.get('base_weight', 0.5)}
-        
+            'category': row.get('category'), 
+            'hdi_weight': float(row.get('hdi_weight'))}
+        db.indicator.update({'name': row.get('name')}, indicator, upsert=True)
     fh.close() 
-    
+ 
+def load_dataset_from_file(file_name):
+    fh = open(file_name, 'rb') 
+    db = get_db()
+    reader = csv.DictReader(fh) 
+    for row in reader: 
+        if not row.get('name'):
+            continue
+        dataset = {
+            'country_name': row.get('country2')}
+        if row.get('value'):
+            dataset['value'] = float(row.get('value'))
+        else: 
+            dataset['value'] = 0.0 
+        if row.get('normalized_value'):
+             dataset['normalized_value'] = float(row.get('normalized_value'))
+        else: 
+            dataset['normalized_value'] = dataset['value'] 
+        indicator = db.indicator.find_one({'name': row.get('name')})
+        assert indicator, "Indicator %s could not be found!" % row.get('name') 
+        query = {'indicator': indicator.get('_id'), 
+                 'country': row.get('country'), 
+                 'time': row.get('time')}
+        db.datum.update(query, dataset, upsert=True) 
+    fh.close() 
+   
 if __name__ == '__main__':
     if len(sys.argv) != 3:
         print "Usage: %s [indicator|dataset] indicator_file.csv" % sys.argv[0]
