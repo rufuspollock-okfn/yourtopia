@@ -17,14 +17,15 @@ var OpenHDI = (function($, my) {
   my.Users = new UserList();
   my.WeightingSets = new WeightingSetList();
 
-  Backbone.sync = function(method, model) {
-    console.log(method + ": " + JSON.stringify(model));
-  };
+  //Backbone.sync = function(method, model) {
+  //  console.log(method + ": " + JSON.stringify(model));
+  //};
 
   my.getWeightings = function() {
-    var weightings = $('.weighting').map(function(idx, div) {
+    var weightings = [];
+    $('.weighting').each(function(idx, div) {
       var div = $(div);
-      return { id: div.attr('id').split('-')[1], weighting: div.slider('value') }
+      weightings.push({ id: div.attr('id').split('-')[1], weighting: div.slider('value') });
     });
     return weightings;
   };
@@ -77,7 +78,7 @@ var OpenHDI = (function($, my) {
       e.preventDefault();
       var weightings = my.getWeightings();
       my.WeightingSets.create(
-        weightings
+        {weightings: weightings}
         );
       my.showNotification('alert', 'Saved your weightings');
     });
