@@ -1,8 +1,21 @@
 from flask import Flask, request
 from flaskext.genshi import Genshi, render_response
 
+from mongo import get_db, jsonify
+
 app = Flask(__name__)
 genshi = Genshi(app)
+
+
+
+@app.route('/questions')
+def questions():
+    db = get_db() 
+    indicators = [] 
+    for i in db.indicator.find():
+        del i['_id']
+        indicators.append(i)
+    return jsonify(app, indicators)
 
 @app.route('/')
 def home():
