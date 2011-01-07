@@ -1,0 +1,42 @@
+
+
+
+indicator {
+    name = 
+    label = 
+    question = 
+    source = 
+    category = 
+    values {
+        time = 
+        country = 
+        value = 
+    }
+}
+
+name, label, source, country, time, value 
+name, label, source, country1, country2, country3
+
+user {
+    name = 
+    country = 
+    age = 
+    prefs [
+        {
+            indicator_name: 
+            weight: 
+        }
+    ]
+}
+
+
+global_prefs {
+    indicator_name: 
+    weight: 
+    num: 
+}
+        
+
+
+
+

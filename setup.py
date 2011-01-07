@@ -19,6 +19,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'flask',
-        'flask-genshi'
+        'flask-genshi',
+        'pymongo'
     ],
 )
