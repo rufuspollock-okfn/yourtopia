@@ -1,60 +1,62 @@
-function getWeightings() {
-  var weightingsList = $('.weighting').map(function(idx, div) {
-    var div = $(div);
-    return { id: div.attr('id').split('-')[1], weighting: div.slider('value') }
-  });
-  var weightings = {};
-  $.each(weightingsList, function(idx, item) {
-    weightings[item.id] = item.weighting;
-  });
-  return weightings;
-}
+var OpenHDI = (function($, my) {
 
-function renderPieChart() {
-  // var ids = $('.question').id.split('-')[1];
-  var ids = [ 'noise', 'education', 'inequality' ];
-  var data = $('.weighting').map(function(idx, div) {
-    var div = $(div);
-    return { label: div.attr('id').split('-')[1], data: div.slider('value') }
-  });
+   my.getWeightings = function() {
+    var weightingsList = $('.weighting').map(function(idx, div) {
+      var div = $(div);
+      return { id: div.attr('id').split('-')[1], weighting: div.slider('value') }
+    });
+    var weightings = {};
+    $.each(weightingsList, function(idx, item) {
+      weightings[item.id] = item.weighting;
+    });
+    return weightings;
+  };
 
-  $.plot($("#pie"), data, {
-    series: {
-      pie: { 
-        show: true
+  my.renderPieChart = function() {
+    // var ids = $('.question').id.split('-')[1];
+    var ids = [ 'noise', 'education', 'inequality' ];
+    var data = $('.weighting').map(function(idx, div) {
+      var div = $(div);
+      return { label: div.attr('id').split('-')[1], data: div.slider('value') }
+    });
+
+    $.plot($("#pie"), data, {
+      series: {
+        pie: { 
+          show: true
+        }
+      },
+      legend: {
+        show: false
       }
-    },
-    legend: {
-      show: false
+    });
+  };
+
+  my.setupApp = function() {
+    $('.weighting').slider({
+      value: 50,
+      min: 0,
+      max: 100,
+      step: 1,
+      slide: function( event, ui ) {
+        questionId = event.target.id.split('-')[1];
+        $("#weighting-" + questionId + '-percent').html(ui.value);
+        my.renderPieChart();
+      }
+    });
+
+    $('#save').click(function(e) {
+      e.preventDefault();
+      var weightings = my.getWeightings();
+      $.cookie('worldtopia', $.toJSON(weightings));
+      $('#notification').addClass('alert').html('Saved your weightings!');
+    });
+
+    var userData = $.parseJSON($.cookie('worldtopia'));
+    for(questionId in userData) {
+      $('#weighting-' + questionId).slider('value', userData[questionId]);
     }
-  });
-}
-
-jQuery('document').ready(function($) {
-  $('.weighting').slider({
-    value: 50,
-    min: 0,
-    max: 100,
-    step: 1,
-    slide: function( event, ui ) {
-      questionId = event.target.id.split('-')[1];
-      $("#weighting-" + questionId + '-percent').html(ui.value);
-      renderPieChart();
-    }
-  });
-
-  $('#save').click(function(e) {
-    e.preventDefault();
-    var weightings = getWeightings();
-    $.cookie('worldtopia', $.toJSON(weightings));
-    $('#notification').addClass('alert').html('Saved your weightings!');
-  });
-
-  var userData = $.parseJSON($.cookie('worldtopia'));
-  for(questionId in userData) {
-    $('#weighting-' + questionId).slider('value', userData[questionId]);
   }
-  
-  renderPieChart();
-});
+  return my;
+}(jQuery, OpenHDI || {}));
 

@@ -12,8 +12,15 @@
     <script src="http://assets.okfn.org/ext/flot/0.6/jquery.flot.min.js"></script>
     <script src="/static/vendor/jquery.flot.pie.js"></script>
 
-    <script src="/static/app.js"></script>
     <link rel="stylesheet" href="/static/style.css" media="screen, print" title="Master stylesheet" charset="utf-8" />
+
+    <script src="/static/app.js"></script>
+    <script type="text/javascript">
+jQuery(function() {
+  OpenHDI.setupApp();
+  OpenHDI.renderPieChart();
+});
+    </script>
   </py:def>
 
   <div py:def="content">
