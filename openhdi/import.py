@@ -15,8 +15,12 @@ def load_indicator_from_file(file_name):
             'description': row.get('description'), 
             'source': row.get('source'),
             'category': row.get('category'), 
-            'hdi_weight': float(row.get('hdi_weight'))}
-        db.indicator.update({'name': row.get('name')}, indicator, upsert=True)
+            'hdi_weight': 0.0}
+        if row.get('hdi_weight'): 
+            indicator['hdi_weight'] = float(row.get('hdi_weight')) 
+        query = {'name': row.get('name')}
+        indicator.update(query)
+        db.indicator.update(query, indicator, upsert=True)
     fh.close() 
  
 def load_dataset_from_file(file_name):
@@ -24,7 +28,7 @@ def load_dataset_from_file(file_name):
     db = get_db()
     reader = csv.DictReader(fh) 
     for row in reader: 
-        if not row.get('name'):
+        if not row.get('indicator_name'):
             continue
         dataset = {
             'country_name': row.get('country2')}
@@ -36,11 +40,13 @@ def load_dataset_from_file(file_name):
              dataset['normalized_value'] = float(row.get('normalized_value'))
         else: 
             dataset['normalized_value'] = dataset['value'] 
-        indicator = db.indicator.find_one({'name': row.get('name')})
-        assert indicator, "Indicator %s could not be found!" % row.get('name') 
+        indicator = db.indicator.find_one({'name': row.get('indicator_name')})
+        assert indicator, "Indicator %s could not be found!" % row.get('indicator_name') 
         query = {'indicator': indicator.get('_id'), 
                  'country': row.get('country'), 
                  'time': row.get('time')}
+        dataset.update(query)
+        dataset['indicator_name'] = indicator.get('name')
         db.datum.update(query, dataset, upsert=True) 
     fh.close() 
    
