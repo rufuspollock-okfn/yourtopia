@@ -8,7 +8,7 @@ genshi = Genshi(app)
 
 
 
-@app.route('/questions')
+@app.route('/api/questions')
 def questions():
     db = get_db() 
     indicators = [] 
