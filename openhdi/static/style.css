@@ -31,11 +31,32 @@ h3 {
   clear: none;
 }
 
-#notification {
-  background: #333;
+/*************************
+  * Notifications
+  ************************/
+
+div#inline-notification {
+  background: #DAD4DF;
+  padding: 0.6em 0;
+  border-bottom: solid 1px #9f9f9f;
+  text-align: center;
+  padding: 0.8em 1.5%; 
+  line-height: 1em;
+  font-size: 14px;
 }
 
-#notification.alert {
-  display: block;
+div#inline-notification.error {
+  background: #800000;
+  color: white;
 }
 
+div#inline-notification a {
+  font-weight: bold;
+}
+
+div#inline-notification button {
+  float: right;
+  margin-top: -0.2em;
+  padding-top: 0;
+  font-size: 90%;
+}

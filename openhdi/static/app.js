@@ -32,6 +32,19 @@ var OpenHDI = (function($, my) {
     });
   };
 
+  my.showNotification = function(status, message) {
+    var $notification = $('#inline-notification');
+    $notification
+      .attr('class', 'notification')
+      .addClass(status)
+      .find('.message')
+        .html(message).end()
+      .find('button').one('click', function() {
+        $(this).parent().slideUp(200);
+      }).end()
+      .slideDown(400);
+  };
+
   my.setupApp = function() {
     $('.weighting').slider({
       value: 50,
@@ -49,8 +62,8 @@ var OpenHDI = (function($, my) {
       e.preventDefault();
       var weightings = my.getWeightings();
       $.cookie('worldtopia', $.toJSON(weightings));
-      $('#notification').addClass('alert').html('Saved your weightings!');
-    });
+      my.showNotification('alert', 'Saved your weightings');
+      });
 
     var userData = $.parseJSON($.cookie('worldtopia'));
     for(questionId in userData) {
