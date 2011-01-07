@@ -18,14 +18,13 @@ def questions():
     indicators = db.indicator.find().limit(100)
     return jsonify(app, indicators)
 
-@app.route('/api/profile', method=['GET'])
+@app.route('/api/profile', methods=['GET'])
 def get_profile():
     db = get_db() 
+    
 
-
-
-# /api/weighting?indicator=NAME&weight=[0.0...1.0]
-@app.route('/api/weighting', method=['POST'])
+# /api/weighting?NAME=[0.0...1.0]&NAME2=....
+@app.route('/api/weighting', methods=['POST'])
 def submit():
     db = get_db()
     user_id = unicode(session.get('id'))
@@ -41,10 +40,10 @@ def submit():
         except Exception, e:
             return jsonify(app, {'status': 'error', 
                                  'message': unicode(e)})
-               db.user.update({'user_id': user_id}, 
-                       {'votes': {key: weight},
-                        'user_id': user_id},
-                       upsert=True)
+            db.user.update({'user_id': user_id}, 
+                           {'votes': {key: weight},
+                            'user_id': user_id},
+                            upsert=True)
     
     for key, value in request.args.items():
         set_indicator(key, value)
