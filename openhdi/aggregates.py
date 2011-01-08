@@ -4,6 +4,10 @@ from pprint import pprint
 from json import dumps
 from time import time
 
+from importer import CATEGORIES
+
+TIMES = ['2007']
+
 # collection: datum 
 # produce aggregates for each selected indicator
 # cat, time, country, user -> weight, value
@@ -11,9 +15,10 @@ from time import time
 map_datum_to_aggregates = """function() {
     var meta_weights = %(meta_weights)s;
     var d = this; 
-    %(weighting)s.items.forEach(function(i) {
+    var w = %(weighting)s;
+    w.items.forEach(function(i) {
         if (i[0] == d.indicator_id) {
-            var value = (i[1]/100) * meta_weights[w.category] * d.value;
+            var value = (i[1]/100) * (meta_weights[w.category]/100) * d.normalized_value;
             emit({category: w.category, time: d.time, 
                   country: d.country, user_id: '%(user_id)s'},
                   value);
@@ -49,48 +54,83 @@ reduce_aggregates = Code("""function(key, values) {
     return sum;
 }""")
 
-def update(db, user_id, weighting): 
-    t0 = time() 
-    meta_weights = {}
-    #weightings = list(db.weighting.find({'user_id': user_id, }))
-    #for weighting in user.get('weightings'): 
-    #    if weighting.get('category') != 'meta':
-    #        weightings.append(weighting)
-    #    else: 
-    #        for (category, weight) in weighting.get('items'): 
-    #            meta_weights[category] = weight/100.0 
+def create_fallbacks(db, user_id, items):
+    # HACK
+    items = dict(items)
+    proxies = dict([(c.get('proxy'), k) for k, c in CATEGORIES.items() \
+                    if k in items.keys() and c.get('is_hdi')])
+    data = db.datum.find({'time': {'$in': TIMES},
+                          'indicator_id': {'$in': proxies.keys()}})
+    for datum in data:
+        category = proxies.get(datum.get('indicator_id'))
+        _id = {'category': category, 
+               'time': datum.get('time'), 
+               'country': datum.get('country'),
+               'user_id': user_id}
+        weight = items.get(category)/100
+        value = weight * datum.get('normalized_value')
+        db.aggregate.update({'_id': _id}, {'$set': {'value': value}}, upsert=True)
 
+def update(db, weighting): 
+    #t0 = time()
+    user_id = weighting.get('user_id')
+    if weighting.get('category') == 'meta': 
+        create_fallbacks(db, user_id, weighting.get('items'))
+        return
+    meta_weights = {}
+    meta = db.weighting.find_one({'category': 'meta', 'user_id': user_id})
+    if not meta: 
+        return
+    for category, value in meta.get('items'):
+        meta_weights[category] = value
     values = {'user_id': user_id,
               'weighting': dumps(weighting), 
               'meta_weights': dumps(meta_weights)}
     map_function = Code(map_datum_to_aggregates % values)
     res = db.datum.map_reduce(map_function, 
                               reduce_aggregates, 
-                              out='user_aggregates',
-                              query={'indicator_id': {'$in': indicators},
-                                     'year': 2007})
-    print "USER", time()-t0
+                              query={'indicator_id': {'$in': weighting.get('indicators')}, 
+                                     'time': {'$in': TIMES}})
+    for result in res.find(): 
+        db.aggregate.update({'_id': result.get('_id')}, result, upsert=True)
+    #print "USER", time()-t0
 
 def update_global(db):
-    t0 = time() 
+    #t0 = time() 
     #  This can be done offline via CRON or something
-    db.user_aggregates.map_reduce(map_aggregates_to_aggregates, 
-                                  reduce_aggregates,
-                                  out='global_aggregates')
-    print "GLOBAL", time()-t0
+    res = db.aggregate.map_reduce(map_aggregates_to_aggregates, 
+                                   reduce_aggregates)
+    for result in res.find():
+        db.aggregate.update({'_id': result.get('_id')}, result, upsert=True)
+    #print "GLOBAL", time()-t0
 
-# given a user
+
+def get_weights(db): 
+    return get_weights_by_user(db, '__AXIS__')
+
+def get_weights_by_user(db, user_id):
+    aggregates = db.aggregate.find({'_id.user_id': user_id})
+    by_time = {}
+    for aggregate in aggregates:
+        _id = aggregate.get('_id')
+        by_country = by_time.get(_id.get('time'), {})
+        #by_category = by_country.get(_id.get('country'), {})
+        #by_category[_id.get('category')] = aggregate.get('value')
+        #by_country[_id.get('country')] = by_category
+        by_country[_id.get('country')] = aggregate.get('value')
+        by_time[_id.get('time')] = by_country
+    return by_time
+
 
 
 if __name__ == '__main__':
     db = get_db()
-    ind = [
-			"SPDYNIMRTIN",
-			"SNITKSALTZS",
-			"SHXPDPCAPPPKD",
-			"SPDYNLE00IN",
-			"SNITKDEFCZS",
-			"SHDYNMORT"
-		]
-    update(db, 'd34408f2-ff85-43cd-afea-e086760fabaa', ind) 
+    ind = {'category': u'inequality',
+           'indicators': [u'SIPOVGAP2', u'SPPOPDPND', u'SIPOVGINI', u'SIDST10TH10'],
+           'items': [(u'SPPOPDPND', 15.0),
+           (u'SIPOVGINI', 15.0),
+           (u'SIPOVGAP2', 57.0),
+           (u'SIDST10TH10', 15.0)],
+             'user_id': u'fd35d20a-cbe4-41da-bcfd-5e4dae723a26'}
+    update(db, ind) 
     update_global(db)
