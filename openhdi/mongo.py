@@ -5,8 +5,6 @@ from pymongo.cursor import Cursor
 from datetime import datetime, date
 from json import JSONEncoder 
 
-conn = MongoConnection() 
-
 class MongoEncoder(JSONEncoder):
     
     def default(self, o):
@@ -29,6 +27,16 @@ def jsonify(app, obj):
 
 
 def get_db():
-    return conn['openhdi']
-
+    from openhdi.app import app
+    conn = MongoConnection(
+       app.config['MONGODB_HOST'],
+       app.config['MONGODB_PORT'],
+       pool_size=app.config['MONGODB_POOL_SIZE']
+       )
+    dbname = app.config.get('MONGODB_DATABASE')
+    db = conn[dbname]
+    # auth = db.authenticate(db_info['username'], db_info['password'])
+    # if not auth:
+    #    raise Exception('Authentication to MongoDB failed')
+    return db
 
