@@ -70,8 +70,8 @@ def load_dataset_from_file(file_name):
             dataset['value'] = float(row.get('value'))
         else: 
             dataset['value'] = 0.0 
-        if row.get('normalized_value'):
-             dataset['normalized_value'] = float(row.get('normalized_value'))
+        if row.get('value_norm'):
+             dataset['normalized_value'] = float(row.get('value_norm'))
         else: 
             dataset['normalized_value'] = dataset['value'] 
         indicator = db.indicator.find_one({'id': indicator_name})
