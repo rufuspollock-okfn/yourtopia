@@ -22,7 +22,7 @@ def jsonify(app, obj):
     from flask import request
     content = MongoEncoder().encode(obj) 
     if 'callback' in request.args:
-        content = str(callback) + '(' + content+ ')'
+        content = str(request.args.get('callback')) + '(' + content+ ')'
     return app.response_class(content, mimetype='application/json')
 
 

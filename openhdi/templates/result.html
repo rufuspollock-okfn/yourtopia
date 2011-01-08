@@ -1,0 +1,78 @@
+<html xmlns:py="http://genshi.edgewall.org/"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <py:def function="page_title">Home</py:def>
+
+  <py:def function="optional_head">
+    <script src=" https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js"></script>
+    <script src="/static/vendor/jquery.json-2.2.min.js"></script>
+    <script src="http://assets.okfn.org/ext/jquery.cookie/jquery.cookie.min.js"></script>
+  <!--[if IE]><script language="javascript" type="text/javascript" src="http://assets.okfn.org/ext/flot/0.6/excanvas.min.js"></script><![endif]-->
+    <!--script src="http://assets.okfn.org/ext/flot/0.6/jquery.flot.min.js"></script-->
+    <!--script src="/static/vendor/jquery.flot.pie.js"></script-->
+    <script src="/static/vendor/underscore-1.1.3.js"></script>
+    <script src="/static/vendor/backbone-0.3.3.js"></script>
+    <script src="/static/vendor/protovis-r3.2.js"></script>
+    <script src="/static/countries.js"></script>
+    <script src="/static/app.js"></script>
+    <script type="text/javascript">
+jQuery(function() {
+  OpenHDI.setupApp();
+});
+</script>
+  </py:def>
+
+  <div py:def="content">
+
+      <p>Places you could move: </p>
+
+
+  <script type="text/javascript+protovis">
+ 
+
+    var scoresData = $.ajax({ type: "GET", url: "/api/scores", async: false }).responseText; 
+    var scores = JSON.parse(scoresData); 
+    
+
+var fill = pv.Scale.linear()
+    .domain(0, 10)
+    .range("#ffffff", "#333333");
+
+/* Precompute the country's population density and color. */
+countries.forEach(function(c) {
+  c.color = scores.user[2007][c.code]
+      ? fill(scores.user[2007][c.code])
+      : "#ccc"; // unknown
+});
+
+var w = 700,
+    h = 3 / 5 * w,
+    geo = pv.Geo.scale("identity").range(w, h);
+
+var vis = new pv.Panel()
+    .width(w)
+    .height(h);
+
+/* Countries. */
+vis.add(pv.Panel)
+    .data(countries)
+  .add(pv.Panel)
+    .data(function(c) c.borders)
+  .add(pv.Line)
+    .data(function(b) b)
+    .left(geo.x)
+    .top(geo.y)
+    .title(function(d, b, c) c.name)
+    .fillStyle(function(d, b, c) c.color)
+    .lineWidth(0)
+    .antialias(true);
+
+vis.render();
+    </script>
+
+  </div>
+
+  <xi:include href="layout.html" />
+</html>
+

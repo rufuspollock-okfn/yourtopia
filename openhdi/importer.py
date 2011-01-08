@@ -1,6 +1,8 @@
 import csv 
 import sys
 
+from iso3166 import countries
+
 from mongo import get_db, DBRef
 
 CATEGORIES = {
@@ -74,8 +76,17 @@ def load_dataset_from_file(file_name):
             dataset['normalized_value'] = dataset['value'] 
         indicator = db.indicator.find_one({'id': indicator_name})
         assert indicator, "Indicator %s could not be found!" % row.get('indicator_name') 
+        try:    
+            cc3 = row.get('country')
+            cc3 = {'ROM': 'ROU',
+                   'ZAR': 'COD',
+                   'TMP': 'TLS'}.get(cc3, cc3)
+            cc =  countries.get(cc3).alpha2
+        except: 
+            #print row
+            continue
         query = {'indicator': indicator.get('_id'), 
-                 'country': row.get('country'), 
+                 'country': cc, 
                  'time': row.get('time')}
         dataset.update(query)
         dataset['indicator_id'] = indicator.get('id')

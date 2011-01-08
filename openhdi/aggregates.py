@@ -132,5 +132,5 @@ if __name__ == '__main__':
            (u'SIPOVGAP2', 57.0),
            (u'SIDST10TH10', 15.0)],
              'user_id': u'fd35d20a-cbe4-41da-bcfd-5e4dae723a26'}
-    update(db, ind) 
+    #update(db, ind) 
     update_global(db)

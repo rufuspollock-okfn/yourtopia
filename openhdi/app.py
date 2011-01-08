@@ -44,6 +44,11 @@ def quiz():
 def about():
     return render_response('about.html')
 
+@app.route('/result')
+def result():
+    return render_response('result.html')
+
+
 ## -------------------------
 ## API
 
@@ -98,8 +103,6 @@ def weighting():
     db.weighting.update({'user_id': weighting.get('user_id'), 
                          'category': weighting.get('category')},
                          weighting, upsert=True)
-    from pprint import pprint 
-    pprint(weighting)
     aggregates.update(db, weighting)
     return jsonify(app, {'status': 'ok', 'message': 'saved'})
 

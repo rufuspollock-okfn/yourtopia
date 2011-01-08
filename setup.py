@@ -20,6 +20,7 @@ setup(
     install_requires=[
         'flask',
         'flask-genshi',
-        'pymongo'
+        'pymongo',
+        'iso3166'
     ],
 )
