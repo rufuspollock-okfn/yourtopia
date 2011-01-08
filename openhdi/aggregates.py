@@ -58,7 +58,7 @@ def create_fallbacks(db, user_id, items):
     # HACK
     items = dict(items)
     proxies = dict([(c.get('proxy'), k) for k, c in CATEGORIES.items() \
-                    if k in items.keys() and c.get('is_hdi')])
+                    if k in items.keys() and c.get('set') == 'hdi'])
     data = db.datum.find({'time': {'$in': TIMES},
                           'indicator_id': {'$in': proxies.keys()}})
     for datum in data:

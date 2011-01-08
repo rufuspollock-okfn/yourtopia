@@ -4,15 +4,24 @@ import sys
 from mongo import get_db, DBRef
 
 CATEGORIES = {
-    'economy': {'label': 'Economy', 'is_hdi': True, 'proxy': 'NYGDPPCAPPPCD'},
-    'health': {'label': 'Health', 'is_hdi': True, 'proxy': 'SPDYNLE00IN'},
-    'education': {'label': 'Education', 'is_hdi': True, 'proxy': 'SESECENRR'},
-    'inequality': {'label': 'Inequality', 'is_hdi': True, 'proxy': 'SIPOVGINI'},
-    'social_cap': {'label': 'Social capital', 'is_hdi': False},
-    'environ': {'label': 'Environment', 'is_hdi': False},
-    'institutions': {'label': 'Institutions', 'is_hdi': False},
-    'security': {'label': 'Security', 'is_hdi': False},
-    'governance': {'label': 'Governance', 'is_hdi': False}
+    'economy': {'label': 'Economy', 'set': 'hdi', 'proxy': 'NYGDPPCAPPPCD', 'color': '#e4adc5'},
+    'health': {'label': 'Health', 'set': 'hdi', 'proxy': 'SPDYNLE00IN', 'color': '#e4543a'},
+    'education': {'label': 'Education', 'set': 'hdi', 'proxy': 'SESECENRR', 'color': '#d9df29'},
+    'inequality': {'label': 'Inequality', 'set': 'hdi', 'proxy': 'SIPOVGINI', 'color': '#a9d0e4'},
+    'social_cap': {'label': 'Social capital', 'set': '', 'color': '#0aaae1'},
+    'environ': {'label': 'Environment', 'set': '', 'color': '#89c141'},
+    'institutions': {'label': 'Institutions', 'set': '', 'color': '#ea872e'},
+    'security': {'label': 'Security', 'set': '', 'color': '#e4adc5'},
+    'governance': {'label': 'Governance', 'set': '', 'color': '#9f11ab'},
+    'goal1': {'label': 'Eradicate extreme poverty and hunger', 'set': 'mdg', 'color': '#00ff00'},
+    'goal2': {'label': 'Achieve universal primary education', 'set': 'mdg', 'color': '#ffff00'},
+    'goal3': {'label': 'Promote gender equality and empower women', 'set': 'mdg', 'color': '#ff0000'},
+    'goal4': {'label': 'Reduce child mortality', 'set': 'mdg', 'color': '#00ffff'},
+    'goal5': {'label': 'Improve maternal health', 'set': 'mdg', 'color': '#ff00ff'},
+    'goal6': {'label': 'Combat HIV/AIDS, malaria and other diseases', 'set': 'mdg', 'color': '#0000ff'},
+    'goal7': {'label': 'Ensure environmental sustainability', 'set': 'mdg', 'color': '#219d10'},
+    'goal8': {'label': 'Develop a global partnership for development', 'set': 'mdg', 'color': '#9f11ab'},
+    'goal9': {'label': 'World Domination', 'set': 'mdg', 'color': '#000000'},
 }
 
 def munge_name(name):
@@ -35,7 +44,7 @@ def load_indicator_from_file(file_name):
             'category': {
                 'id': row.get('category'), 
                 'label': category.get('label'),
-                'is_hdi': category.get('is_hdi')
+                'set': category.get('set')
             }, 
             'hdi_weight': 0.0}
         if row.get('hdi_weight'): 

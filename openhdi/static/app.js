@@ -91,7 +91,7 @@ var OpenHDI = (function($, my) {
       step: 1,
 	create: function( event, ui ) {
 	    $(".weighting").each(function(i) {
-		var val = 100 / $(".weighting").size();
+		var val = Math.floor(100 / $(".weighting").size());
 		fieldId = this.id.split('-')[1];
 		$("#weighting-" + fieldId + '-percent').html(val);
             }); 

@@ -11,7 +11,7 @@ def get_questions(user_id):
     if not 'meta' in done:
         questions = []
         for id, data in CATEGORIES.items():
-            if not data.get('is_hdi'): 
+            if not data.get('set') == 'hdi': 
                 continue
             questions.append({
                 'id': id, 
@@ -23,7 +23,7 @@ def get_questions(user_id):
                     }
                 })
     else:
-        unanswered = [c for c, v in CATEGORIES.items() if c not in done and v.get('is_hdi')]
+        unanswered = [c for c, v in CATEGORIES.items() if c not in done and v.get('set') == 'hdi']
         if not len(unanswered):
             return []
         questions = list(db.indicator.find({'category.id': choice(unanswered), 'select': True}))
