@@ -86,7 +86,7 @@ var OpenHDI = (function($, my) {
   my.setupApp = function() {
     $('.weighting').slider({
       value: 100/$(".weighting").size(),
-      min: 0,
+      min: 1,
       max: 100,
       step: 1,
 	create: function( event, ui ) {
