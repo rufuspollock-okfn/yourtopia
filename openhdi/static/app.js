@@ -40,17 +40,17 @@ var OpenHDI = (function($, my) {
       series: {
         pie: { 
           show: true,
-		   label: {
-                    show: false,
-                    radius: 3/4,
-                    formatter: function(label, series){
-                        return '<div style="font-size:8pt;text-align:center;padding:2px;color:white;">'+label+'<br/>'+Math.round(series.percent)+'%</div>';
-                    },
-                    background: { 
-                        opacity: 0.5,
-                        color: '#000'
-                    }
-                }
+          label: {
+            show: false,
+            radius: 3/4,
+            formatter: function(label, series){
+                return '<div style="font-size:8pt;text-align:center;padding:2px;color:white;">'+label+'<br/>'+Math.round(series.percent)+'%</div>';
+            },
+            background: { 
+              opacity: 0.5,
+              color: '#000'
+            }
+          }
         }
       },
       legend: {
@@ -58,11 +58,11 @@ var OpenHDI = (function($, my) {
       },
       hooks: {
         draw: [
-            function(plot, options) {
-                plot.getData().forEach(function(i) {
-                    $("#question-" + i.label).css('color', i.color);
-                }); 
-            }
+          function(plot, options) {
+              plot.getData().forEach(function(i) {
+                  $("#question-" + i.label).css('color', i.color);
+              }); 
+          }
         ]
       }
     }
@@ -89,15 +89,15 @@ var OpenHDI = (function($, my) {
       min: 1,
       max: 100,
       step: 1,
-	create: function( event, ui ) {
-	    $(".weighting").each(function(i) {
-		var val = Math.floor(100 / $(".weighting").size());
-		fieldId = this.id.split('-')[1];
-		$("#weighting-" + fieldId + '-percent').html(val);
-            }); 
+      create: function( event, ui ) {
+          $(".weighting").each(function(i) {
+        var val = Math.floor(100 / $(".weighting").size());
+        fieldId = this.id.split('-')[1];
+        $("#weighting-" + fieldId + '-percent').html(val);
+                }); 
 
-	},
-      slide: function( event, ui ) {
+      },
+      slide: function(event, ui) {
         questionId = event.target.id.split('-')[1];
         my.renderPieChart();
 
@@ -106,11 +106,11 @@ var OpenHDI = (function($, my) {
             sum += $(this).slider('value');
         });
 
-	  var sumOthers = sum - ui.value;
+        var sumOthers = sum - ui.value;
         
-          $(".weighting").not(this).each(function(i) {
-              var newval = (100 - ui.value) * ($(this).slider('value') / sumOthers);
-            $(this).slider('value', newval);
+        $(".weighting").not(this).each(function(i) {
+            var newval = (100 - ui.value) * ($(this).slider('value') / sumOthers);
+          $(this).slider('value', newval);
         });
         
         $(".weighting").each(function(i) {
