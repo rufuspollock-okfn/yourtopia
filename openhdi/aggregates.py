@@ -2,6 +2,7 @@ from bson.code import Code
 from mongo import get_db
 from pprint import pprint
 from json import dumps
+from time import time
 
 # collection: datum 
 # produce aggregates for each selected indicator
@@ -51,7 +52,6 @@ reduce_aggregates = Code("""function(key, values) {
 }""")
 
 def update(db, user_id, indicators): 
-    from time import time 
     t0 = time() 
     user = db.user.find_one({'user_id': user_id})
     meta_weights = {}
@@ -72,13 +72,15 @@ def update(db, user_id, indicators):
                               reduce_aggregates, 
                               out='user_aggregates',
                               query={'indicator_id': {'$in': indicators}})
+    print "USER", time()-t0
 
+def update_global(db):
+    t0 = time() 
     #  This can be done offline via CRON or something
     db.user_aggregates.map_reduce(map_aggregates_to_aggregates, 
                                   reduce_aggregates,
                                   out='global_aggregates')
-    t1 = time() 
-    print "CTCU", t1-t0
+    print "GLOBAL", time()-t0
 
 # given a user
 
@@ -94,3 +96,4 @@ if __name__ == '__main__':
 			"SHDYNMORT"
 		]
     update(db, 'd34408f2-ff85-43cd-afea-e086760fabaa', ind) 
+    update_global(db)
