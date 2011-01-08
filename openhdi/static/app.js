@@ -89,6 +89,14 @@ var OpenHDI = (function($, my) {
       min: 0,
       max: 100,
       step: 1,
+	create: function( event, ui ) {
+	    $(".weighting").each(function(i) {
+		var val = 100 / $(".weighting").size();
+		fieldId = this.id.split('-')[1];
+		$("#weighting-" + fieldId + '-percent').html(val);
+            }); 
+
+	},
       slide: function( event, ui ) {
         questionId = event.target.id.split('-')[1];
         my.renderPieChart();
