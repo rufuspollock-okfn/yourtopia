@@ -9,6 +9,7 @@ from flaskext.genshi import Genshi, render_response
 
 from openhdi.mongo import get_db, jsonify
 import openhdi.model as model
+import openhdi.aggregates as aggregates
 
 app = Flask(__name__)
 app.config.from_object('openhdi.settings_default')
@@ -52,9 +53,29 @@ def questions():
     questions = model.get_questions(user_id)
     return jsonify(app, questions)
 
-@app.route('/api/profile', methods=['GET'])
-def get_profile():
-    db = get_db() 
+@app.route('/api/profile', methods=['GET', 'POST'])
+def profile():
+    db = get_db()
+    user_id = unicode(session.get('id'))
+    if request.method == 'POST': 
+        if not (request.json and 'label' in request.json):
+            abort(400)
+        db.user.update({'user_id': user_id}, 
+                       {'$set': {'label': request.json.get('label')}}, upsert=True)
+    user = db.user.find_one({'user_id': user_id})
+    if not user:
+        return jsonify(app, {})
+    return jsonify(app, user)
+
+@app.route('/api/reset', methods=['GET'])
+def reset():
+    db = get_db()
+    user_id = unicode(session.get('id'))
+    db.weighting.remove({'user_id': user_id})
+    # could keep this as well 
+    #db.user.remove({'user_id': user_id}) 
+    #del session['id']
+    return jsonify(app, {'status': 'ok'})
 
 # /api/weighting?NAME=[0.0...1.0]&NAME2=....
 @app.route('/api/weighting', methods=['POST'])
@@ -65,8 +86,8 @@ def weighting():
                              'message': 'No data given'})
     if not len(request.json.get('weightings')):
         return jsonify(app, {'status': 'ok', 'message': 'no data'})
-
-    weighting = {}
+    
+    weighting = {'user_id': unicode(session.get('id'))}
     weights = [ model.validate_weight(d.get('id'),d.get('weighting'), db)
             for d in request.json.get('weightings')
             ]
@@ -74,10 +95,10 @@ def weighting():
     weighting['items'] = items
     weighting['category'] = weights[0][0]
     weighting['indicators'] = dict(items).keys()
-    user_id = unicode(session.get('id'))
-    db.user.update({'user_id': user_id}, 
-                   {'$addToSet': {'weightings': weighting}},
-                    upsert=True)
+    db.weighting.update({'user_id': weighting.get('user_id'), 
+                         'category': weighting.get('category')},
+                         weighting, upsert=True)
+    # aggregates.update ... 
     return jsonify(app, {'status': 'ok', 'message': 'saved'})
 
 

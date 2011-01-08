@@ -7,7 +7,7 @@ from openhdi.importer import CATEGORIES
 
 def get_questions(user_id):
     db = get_db()
-    done = db.user.find({'user_id': user_id}).distinct('weightings.category')
+    done = db.weighting.find({'user_id': user_id}).distinct('category')
     if not 'meta' in done:
         questions = []
         for id, data in CATEGORIES.items():

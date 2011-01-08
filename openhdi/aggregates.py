@@ -11,18 +11,16 @@ from time import time
 map_datum_to_aggregates = """function() {
     var meta_weights = %(meta_weights)s;
     var d = this; 
-    %(weightings)s.forEach(function(w) {
-        w.items.forEach(function(i) {
-            if (i[0] == d.indicator_id) {
-                var value = (i[1]/100) * meta_weights[w.category] * d.value;
-                emit({category: w.category, time: d.time, 
-                      country: d.country, user_id: '%(user_id)s'},
-                      value);
-                emit({category: '__AXIS__', time: d.time,
-                      country: d.country, user_id: '%(user_id)s'},
-                      value); 
-            }
-        }); 
+    %(weighting)s.items.forEach(function(i) {
+        if (i[0] == d.indicator_id) {
+            var value = (i[1]/100) * meta_weights[w.category] * d.value;
+            emit({category: w.category, time: d.time, 
+                  country: d.country, user_id: '%(user_id)s'},
+                  value);
+            emit({category: '__AXIS__', time: d.time,
+                  country: d.country, user_id: '%(user_id)s'},
+                  value); 
+        }
     });}""" 
 
 # collection: user_aggregates
@@ -51,27 +49,26 @@ reduce_aggregates = Code("""function(key, values) {
     return sum;
 }""")
 
-def update(db, user_id, indicators): 
+def update(db, user_id, weighting): 
     t0 = time() 
-    user = db.user.find_one({'user_id': user_id})
     meta_weights = {}
-    weightings = []
-    for weighting in user.get('weightings'): 
-        if weighting.get('category') != 'meta':
-            weightings.append(weighting)
-        else: 
-            for (category, weight) in weighting.get('items'): 
-                meta_weights[category] = weight/100.0 
+    #weightings = list(db.weighting.find({'user_id': user_id, }))
+    #for weighting in user.get('weightings'): 
+    #    if weighting.get('category') != 'meta':
+    #        weightings.append(weighting)
+    #    else: 
+    #        for (category, weight) in weighting.get('items'): 
+    #            meta_weights[category] = weight/100.0 
 
-    # db.aggregates.remove()
     values = {'user_id': user_id,
-              'weightings': dumps(weightings), 
+              'weighting': dumps(weighting), 
               'meta_weights': dumps(meta_weights)}
     map_function = Code(map_datum_to_aggregates % values)
     res = db.datum.map_reduce(map_function, 
                               reduce_aggregates, 
                               out='user_aggregates',
-                              query={'indicator_id': {'$in': indicators}})
+                              query={'indicator_id': {'$in': indicators},
+                                     'year': 2007})
     print "USER", time()-t0
 
 def update_global(db):
