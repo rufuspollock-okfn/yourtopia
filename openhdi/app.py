@@ -98,8 +98,21 @@ def weighting():
     db.weighting.update({'user_id': weighting.get('user_id'), 
                          'category': weighting.get('category')},
                          weighting, upsert=True)
-    # aggregates.update ... 
+    from pprint import pprint 
+    pprint(weighting)
+    aggregates.update(db, weighting)
     return jsonify(app, {'status': 'ok', 'message': 'saved'})
+
+@app.route('/api/scores')
+def scores():
+    db = get_db() 
+    from aggregates import get_weights, get_weights_by_user
+    data = {
+        'user': get_weights_by_user(db, unicode(session.get('id'))),
+        'global': get_weights(db)
+        }
+    return jsonify(app, data)
+
 
 
 if __name__ == '__main__':

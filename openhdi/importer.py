@@ -4,10 +4,10 @@ import sys
 from mongo import get_db, DBRef
 
 CATEGORIES = {
-    'economy': {'label': 'Economy', 'is_hdi': True},
-    'health': {'label': 'Health', 'is_hdi': True},
-    'education': {'label': 'Education', 'is_hdi': True},
-    'inequality': {'label': 'Inequality', 'is_hdi': True},
+    'economy': {'label': 'Economy', 'is_hdi': True, 'proxy': 'NYGDPPCAPPPCD'},
+    'health': {'label': 'Health', 'is_hdi': True, 'proxy': 'SPDYNLE00IN'},
+    'education': {'label': 'Education', 'is_hdi': True, 'proxy': 'SESECENRR'},
+    'inequality': {'label': 'Inequality', 'is_hdi': True, 'proxy': 'SIPOVGINI'},
     'social_cap': {'label': 'Social capital', 'is_hdi': False},
     'environ': {'label': 'Environment', 'is_hdi': False},
     'institutions': {'label': 'Institutions', 'is_hdi': False},
