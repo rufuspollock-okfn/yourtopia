@@ -1,5 +1,6 @@
 """The Flask App
 """
+import os
 from uuid import uuid4
 from datetime import datetime
 
@@ -9,10 +10,11 @@ from flaskext.genshi import Genshi, render_response
 from openhdi.mongo import get_db, jsonify
 import openhdi.model as model
 
-    
 app = Flask(__name__)
-app.secret_key = "harry" 
+app.config.from_object('openhdi.settings_default')
+
 genshi = Genshi(app)
+secret_key = app.config['SECRET_KEY']
 
 
 @app.before_request
@@ -76,5 +78,13 @@ def weighting():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    here = os.path.dirname(os.path.abspath( __file__ ))
+    # parent directory
+    config_path = os.path.join(os.path.dirname(here), 'openhdi.cfg')
+    if 'OPENHDI_CONFIG' in os.environ:
+        app.config.from_envvar('OPENHDI_CONFIG')
+    elif os.path.exists(config_path):
+        app.config.from_pyfile(config_path)
+
+    app.run()
 
