@@ -30,9 +30,6 @@ def get_questions(user_id):
     shuffle(questions)
     return questions
 
-def get_weightings(user_id):
-    pass
-
 
 def validate_weight(key, value, db):
     if key not in CATEGORIES.keys():

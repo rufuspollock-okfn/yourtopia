@@ -105,10 +105,10 @@ def update_global(db):
     #print "GLOBAL", time()-t0
 
 
-def get_weights(db): 
-    return get_weights_by_user(db, '__AXIS__')
+def get_scores(db): 
+    return get_scores_by_user(db, '__AXIS__')
 
-def get_weights_by_user(db, user_id):
+def get_scores_by_user(db, user_id):
     aggregates = db.aggregate.find({'_id.user_id': user_id})
     by_time = {}
     for aggregate in aggregates:

@@ -109,10 +109,10 @@ def weighting():
 @app.route('/api/scores')
 def scores():
     db = get_db() 
-    from aggregates import get_weights, get_weights_by_user
+    from aggregates import get_scores, get_scores_by_user
     data = {
-        'user': get_weights_by_user(db, unicode(session.get('id'))),
-        'global': get_weights(db)
+        'user': get_scores_by_user(db, unicode(session.get('id'))),
+        'global': get_scores(db)
         }
     return jsonify(app, data)
 
