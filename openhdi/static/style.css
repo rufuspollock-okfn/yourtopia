@@ -76,6 +76,33 @@ div#inline-notification button {
   * Home Page
   ************************/
 
+a.start_button {
+    border: 1px solid #ccc;
+    margin: 20px;
+    padding: 10px 20px 6px;
+    color: #333 !important;
+    font-family: "Helvetica Neue", "Helvetica", sans-serif !important;
+    text-decoration: none;
+    font-size: 28px;
+    line-height: 60px;
+    background: #ddd;
+    border-radius: 12px;
+    -webkit-border-radius: 12px;
+    -moz-border-radius: 12px;
+    box-shadow: 1px 1px 2px rgba(0,0,0,.5);
+    -webkit-box-shadow: 1px 1px 2px rgba(0,0,0,.5);
+    -moz-box-shadow: 1px 1px 2px rgba(0,0,0,.5);
+    text-shadow: #fff 0px 1px 1px;
+    background: -webkit-gradient(linear, left top, left bottom, from(#eeeeee), to(#cccccc));
+    background: -moz-linear-gradient(top,  #eeeeee,  #cccccc);
+    filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#cccccc');
+    vertical-align: middle;
+}
+
+.teaser {
+    margin: 10px;
+}
+
 .Home #primary {
   display: none;
 }
@@ -94,13 +121,13 @@ div#inline-notification button {
 }
 
 .Home .top .box {
-  background-color: #E2E2E2;
-  border: thin dashed #666;
+  background: url("/static/img/wire_globe_transp.png") no-repeat top right;  
   text-align: center;
   vertical-align: center;
-  width: 43%;
   height: 200px;
   float: right;
+  border: solid 1px #990000;
+  border-radius: 12px;
   margin-bottom: 20px;
 }
 
@@ -110,16 +137,20 @@ div#inline-notification button {
 
 .Home .startquiz {
   font-weight: bold;
-  padding-top: 40px;
+  padding-top: 10px;
 }
 
 .Home .startquiz h3 {
   font-weight: bold;
+  font-size: 40px;
 }
 
 .Home .idea {
+  padding-top: 20px;
+  border-radius: 12px;
+  margin-top: 20px;
   background-color: #D5DFFF;
-  border: thin dashed #666;
+  text-align: center;
 }
 
 
