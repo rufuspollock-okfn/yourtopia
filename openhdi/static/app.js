@@ -36,7 +36,7 @@ var OpenHDI = (function($, my) {
       return { label: div.attr('id').split('-')[1], data: div.slider('value') }
     });
 
-    $.plot($("#pie"), data, {
+    options = {
       series: {
         pie: { 
           show: true
@@ -44,8 +44,19 @@ var OpenHDI = (function($, my) {
       },
       legend: {
         show: false
+      },
+      hooks: {
+        draw: [
+            function(plot, options) {
+                plot.getData().forEach(function(i) {
+                    $("#question-" + i.label).css('color', i.color);
+                }); 
+            }
+        ]
       }
-    });
+    }
+
+    $.plot($("#pie"), data, options); 
   };
 
   my.showNotification = function(status, message) {
@@ -63,14 +74,29 @@ var OpenHDI = (function($, my) {
 
   my.setupApp = function() {
     $('.weighting').slider({
-      value: 50,
-      min: 1,
+      value: 100/$(".weighting").size(),
+      min: 0,
       max: 100,
       step: 1,
       slide: function( event, ui ) {
         questionId = event.target.id.split('-')[1];
-        $("#weighting-" + questionId + '-percent').html(ui.value);
         my.renderPieChart();
+        var sum = 0;
+
+        $(".weighting").each(function(s) {
+            sum += $(this).slider('value');
+        });
+        
+        $(".weighting:not(#" + this.id + ")").each(function(i) {
+            var newval = 100 * ($(this).slider('value') / sum);
+            $(this).slider('value', newval);
+        });
+        
+        $(".weighting").each(function(i) {
+            var val = $(this).slider('value');
+            fieldId = this.id.split('-')[1];
+            $("#weighting-" + fieldId + '-percent').html(val);
+        }); 
       }
     });
 
@@ -80,7 +106,10 @@ var OpenHDI = (function($, my) {
       my.WeightingSets.create(
         {weightings: weightings}
         );
-      my.showNotification('alert', 'Saved your weightings');
+      //my.showNotification('alert', 'Saved your weightings');
+      
+      // TEMP HACK make this ajax
+      document.location.reload();
     });
   }
   return my;

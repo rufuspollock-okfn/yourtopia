@@ -15,6 +15,9 @@ CATEGORIES = {
     'governance': {'label': 'Governance', 'is_hdi': False}
 }
 
+def munge_name(name):
+    return name.replace('.', '').replace('-', '').strip()
+
 def load_indicator_from_file(file_name):
     fh = open(file_name, 'rb') 
     db = get_db()
@@ -22,11 +25,11 @@ def load_indicator_from_file(file_name):
     for row in reader: 
         category = CATEGORIES.get(row.get('category'), {})
         indicator =  {
-            'id': row.get('name'),
+            'id': munge_name(row.get('name')),
             'label': row.get('label'),
             'question': row.get('question'),
             'good': row.get('good').strip()=='1', 
-            'select': row.get('select').strip()=='1',
+            'select': row.get('select').strip()>'0',
             'description': row.get('description').decode('iso-8859-1'), 
             'source': row.get('source').decode('iso-8859-1'),
             'category': {
@@ -37,7 +40,7 @@ def load_indicator_from_file(file_name):
             'hdi_weight': 0.0}
         if row.get('hdi_weight'): 
             indicator['hdi_weight'] = float(row.get('hdi_weight')) 
-        query = {'id': row.get('name')}
+        query = {'id': munge_name(row.get('name'))}
         indicator.update(query)
         db.indicator.update(query, indicator, upsert=True)
     fh.close() 
@@ -49,6 +52,7 @@ def load_dataset_from_file(file_name):
     for row in reader: 
         if not row.get('indicator_name'):
             continue
+        indicator_name = munge_name(row.get('indicator_name'))
         dataset = {
             'country_name': row.get('country2')}
         if row.get('value'):
@@ -59,7 +63,7 @@ def load_dataset_from_file(file_name):
              dataset['normalized_value'] = float(row.get('normalized_value'))
         else: 
             dataset['normalized_value'] = dataset['value'] 
-        indicator = db.indicator.find_one({'id': row.get('indicator_name').strip()})
+        indicator = db.indicator.find_one({'id': indicator_name})
         assert indicator, "Indicator %s could not be found!" % row.get('indicator_name') 
         query = {'indicator': indicator.get('_id'), 
                  'country': row.get('country'), 
@@ -67,6 +71,10 @@ def load_dataset_from_file(file_name):
         dataset.update(query)
         dataset['indicator_id'] = indicator.get('id')
         db.datum.update(query, dataset, upsert=True) 
+    db.datum.ensure_index('country')
+    db.datum.ensure_index('indicator')
+    db.datum.ensure_index('time')
+    db.datum.ensure_index('indicator_id')
     fh.close() 
    
 if __name__ == '__main__':
