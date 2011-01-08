@@ -121,3 +121,42 @@ div#inline-notification button {
   background-color: #D5DFFF;
   border: thin dashed #666;
 }
+
+
+
+/*************************
+  * About Page
+  ************************/
+
+
+.About #primary {
+  display: none;
+}
+
+.About #content {
+  margin-right: 0;
+}
+
+
+.About .box_left {
+  background-color: #E2E2E2;
+  border: thin dashed #666;
+  text-align: left;
+  padding: 2%;
+  vertical-align: top;
+  width: 55%;
+  float: left;
+  margin-bottom: 20px;
+}
+
+.About .box_right {
+  background-color: #D5DFFF;
+  border: thin dashed #666;
+  text-align: center;
+  vertical-align: center;
+  width: 40%;
+  height: 200px;
+  float: right;
+  margin-bottom: 20px;
+}
+
