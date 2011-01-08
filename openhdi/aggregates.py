@@ -51,7 +51,7 @@ reduce_aggregates = Code("""function(key, values) {
                           "country" : key.country, 
                           "user_id" : key.user_id},
                           {'$set': {'value': sum}}, upsert=true); 
-    return sum;
+    return sum/Math.max(1, values.length);
 }""")
 
 def create_fallbacks(db, user_id, items):

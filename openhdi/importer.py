@@ -75,6 +75,8 @@ def load_dataset_from_file(file_name):
         else: 
             dataset['normalized_value'] = dataset['value'] 
         indicator = db.indicator.find_one({'id': indicator_name})
+        if not indicator.get('good'):
+            dataset['normalized_value'] = 1.0 - dataset['normalized_value'] 
         assert indicator, "Indicator %s could not be found!" % row.get('indicator_name') 
         try:    
             cc3 = row.get('country')
