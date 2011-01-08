@@ -12,7 +12,16 @@ import openhdi.model as model
 import openhdi.aggregates as aggregates
 
 app = Flask(__name__)
-app.config.from_object('openhdi.settings_default')
+def configure_app():
+    app.config.from_object('openhdi.settings_default')
+    here = os.path.dirname(os.path.abspath( __file__ ))
+    # parent directory
+    config_path = os.path.join(os.path.dirname(here), 'openhdi.cfg')
+    if 'OPENHDI_CONFIG' in os.environ:
+        app.config.from_envvar('OPENHDI_CONFIG')
+    elif os.path.exists(config_path):
+        app.config.from_pyfile(config_path)
+configure_app()
 
 genshi = Genshi(app)
 secret_key = app.config['SECRET_KEY']
@@ -119,13 +128,6 @@ def scores():
 
 
 if __name__ == '__main__':
-    here = os.path.dirname(os.path.abspath( __file__ ))
-    # parent directory
-    config_path = os.path.join(os.path.dirname(here), 'openhdi.cfg')
-    if 'OPENHDI_CONFIG' in os.environ:
-        app.config.from_envvar('OPENHDI_CONFIG')
-    elif os.path.exists(config_path):
-        app.config.from_pyfile(config_path)
 
     app.run()
 
