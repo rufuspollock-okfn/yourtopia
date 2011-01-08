@@ -92,14 +92,16 @@ var OpenHDI = (function($, my) {
       slide: function( event, ui ) {
         questionId = event.target.id.split('-')[1];
         my.renderPieChart();
-        var sum = 0;
 
+        var sum = 0;
         $(".weighting").each(function(s) {
             sum += $(this).slider('value');
         });
+
+	  var sumOthers = sum - ui.value;
         
-        $(".weighting:not(#" + this.id + ")").each(function(i) {
-            var newval = 100 * ($(this).slider('value') / sum);
+          $(".weighting").not(this).each(function(i) {
+              var newval = (100 - ui.value) * ($(this).slider('value') / sumOthers);
             $(this).slider('value', newval);
         });
         
