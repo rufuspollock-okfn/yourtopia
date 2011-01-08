@@ -31,22 +31,18 @@ def get_questions(user_id):
     return questions
 
 
-def validate_weight(key, value):
+def validate_weight(key, value, db):
     if key not in CATEGORIES.keys():
         indicator = db.indicator.find_one({'id': key})
         if not indicator:
             abort(400)
         category = indicator.get('category').get('id')
-    else:
+    else: 
         category = 'meta'
-    if '_category' in weighting and \
-        weighting['category'] != category:
-        abort(400)
-    weighting['category'] = category
     try: 
         weight = float(value)
         assert weight >=0.0, "Too small"
         assert weight <=100.0, "Too big"
     except Exception, e:
         abort(400)
-    return (key, weight)
+    return (category, (key, weight))

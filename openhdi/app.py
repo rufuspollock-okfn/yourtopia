@@ -61,13 +61,17 @@ def weighting():
     if not request.json or not isinstance(request.json, dict): 
         return jsonify(app, {'status': 'error', 
                              'message': 'No data given'})
-       
+    if not len(request.json.get('weightings')):
+        return jsonify(app, {'status': 'ok', 'message': 'no data'})
+
     weighting = {}
-    
-    items = [ model.validate_weight(d.get('id'),d.get('weighting'))
+    weights = [ model.validate_weight(d.get('id'),d.get('weighting'), db)
             for d in request.json.get('weightings')
             ]
+    items = [v for k,v in weights]
     weighting['items'] = items
+    weighting['category'] = weights[0][0]
+    weighting['indicators'] = dict(items).keys()
     user_id = unicode(session.get('id'))
     db.user.update({'user_id': user_id}, 
                    {'$addToSet': {'weightings': weighting}},
