@@ -1,5 +1,5 @@
 # See openhdi/settings_default.py for list of possible settings
 
 # For testing
-# DEBUG = True
+DEBUG = True
 
