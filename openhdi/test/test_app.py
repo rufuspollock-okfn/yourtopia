@@ -14,7 +14,7 @@ class TestApp():
 
     def test_index(self):
         res =  self.app.get('/')
-        assert 'Ever wanted to find out' in res.data, res.data
+        assert 'Which country is closest' in res.data, res.data
 
     def test_quiz(self):
         res =  self.app.get('/quiz')
