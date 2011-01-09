@@ -156,27 +156,85 @@ def get_scores_by_user(db, user_id):
         by_time[_id.get('time')] = by_country
     return by_time
 
-def get_weightings(db):
-    return get_weightings_by_user(db, '__AXIS__')
+class Aggregator(object):
+    def __init__(self):
+        self.db = get_db()
 
-def get_weightings_by_user(db, user_id): 
-    weightings = list(db.weighting.find({'user_id': user_id}))
-    if not len(weightings): 
-        return {}
-    by_name = lambda n: [w for w in weightings if w.get('category')==n]
-    categories = {}
-    for k, v in by_name('meta')[0].get('items'):
-        category = {'value': v/100, 'color': CATEGORIES.get(k).get('color')}
-        category['indicators'] = {}
-        indicator = by_name(k) 
-        if len(indicator):
-            colors = list(color_range(category.get('color'), 
-                                 len(indicator[0].get('items'))))
-            for n, (ik, iv) in enumerate(indicator[0].get('items')):
-                category['indicators'][ik] = {'value': iv/100, 
-                                              'color': colors[n]}
-        categories[k] = category
-    return categories
+    def countries(self, year):
+        '''
+        :return: list of tuples [country_id, float]
+        '''
+        results = []
+        for country in our_countries:
+            results.append([country, self.get_country(country, year)])
+    
+    def country(country, year):
+        total = 0
+        count = 0
+        for user in users:
+            count += 1
+            total += self.country_by_user(country, user)
+        return total / len(users) 
+
+    def countries_by_user(self, user_id, year):
+        sum = []
+        for indicator in self.INDICATORS:
+            # norm_value returns [value, ... ]
+            newvalue = [ [country, value* self.weighting(indicator_i, user) ] for country, value in self.norm_value(indicator, year) ]
+            # could do this ...
+            # sum.append(self.weighting(...) * self.norm_value(indicator, year)
+            sum.append(newvalue)
+        return sum/len(self.INDICATORS)
+
+    def country_by_user(country, user_id, year):
+        sum = 0
+        # omitted values (e.g. no weighting for that indicator or no value)
+        # in particular if user just completed first page will only have 4 indicators
+        # if there are no indicators: 
+        #    indicators = [proxy_indicator]
+        
+        for indicator in self.INDICATORS:
+            sum += self.weighting(indicator_i, user) * self.norm_value(indicator_i, country, year)
+        return sum/len(self.INDICATORS)
+    
+    def weighting(indicator, user='__AXIS__'):
+        indicator_weighting = self.get_weighting_in_category(user, indicator)
+        if self.has_no_weightings(user, indicator):
+            if is_proxy_indicator(indicator):
+                indicator_weighting = 1
+            else:
+                indicator_weighting = 0
+        self.category_weighting(indicator.category) * indicator_weighting
+
+    def weightings(self, user_id='__AXIS__'): 
+        db = self.db
+        weightings = list(db.weighting.find({'user_id': user_id}))
+        if not len(weightings): 
+            return {}
+        by_category = lambda n: [w for w in weightings if w.get('category')==n]
+        categories = {}
+        for k, v in by_category('meta')[0].get('items'):
+            category = {'value': v/100, 'color': CATEGORIES.get(k).get('color')}
+            category['indicators'] = {}
+            indicator = by_category(k) 
+            if len(indicator):
+                colors = list(color_range(category.get('color'), 
+                                     len(indicator[0].get('items'))))
+                for n, (ik, iv) in enumerate(indicator[0].get('items')):
+                    category['indicators'][ik] = {'value': iv/100, 
+                                                  'color': colors[n]}
+            categories[k] = category
+        return categories
+
+
+    def norm_value(indicator, country, year):
+        '''Interpolates if value is missing ...
+        
+        :return: float in [0,1]
+        '''
+        pass
+
+        
     
 if __name__ == '__main__':
     db = get_db()
