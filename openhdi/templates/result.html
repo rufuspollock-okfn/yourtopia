@@ -15,22 +15,43 @@ jQuery(function() {
     </script>
 
     <style type="text/css">
+#content .yourtopia {
+  margin-top: 2em;
+}
+
+#content .yourtopia h1 {
+  text-align: center;
+  font-size: 150%;
+}
+
+#worldmap-outer {
+  height: 430px;
+  width: 750px;
+  margin: auto;
+}
+
 .category-counts {
-  width: 40%;
+  width: 48%;
   float: left;
 }
 
-#worldmap {
-  height: 430px;
+.chartlist li a {
+  font-size: 90%;
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
 }
+
     </style>
   </py:def>
 
   <div py:def="content">
-    <p>Based on your answers to our question the country closed to your
-    utopia (yourtopia!) is <strong>${user_scores[0][2]}</strong>.</p>
+    <div class="yourtopia">
+      <h1>The country closest to <strong>yourtopia</strong> (your utopia) is the ${user_scores[0][2]}</h1>
+    </div>
 
-    <div id="worldmap"></div>
+    <div id="worldmap-outer">
+      <div id="worldmap"></div>
+    </div>
 
     <py:def function="score_bar_chart(_scores)">
       <ul class="chartlist">
