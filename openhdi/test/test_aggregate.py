@@ -1,5 +1,8 @@
+import pprint
+
 from openhdi.app import app
 import openhdi.aggregates as aggregates
+import openhdi.model as model
 
 db = aggregates.get_db()    
 our_user = 'testuser'
@@ -36,6 +39,7 @@ def setup():
     ]
 }
     db.weighting.insert(weighting)
+    model.setup_quiz()
     aggregates.update(db, weighting)
     # aggregates.update_global(db)
 
@@ -51,4 +55,14 @@ class TestAggregates:
         weightings = self.agg.weightings(our_user)
         assert len(weightings) == 4, weightings
         assert u'economy' in weightings.keys(), weightings
+
+    def test_setup_quiz(self):
+        # out = db.quiz.find_one({'id': 'yourtopia'})
+        out = model.Quiz('yourtopia')
+        assert len(out['structure']) == 3, len(out['structure'])
+        econ = out['structure'][0]
+        assert econ['label'] == 'Economy'
+        assert econ['proxy'] == 'NYGDPPCAPPPCD', econ['proxy']
+        econ_struct = econ['structure']
+        assert len(econ_struct) == 4, pprint.pprint(econ_struct)
 

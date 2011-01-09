@@ -5,5 +5,7 @@ MONGODB_DATABASE = 'openhdi'
 
 SECRET_KEY = 'harry'
 
+QUIZ = 'yourtopia'
+
 DEBUG = False
 

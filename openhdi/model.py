@@ -5,6 +5,14 @@ from random import choice, shuffle
 from openhdi.mongo import get_db
 from openhdi.importer import CATEGORIES
 
+class Quiz(dict):
+    def __init__(self, id_):
+        db = get_db()
+        quiz_data = db.quiz.find_one({'id': id_})
+        assert quiz_data, '%s not found in db' % id_
+        self.update(quiz_data)
+
+
 def get_questions(user_id):
     db = get_db()
     done = db.weighting.find({'user_id': user_id}).distinct('category')
@@ -66,6 +74,32 @@ def save_weightings(weightings, user_id):
     # TODO: reinstate update of aggregates?
     # aggregates.update(db, weighting)
 
+def setup_quiz():
+    db = get_db()
+    ourquiz = {
+        'id': 'yourtopia',
+        'label': 'Yourtopia default quiz',
+        'description': '',
+        'structure': [],
+        'questions': []
+        }
+    structures = []
+    for dimension in [
+        {'id': 'economy', 'label': 'Economy', 'set': 'hdi', 'proxy': 'NYGDPPCAPPPCD', 'color': '#e4adc5'},
+        {'id': 'health', 'label': 'Health', 'set': 'hdi', 'proxy': 'SPDYNLE00IN', 'color': '#e4543a'},
+        {'id': 'education', 'label': 'Education', 'set': 'hdi', 'proxy': 'SESECENRR', 'color': '#d9df29'},
+        ]:
+        dim_structure = list(db.indicator.find({'category.id': dimension['id'], 'select': True}))
+        dimension['question'] = dimension['label']
+        dimension['structure'] = dim_structure
+        print ourquiz
+        print dimension['id']
+        structures.append(dimension)
+        ourquiz['questions'] = ourquiz['questions'] + [x['id'] for x in dim_structure]
+    ourquiz['structure'] = structures
+    query = {'id': ourquiz['id']} 
+    db.quiz.update(query, ourquiz, upsert=True)
+
 
 def delete_all():
     db = get_db()
@@ -89,5 +123,6 @@ if __name__ == '__main__':
         delete_all()
     elif action == 'load':
         load()
-
+    elif action == 'quiz':
+        setup_quiz()
 
