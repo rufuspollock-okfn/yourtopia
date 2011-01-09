@@ -9,7 +9,7 @@ CATEGORIES = {
     'economy': {'label': 'Economy', 'set': 'hdi', 'proxy': 'NYGDPPCAPPPCD', 'color': '#e4adc5'},
     'health': {'label': 'Health', 'set': 'hdi', 'proxy': 'SPDYNLE00IN', 'color': '#e4543a'},
     'education': {'label': 'Education', 'set': 'hdi', 'proxy': 'SESECENRR', 'color': '#d9df29'},
-    'inequality': {'label': 'Inequality', 'set': 'hdi', 'proxy': 'SIPOVGINI', 'color': '#a9d0e4'},
+    'inequality': {'label': 'Inequality', 'set': '', 'proxy': 'SIPOVGINI', 'color': '#a9d0e4'},
     'social_cap': {'label': 'Social capital', 'set': '', 'color': '#0aaae1'},
     'environ': {'label': 'Environment', 'set': '', 'color': '#89c141'},
     'institutions': {'label': 'Institutions', 'set': '', 'color': '#ea872e'},
