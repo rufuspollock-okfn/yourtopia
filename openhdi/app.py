@@ -6,6 +6,7 @@ from datetime import datetime
 
 from flask import Flask, request, session, abort
 from flaskext.genshi import Genshi, render_response
+from flask import json
 
 from openhdi.mongo import get_db, jsonify
 import openhdi.model as model
@@ -55,7 +56,28 @@ def about():
 
 @app.route('/result')
 def result():
-    return render_response('result.html')
+    import iso3166
+    db = get_db() 
+    from aggregates import get_scores, get_scores_by_user
+    user_scores = get_scores_by_user(db, unicode(session.get('id')))
+    global_scores = get_scores(db)
+    scores_data = json.dumps({
+        'user': user_scores, 
+        'global': global_scores
+        })
+    last_year='2007'
+    def get_sorted(score_set):
+        s = score_set[last_year]
+        s = sorted(s.items(), cmp=lambda x,y: -cmp(x[1], y[1]))
+        s = [ [x[0], x[1], iso3166.countries.get(x[0]).name] for x in s ]
+        return s
+    user_scores = get_sorted(user_scores)
+    global_scores = get_sorted(global_scores)
+    return render_response('result.html', dict(
+        scores_data=scores_data,
+        user_scores=user_scores,
+        global_scores=global_scores
+        ))
 
 
 ## -------------------------

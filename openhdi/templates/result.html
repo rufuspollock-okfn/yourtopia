@@ -8,23 +8,54 @@
     <script src="/static/countries.js"></script>
     <script src="/static/app.js"></script>
     <script type="text/javascript">
+var scores = ${scores_data};
 jQuery(function() {
   OpenHDI.setupApp();
 });
     </script>
+
+    <style type="text/css">
+.category-counts {
+  width: 40%;
+  float: left;
+}
+
+#worldmap {
+  height: 430px;
+}
+    </style>
   </py:def>
 
   <div py:def="content">
-    <p>Places you could move: </p>
+    <p>Based on your answers to our question the country closed to your
+    utopia (yourtopia!) is <strong>${user_scores[0][2]}</strong>.</p>
+
+    <div id="worldmap"></div>
+
+    <py:def function="score_bar_chart(_scores)">
+      <ul class="chartlist">
+      <py:for each="code,v,country in _scores" py:with="divisor = _scores[0][1]">
+        <li>
+          <a href="#">${country}</a>
+          <span class="count">${round(v/divisor, 2)}</span>
+          <span class="index" style="width: ${100*v/divisor}%">${v/divisor}</span>
+        </li>
+      </py:for>
+      </ul>
+    </py:def>
+
+    <div class="category-counts">
+      <h3>Your Rankings</h3>
+      ${score_bar_chart(user_scores)}
+    </div>
+
+    <div class="category-counts">
+      <h3>Global Rankings</h3>
+      ${score_bar_chart(global_scores)}
+    </div>
 
 
   <script type="text/javascript+protovis">
- 
-
-    var scoresData = $.ajax({ type: "GET", url: "/api/scores", async: false }).responseText; 
-    var scores = JSON.parse(scoresData); 
-    
-
 var fill = pv.Scale.linear()
     .domain(0, 1)
     .range("#ffffff", "#333333");
@@ -41,8 +72,10 @@ var w = 700,
     geo = pv.Geo.scale("identity").range(w, h);
 
 var vis = new pv.Panel()
-    .width(w)
-    .height(h);
+  .width(w)
+  .height(h)
+  .canvas('worldmap')
+  ;
 
 /* Countries. */
 vis.add(pv.Panel)
