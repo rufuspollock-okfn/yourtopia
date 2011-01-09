@@ -12,7 +12,89 @@ class Quiz(dict):
         assert quiz_data, '%s not found in db' % id_
         self.update(quiz_data)
 
+    @property
+    def indicators(self):
+        # assume depth 
+        indicators = {}
+        for dim in self['structure']:
+            for ind in dim['structure']:
+                indicators[ind['id']] = ind
+        return indicators
 
+class Weighting(dict):
+    @classmethod
+    def load(self, quiz_id, user_id):
+        db = get_db()
+        query = {'quiz_id': quiz_id, 'user_id': user_id} 
+        w = db.weighting.find_one(query)
+        assert w, 'not found in db'
+        w = Weighting(w)
+        return w
+
+    @property
+    def quiz(self):
+        db = get_db()
+        quiz = Quiz(self['quiz_id'])
+        return quiz
+    
+    def compute_weights(self):
+        indicator_ids = self.quiz['indicator_list']
+        lookup = {}
+        for name,qs in self['question_sets'].items():
+            lookup[name] = {}
+            for id_, weight in qs:
+                lookup[name][id_] = weight
+
+        weights = []
+        for ind_id in indicator_ids:
+            ind = self.quiz.indicators[ind_id]
+            dim_id = ind['category']['id']
+            dim_weight = lookup['__dimension__'][dim_id]
+            ind_weight = lookup[dim_id][ind_id]
+            weights.append(ind_weight*dim_weight)
+        self['weights'] = weights
+
+    DEFAULT_WEIGHTING =  {
+        'quiz_id': None,
+        'user_id' : None,
+        # question sets done
+        'sets_done': [],
+        # answers keyed by question set ids
+        # __dimension__ is special_
+        'question_sets': {},
+        'weights': [
+        ]
+    }
+
+    @classmethod
+    def new(self, quiz_id=None, user_id=None):
+        '''Clean new object'''
+        w = Weighting(self.DEFAULT_WEIGHTING)
+        w['quiz_id'] = quiz_id
+        w['user_id'] = user_id
+        if not quiz_id:
+            return
+        quiz = w.quiz
+        # assume for moment quiz structure has depth 2
+        # TODO: randomize
+        dims = quiz['structure']
+        default_weight = float(1)/len(dims)
+        w['question_sets']['__dimension__'] = [ [d['id'], default_weight] for d in
+                dims ]
+        for idx,dim in enumerate(quiz['structure']):
+            indicators = dim['structure']
+            def default_weight(ind):
+                # assume only one proxy!
+                if ind['id'] == dim['proxy']:
+                    return 1
+                else:
+                    return 0
+            w['question_sets'][dim['id']] = [ [ind['id'], default_weight(ind)] for ind in
+                indicators ]
+        w.compute_weights()
+        return w
+
+    
 def get_questions(user_id):
     db = get_db()
     done = db.weighting.find({'user_id': user_id}).distinct('category')
@@ -81,21 +163,19 @@ def setup_quiz():
         'label': 'Yourtopia default quiz',
         'description': '',
         'structure': [],
-        'questions': []
+        'indicator_list': []
         }
     structures = []
     for dimension in [
-        {'id': 'economy', 'label': 'Economy', 'set': 'hdi', 'proxy': 'NYGDPPCAPPPCD', 'color': '#e4adc5'},
+        {'id': 'economy', 'label': 'Economy', 'set': 'hdi', 'proxy': 'NYGNPPCAPPPCD', 'color': '#e4adc5'},
         {'id': 'health', 'label': 'Health', 'set': 'hdi', 'proxy': 'SPDYNLE00IN', 'color': '#e4543a'},
         {'id': 'education', 'label': 'Education', 'set': 'hdi', 'proxy': 'SESECENRR', 'color': '#d9df29'},
         ]:
         dim_structure = list(db.indicator.find({'category.id': dimension['id'], 'select': True}))
         dimension['question'] = dimension['label']
         dimension['structure'] = dim_structure
-        print ourquiz
-        print dimension['id']
         structures.append(dimension)
-        ourquiz['questions'] = ourquiz['questions'] + [x['id'] for x in dim_structure]
+        ourquiz['indicator_list'] = ourquiz['indicator_list'] + [x['id'] for x in dim_structure]
     ourquiz['structure'] = structures
     query = {'id': ourquiz['id']} 
     db.quiz.update(query, ourquiz, upsert=True)
