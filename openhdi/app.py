@@ -4,7 +4,7 @@ import os
 from uuid import uuid4
 from datetime import datetime
 
-from flask import Flask, request, session, abort, redirect, g
+from flask import Flask, request, session, abort, redirect, g, url_for
 from flaskext.genshi import Genshi, render_response
 from flask import json
 
@@ -45,6 +45,8 @@ def home():
 def quiz():
     # step = int(request.args.get('stage', '1'))
     step, questions = model.get_questions(g.user_id)
+    if step == 4:
+        return redirect(url_for('result'))
     return render_response('quiz.html', dict(
         questions=questions,
         step=step

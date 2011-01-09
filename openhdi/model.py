@@ -25,10 +25,10 @@ def get_questions(user_id):
                 })
     else:
         unanswered = [c for c, v in CATEGORIES.items() if c not in done and v.get('set') == 'hdi']
-        if not len(unanswered):
-            return []
-        questions = list(db.indicator.find({'category.id': choice(unanswered), 'select': True}))
         step = 1 + 3 - len(unanswered)
+        if not len(unanswered):
+            return (step, [])
+        questions = list(db.indicator.find({'category.id': choice(unanswered), 'select': True}))
     shuffle(questions)
     return (step, questions)
 
