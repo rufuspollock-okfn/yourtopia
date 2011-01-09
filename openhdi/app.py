@@ -67,6 +67,8 @@ def result():
         })
     last_year='2007'
     def get_sorted(score_set):
+        if not last_year in score_set:
+            return []
         s = score_set[last_year]
         s = sorted(s.items(), cmp=lambda x,y: -cmp(x[1], y[1]))
         s = [ [x[0], x[1], iso3166.countries.get(x[0]).name] for x in s ]
