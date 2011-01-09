@@ -54,6 +54,33 @@ reduce_aggregates = Code("""function(key, values) {
     return sum/Math.max(1, values.length);
 }""")
 
+
+map_weightings = Code("""function() {
+    if (this.user_id != '__AXIS__') {
+        var ind = this.indicators; 
+        ind.sort(); 
+        emit({indicators: ind, category: this.category},
+             this.items);
+    }
+}""")
+
+reduce_weightings = Code("""function (key, values) {
+    var sums = new Object();
+    values.forEach(function(items) {
+        items.forEach(function(item) {
+            k = item[0];
+            if (!sums[k]) sums[k] = 0;
+            sums[k] += item[1];
+        }); 
+    });
+    var means = new Object();
+    for (var k in sums) {
+         means[k] = sums[k]/Math.max(1, values.length); 
+    }
+    return means; 
+}""")
+
+
 def create_fallbacks(db, user_id, items):
     # HACK
     items = dict(items)
@@ -98,11 +125,18 @@ def update(db, weighting):
 def update_global(db):
     #t0 = time() 
     #  This can be done offline via CRON or something
-    res = db.aggregate.map_reduce(map_aggregates_to_aggregates, 
-                                   reduce_aggregates)
-    for result in res.find():
-        db.aggregate.update({'_id': result.get('_id')}, result, upsert=True)
+    #res = db.aggregate.map_reduce(map_aggregates_to_aggregates, 
+    #                               reduce_aggregates)
+    #for result in res.find():
+    #    db.aggregate.update({'_id': result.get('_id')}, result, upsert=True)
     #print "GLOBAL", time()-t0
+
+    res = db.weighting.map_reduce(map_weightings, reduce_weightings)
+    for result in res.find():
+        db.weighting.update({'user_id': '__AXIS__', 
+                             'category': result.get('_id').get('category'),
+                             'indicators': result.get('_id').get('indicators')}, 
+                            {'$set': {'items': result.get('value').items()}}, upsert=True)
 
 
 def get_scores(db): 
@@ -121,8 +155,25 @@ def get_scores_by_user(db, user_id):
         by_time[_id.get('time')] = by_country
     return by_time
 
+def get_weightings(db):
+    return get_weightings_by_user(db, '__AXIS__')
 
-
+def get_weightings_by_user(db, user_id): 
+    weightings = list(db.weighting.find({'user_id': user_id}))
+    if not len(weightings): 
+        return {}
+    by_name = lambda n: [w for w in weightings if w.get('category')==n]
+    categories = {}
+    for k, v in by_name('meta')[0].get('items'):
+        category = {'value': v/100}
+        category['indicators'] = {}
+        inidcator = by_name(k) 
+        if len(indicator):
+            for ik, iv in indicator[0].get('items'):
+                category['indicators'][ik] = iv/100
+        categories[k] = category
+    return categories
+    
 if __name__ == '__main__':
     db = get_db()
     ind = {'category': u'inequality',
@@ -134,3 +185,4 @@ if __name__ == '__main__':
              'user_id': u'fd35d20a-cbe4-41da-bcfd-5e4dae723a26'}
     #update(db, ind) 
     update_global(db)
+
