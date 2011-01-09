@@ -6,6 +6,7 @@ import openhdi.model as model
 
 db = aggregates.get_db()    
 our_user = u'testuser'
+our_user2 = u'testuser2'
 quiz_id = u'yourtopia'
 
 def setup():
@@ -14,7 +15,12 @@ def setup():
     db.drop_collection('quiz')
     model.setup_quiz()
     w = model.Weighting.new(quiz_id, our_user)
+    w2 = model.Weighting.new(quiz_id, our_user2)
+    # mess with it
+    w2['weights'] = [0] * 11
+    w2['weights'][0] = 1.0
     db.weighting.insert(w)
+    db.weighting.insert(w2)
     # aggregates.update(db, weighting)
     # aggregates.update_global(db)
 
@@ -34,6 +40,17 @@ class TestAggregates:
         assert len(weights) == 11, len(weights)
 
         assert round(sum(weights),5) == 1, sum(weights) 
+
+    def test_get_avg_weighting(self):
+        avg = self.agg.compute_average_weighting()
+        assert avg['count'] == 2
+        w = avg['weights']
+        assert w[2] == 0, w
+        assert w[0] == 0.5, w
+        assert round(sum(w), 5) == 1.0, sum(w)
+
+        avgweights = self.agg.weights()
+        assert avgweights['NYGNPPCAPPPCD'] == 1.0/6, avgweights
 
     def test_setup_quiz(self):
         # out = db.quiz.find_one({'id': quiz_id})

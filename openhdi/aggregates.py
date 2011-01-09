@@ -6,6 +6,7 @@ from time import time
 from colors import color_range
 
 from importer import CATEGORIES
+import openhdi.model as model
 
 TIMES = ['2007']
 
@@ -159,6 +160,7 @@ def get_scores_by_user(db, user_id):
 class Aggregator(object):
     def __init__(self):
         self.db = get_db()
+        self.quiz = model.Quiz(u'yourtopia')
 
     def countries(self, year):
         '''
@@ -171,7 +173,7 @@ class Aggregator(object):
     def country(country, year):
         total = 0
         count = 0
-        for user in users:
+        for user in self.db.users:
             count += 1
             total += self.country_by_user(country, user)
         return total / len(users) 
@@ -193,39 +195,36 @@ class Aggregator(object):
         # if there are no indicators: 
         #    indicators = [proxy_indicator]
         
-        for indicator in self.INDICATORS:
+    def _query(self, user_id):
+        return dict(quiz_id=self.quiz['id'], user_id=user_id)
+
+    def scores(self, user_id='__AVG__', year='2007'):
+        weights = self.weights(user_id)
+        for indicator in self.query['indicator_list']:
             sum += self.weighting(indicator_i, user) * self.norm_value(indicator_i, country, year)
         return sum/len(self.INDICATORS)
-    
-    def weighting(indicator, user='__AXIS__'):
-        indicator_weighting = self.get_weighting_in_category(user, indicator)
-        if self.has_no_weightings(user, indicator):
-            if is_proxy_indicator(indicator):
-                indicator_weighting = 1
-            else:
-                indicator_weighting = 0
-        self.category_weighting(indicator.category) * indicator_weighting
 
-    def weightings(self, user_id='__AXIS__'): 
+    def compute_average_weighting(self):
         db = self.db
-        weightings = list(db.weighting.find({'user_id': user_id}))
-        if not len(weightings): 
-            return {}
-        by_category = lambda n: [w for w in weightings if w.get('category')==n]
-        categories = {}
-        for k, v in by_category('meta')[0].get('items'):
-            category = {'value': v/100, 'color': CATEGORIES.get(k).get('color')}
-            category['indicators'] = {}
-            indicator = by_category(k) 
-            if len(indicator):
-                colors = list(color_range(category.get('color'), 
-                                     len(indicator[0].get('items'))))
-                for n, (ik, iv) in enumerate(indicator[0].get('items')):
-                    category['indicators'][ik] = {'value': iv/100, 
-                                                  'color': colors[n]}
-            categories[k] = category
-        return categories
-
+        avg = model.Weighting.new(quiz_id=self.quiz['id'], user_id='__AVG__')
+        q = {'quiz_id': self.quiz['id']}
+        count = 0
+        weightsum = [0] * len(self.quiz['indicator_list'])
+        for weighting in db.weighting.find(q):
+            for idx, weight in enumerate(weighting['weights']):
+                weightsum[idx] = weightsum[idx] + weight 
+            count += 1
+        avg['weights'] = [ x/float(count) for x in weightsum ]
+        avg['count'] = count
+        avg.save()
+        return avg
+    
+    def weights(self, user_id='__AVG__'): 
+        return dict(
+            zip(self.quiz['indicator_list'],
+                self.db.weighting.find_one(self._query(user_id))['weights']
+                )
+            )
 
     def norm_value(indicator, country, year):
         '''Interpolates if value is missing ...

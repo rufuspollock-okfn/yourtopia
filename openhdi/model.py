@@ -31,6 +31,11 @@ class Weighting(dict):
         w = Weighting(w)
         return w
 
+    def save(self):
+        db = get_db()
+        query = {'quiz_id': self['quiz_id'], 'user_id': self['user_id']} 
+        db.weighting.update(query, self, upsert=True)
+
     @property
     def quiz(self):
         db = get_db()
