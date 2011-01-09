@@ -95,7 +95,7 @@ def load_dataset_from_file(file_name):
         dataset.update(query)
         dataset['indicator_id'] = indicator.get('id')
         # db.datum.update(query, dataset, upsert=True) 
-        db.datum.insert(query, dataset)
+        db.datum.insert(dataset)
         if count % 1000 == 0:
             print 'Progress: %s' % count
 
