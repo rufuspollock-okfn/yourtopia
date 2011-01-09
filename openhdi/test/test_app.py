@@ -24,6 +24,7 @@ class TestApp():
         assert 'Economy' in res.data, res.data
         assert 'Education' in res.data, res.data
         assert 'Current weighting' in res.data, res.data
+        assert 'Step 1' in res.data, res.data
 
     def test_quiz_post(self):
         data = dict([
@@ -38,6 +39,12 @@ class TestApp():
             out = db.weighting.find_one({'user_id': userid})
             assert out, out
             assert out['items'][0] == [u'economy', 30]
+    
+    def _test_quiz_multistep(self):
+        for stage in range(4):
+            res = self.app.get('/quiz')
+            print stage
+            assert 'Step %s' % (stage+1) in res.data, res.data
 
 
 class TestApi():

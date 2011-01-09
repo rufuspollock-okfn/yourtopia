@@ -28,7 +28,7 @@ def get_questions(user_id):
         if not len(unanswered):
             return []
         questions = list(db.indicator.find({'category.id': choice(unanswered), 'select': True}))
-        step = len(unanswered) - 3
+        step = 1 + 3 - len(unanswered)
     shuffle(questions)
     return (step, questions)
 
