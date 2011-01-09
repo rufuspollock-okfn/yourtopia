@@ -46,11 +46,16 @@ jQuery(function() {
 
   <div py:def="content">
     <div class="yourtopia">
+      <py:if test="not user_scores">
+      <h1>You haven't yet taken the <a href="${url_for('quiz')}">quiz</a> so we can't tell which country is your(u)topia.</h1>
+      </py:if>
+      <py:if test="user_scores">
       <h1>The country closest to <strong>yourtopia</strong> (your utopia) is the ${user_scores[0][2]}</h1>
-    </div>
 
-    <div id="worldmap-outer">
-      <div id="worldmap"></div>
+      <div id="worldmap-outer">
+        <div id="worldmap"></div>
+      </div>
+      </py:if>
     </div>
 
     <py:def function="score_bar_chart(_scores)">
@@ -66,14 +71,17 @@ jQuery(function() {
     </py:def>
 
     <div class="category-counts">
+      <h3>Global Rankings (based on everybody's answers)</h3>
+      ${score_bar_chart(global_scores)}
+    </div>
+
+    <py:if test="user_scores">
+    <div class="category-counts">
       <h3>Your Rankings</h3>
       ${score_bar_chart(user_scores)}
     </div>
+    </py:if>
 
-    <div class="category-counts">
-      <h3>Global Rankings</h3>
-      ${score_bar_chart(global_scores)}
-    </div>
 
 
   <script type="text/javascript+protovis">
