@@ -14,21 +14,40 @@ jQuery(function() {
   OpenHDI.renderPieChart();
 });
     </script>
+
+  </py:def>
+
+  <py:def function="primary_sidebar_extras">
+    <li class="widget-container widget_text">
+      <h3 class="widget-title">Step ${step}</h3>
+        <div class="textwidget">
+          You are at Step ${step} (${max(0, 1-step)} - ${5-step} to
+          go)
+        </div>
+    </li>
   </py:def>
 
   <div py:def="content">
+    <h2>
+      How important are each of the following aspects of your ideal country?
+    </h2>
     <div id="pie"></div>
 
     <div id="div-question-list">
-      <p>How important are each of the following items to your ideal country?</p>
-      <ul id="question-listing">
-        <li py:for="question in questions" class="question" id="question-${question['id']}">
-          <h3>${question['label']}</h3>
-          Current weighting: <span id="weighting-${question['id']}-percent"></span>%
-          <div id="weighting-${question['id']}" class="weighting"></div>
-        </li>
-      </ul>
-      <button id="save">Save</button>
+      <form id="question-form" action="" method="POST">
+        <ul id="question-listing">
+          <li py:for="question in questions" class="question" id="question-${question['id']}">
+            <h3>${question['label']}</h3>
+            Current weighting:
+            <input type="text"
+              id="weighting-${question['id']}-percent"
+              name="weighting-${question['id']}-percent"
+              class="weighting-val" />%
+            <div id="weighting-${question['id']}" class="weighting"></div>
+          </li>
+        </ul>
+        <input type="submit" id="save" name="save" value="Next &raquo;"/>
+      </form>
     </div>
   </div>
 

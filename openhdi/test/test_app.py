@@ -1,6 +1,8 @@
 from flask import json, url_for
 
-from openhdi.app import app
+from openhdi.app import app, g
+from openhdi.mongo import get_db
+db = get_db()
 
 def setup():
     pass
@@ -10,7 +12,7 @@ class TestApp():
         self.app = app.test_client()
 
     def teardown(self):
-        pass
+        db.weighting.drop()
 
     def test_index(self):
         res =  self.app.get('/')
@@ -23,6 +25,21 @@ class TestApp():
         assert 'Education' in res.data, res.data
         assert 'Current weighting' in res.data, res.data
 
+    def test_quiz_post(self):
+        data = dict([
+            ('weighting-economy-percent', u'30'),
+            ('save', u'Next \xbb'),
+            ('weighting-education-percent', u'30'),
+            ('weighting-health-percent', u'40')
+            ])
+        with app.test_client() as c:
+            res = c.post('/quiz', data=data)
+            userid = g.user_id
+            out = db.weighting.find_one({'user_id': userid})
+            assert out, out
+            assert out['items'][0] == [u'economy', 30]
+
+
 class TestApi():
     def setup(self):
         self.app = app.test_client()
@@ -33,9 +50,10 @@ class TestApi():
     def test_indicator(self):
         res = self.app.get('/api/indicators')
         data = json.loads(res.data)
-        assert len(data) == 4, data
+        data = data[1]
+        assert len(data) == 3, data
         labels = sorted([x['label'] for x in data ])
-        assert labels == ['Economy', 'Education', 'Health', 'Inequality'], labels
+        assert labels == ['Economy', 'Education', 'Health'], labels
 
     def test_weighting(self):
         res = self.app.post('/api/indicators')

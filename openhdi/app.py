@@ -4,7 +4,7 @@ import os
 from uuid import uuid4
 from datetime import datetime
 
-from flask import Flask, request, session, abort
+from flask import Flask, request, session, abort, redirect, g
 from flaskext.genshi import Genshi, render_response
 from flask import json
 
@@ -27,11 +27,11 @@ configure_app()
 genshi = Genshi(app)
 secret_key = app.config['SECRET_KEY']
 
-
 @app.before_request
 def make_session():
     if not 'id' in session:
         session['id'] = uuid4()
+    g.user_id = session.get('id') 
 
 
 ## ======================
@@ -43,12 +43,24 @@ def home():
 
 @app.route('/quiz')
 def quiz():
-    user_id = unicode(session.get('id'))
-    questions = model.get_questions(user_id)
-    return render_response(
-        'quiz.html',
-        dict(questions=questions)
-        )
+    # step = int(request.args.get('stage', '1'))
+    step, questions = model.get_questions(g.user_id)
+    return render_response('quiz.html', dict(
+        questions=questions,
+        step=step
+        ))
+
+@app.route('/quiz', methods=['POST'])
+def quiz_submit():
+    def indicator(field_name):
+        return field_name.split('-')[1]
+    weightings = [
+            {'id': indicator(x[0]), 'weighting': int(x[1])}
+            for x in request.form.items()
+            if x[0].startswith('weighting-')
+            ]
+    model.save_weightings(weightings, g.user_id)
+    return quiz()
 
 @app.route('/about')
 def about():
@@ -87,20 +99,18 @@ def result():
 
 @app.route('/api/indicators')
 def questions():
-    user_id = unicode(session.get('id'))
-    questions = model.get_questions(user_id)
+    questions = model.get_questions(g.user_id)
     return jsonify(app, questions)
 
 @app.route('/api/profile', methods=['GET', 'POST'])
 def profile():
     db = get_db()
-    user_id = unicode(session.get('id'))
     if request.method == 'POST': 
         if not (request.form and 'label' in request.form):
             abort(400)
-        db.user.update({'user_id': user_id}, 
+        db.user.update({'user_id': g.user_id}, 
                        {'$set': {'label': request.form.get('label')}}, upsert=True)
-    user = db.user.find_one({'user_id': user_id})
+    user = db.user.find_one({'user_id': g.user_id})
     if not user:
         return jsonify(app, {})
     return jsonify(app, user)
@@ -108,12 +118,19 @@ def profile():
 @app.route('/api/reset', methods=['GET'])
 def reset():
     db = get_db()
-    user_id = unicode(session.get('id'))
-    db.weighting.remove({'user_id': user_id})
+    db.weighting.remove({'user_id': g.user_id})
     # could keep this as well 
     #db.user.remove({'user_id': user_id}) 
     #del session['id']
     return jsonify(app, {'status': 'ok'})
+
+@app.route('/api/weighting', methods=['GET'])
+def weighting_get():
+    db = get_db()
+    return jsonify(app, {
+        'count': db.weighting.count(),
+        'rows': [x for x in db.weighting.find()]
+        }, indent=2)
 
 # /api/weighting?NAME=[0.0...1.0]&NAME2=....
 @app.route('/api/weighting', methods=['POST'])
@@ -125,18 +142,8 @@ def weighting():
     if not len(request.json.get('weightings')):
         return jsonify(app, {'status': 'ok', 'message': 'no data'})
     
-    weighting = {'user_id': unicode(session.get('id'))}
-    weights = [ model.validate_weight(d.get('id'),d.get('weighting'), db)
-            for d in request.json.get('weightings')
-            ]
-    items = [v for k,v in weights]
-    weighting['items'] = items
-    weighting['category'] = weights[0][0]
-    weighting['indicators'] = dict(items).keys()
-    db.weighting.update({'user_id': weighting.get('user_id'), 
-                         'category': weighting.get('category')},
-                         weighting, upsert=True)
-    aggregates.update(db, weighting)
+    weightings = request.json.get('weightings')
+    model.save_weightings(weightings, g.user_id)
     return jsonify(app, {'status': 'ok', 'message': 'saved'})
 
 @app.route('/api/scores')

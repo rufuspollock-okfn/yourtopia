@@ -83,23 +83,25 @@ var OpenHDI = (function($, my) {
       .slideDown(400);
   };
 
+  my.setWeighting = function(questionId, val) {
+    $("#weighting-" + fieldId + '-percent').val(val);
+  }
+
   my.setupApp = function() {
     $('.weighting').slider({
       value: 100/$(".weighting").size(),
-      min: 1,
+      min: 0,
       max: 100,
       step: 1,
       create: function( event, ui ) {
-          $(".weighting").each(function(i) {
-        var val = Math.floor(100 / $(".weighting").size());
-        fieldId = this.id.split('-')[1];
-        $("#weighting-" + fieldId + '-percent').html(val);
-                }); 
-
+        $(".weighting").each(function(i) {
+          var val = Math.floor(100 / $(".weighting").size());
+          fieldId = this.id.split('-')[1];
+          my.setWeighting(fieldId, val);
+        }); 
       },
       slide: function(event, ui) {
         questionId = event.target.id.split('-')[1];
-        my.renderPieChart();
 
         var sum = 0;
         $(".weighting").each(function(s) {
@@ -116,21 +118,23 @@ var OpenHDI = (function($, my) {
         $(".weighting").each(function(i) {
             var val = $(this).slider('value');
             fieldId = this.id.split('-')[1];
-            $("#weighting-" + fieldId + '-percent').html(val);
+            my.setWeighting(fieldId, val);
         }); 
+
+        my.renderPieChart();
       }
     });
 
     $('#save').click(function(e) {
-      e.preventDefault();
-      var weightings = my.getWeightings();
-      my.WeightingSets.create(
-        {weightings: weightings}
-        );
-      //my.showNotification('alert', 'Saved your weightings');
+      // e.preventDefault();
+      // var weightings = my.getWeightings();
+      // my.WeightingSets.create(
+      //  {weightings: weightings}
+      //  );
+      my.showNotification('alert', 'Saved your weightings');
       
       // TEMP HACK make this ajax
-      document.location.reload();
+      // document.location.reload();
     });
   }
   return my;

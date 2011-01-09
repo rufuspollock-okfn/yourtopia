@@ -9,6 +9,7 @@ def get_questions(user_id):
     db = get_db()
     done = db.weighting.find({'user_id': user_id}).distinct('category')
     if not 'meta' in done:
+        step = 1
         questions = []
         for id, data in CATEGORIES.items():
             if not data.get('set') == 'hdi': 
@@ -27,11 +28,13 @@ def get_questions(user_id):
         if not len(unanswered):
             return []
         questions = list(db.indicator.find({'category.id': choice(unanswered), 'select': True}))
+        step = len(unanswered) - 3
     shuffle(questions)
-    return questions
+    return (step, questions)
 
 
-def validate_weight(key, value, db):
+def validate_weight(key, value):
+    db = get_db()
     if key not in CATEGORIES.keys():
         indicator = db.indicator.find_one({'id': key})
         if not indicator:
@@ -46,6 +49,23 @@ def validate_weight(key, value, db):
     except Exception, e:
         abort(400)
     return (category, (key, weight))
+
+def save_weightings(weightings, user_id):
+    db = get_db()
+    weighting = {'user_id': user_id}
+    weights = [ validate_weight(d.get('id'),d.get('weighting'))
+            for d in weightings
+            ]
+    items = [v for k,v in weights]
+    weighting['items'] = items
+    weighting['category'] = weights[0][0]
+    weighting['indicators'] = dict(items).keys()
+    db.weighting.update({'user_id': weighting.get('user_id'), 
+                         'category': weighting.get('category')},
+                         weighting, upsert=True)
+    # TODO: reinstate update of aggregates?
+    # aggregates.update(db, weighting)
+
 
 def delete_all():
     db = get_db()
