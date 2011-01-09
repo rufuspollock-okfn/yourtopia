@@ -4,6 +4,7 @@
   <py:def function="page_title">Home</py:def>
 
   <div py:def="content">
+
     <div class="row top">
       <div class="box">
         <div class="startquiz">
@@ -11,35 +12,37 @@
         <a href="${url_for('quiz')}" class="start_button">Start quiz</a>
         </div>
 
-      <div class="teaser">Help us construct a better index of human development
-        by telling us which indicators of development such as the Economy,
-        Equality, Health or Education you think are the most important for a
-        good life.</div>
+      <div class="teaser">What are the
+      most important things for human development?</div>
     </div>
-
-       <!--<div class="box">
-        <p>Find out how we calculate your personal development index!</p>
-        <img src="http://eutopia.guoxu.org/gfx/goal1_sm.gif" width="50" height="50" />
-        <img src="http://eutopia.guoxu.org/gfx/goal2_sm.gif" width="50" height="50" />
-        <img src="http://eutopia.guoxu.org/gfx/goal3_sm.gif" width="50" height="50" />
-        <img src="http://eutopia.guoxu.org/gfx/goal4_sm.gif" width="50" height="50" />
+      <div class="right">
+        Find out how does it Yourtopia works!
+        
+        <br /><br />
+        <img src="static/img/icons/economy.png" width="50" height="50" />
+        <img src="static/img/icons/education.png" width="50" height="50" />
+        <img src="static/img/icons/environ.png" width="50" height="50" />
         <br />
 
-        <img src="http://eutopia.guoxu.org/gfx/goal5_sm.gif" width="50" height="50" />
-        <img src="http://eutopia.guoxu.org/gfx/goal6_act.gif" width="50" height="50" />
-        <img src="http://eutopia.guoxu.org/gfx/goal7_sm.gif" width="50" height="50" />
-        <img src="http://eutopia.guoxu.org/gfx/goal8_sm.gif" width="50" height="50" />
-      </div>-->
-    </div>
+        <img src="static/img/icons/health.png" width="50" height="50" />
+        <img src="static/img/icons/inequality.png" width="50" height="50" />
+        <img src="static/img/icons/institutions.png" width="50" height="50" />
+        <br />
+        <img src="static/img/icons/governance.png" width="50" height="50" />
+        <img src="static/img/icons/security.png" width="50" height="50" />
+        <img src="static/img/icons/social_cap.png" width="50" height="50" />
 
-    <div class="row">
-      <div class="box idea">
-	<strong>The idea:</strong> Construct a measure of social 	progress world-wide based on your preferences for development. 	Participate in a global effort to improve public tracing of 	progress towards the Millennium Development Goals. 	<a href="${url_for('about')}">more &raquo;</a>.
       </div>
     </div>
-
+    <div class="row">
+      <div class="box idea">
+	<strong>The idea:</strong> Construct a measure of social progress world-wide based on your preferences for development. Participate in a global effort to improve public tracing of progress towards the Millennium Development Goals. 	<a href="${url_for('about')}">more &raquo;</a>.
+      </div>
+      
+<iframe src="http://www.facebook.com/widgets/like.php?href=http://eutopia.guoxu.org" scrolling="no" frameborder="0"
+        style="border:none; width:450px; height:80px"></iframe>
+    </div>
   </div>
-
   <xi:include href="layout.html" />
 </html>
 

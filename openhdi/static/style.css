@@ -79,7 +79,7 @@ div#inline-notification button {
   ************************/
 
 a.start_button {
-    border: 1px solid #ccc;
+    border: 1px dashed #ccc;
     margin: 20px;
     padding: 6px 20px 6px;
     color: #333 !important;
@@ -102,6 +102,7 @@ a.start_button {
 }
 
 .teaser {
+	font-size: 13px;
     margin: 10px;
 }
 
@@ -116,25 +117,35 @@ a.start_button {
 .Home .row {
   clear: both;
   margin: auto;
+  width: 680px;
 }
 
 .Home .box {
   padding: 2%;
+  width: 650px;
 }
 
 .Home .top .box {
-  background: url("/static/img/wire_globe_transp.png") no-repeat top right;  
+  background-color: #e2e2e2;
   text-align: center;
   vertical-align: center;
-  height: 200px;
-  float: right;
-  border: solid 1px #990000;
-  border-radius: 12px;
+  height: 220px;
+  float: left;
+  width: 300px;
+  border: dashed 1px #999999;
+  /* border-radius: 12px; */
   margin-bottom: 20px;
 }
 
-.Home .top .left {
-  float: left;
+.Home .top .right {
+  float: right;
+  background-color: #f0f0f0;
+  border: dashed 1px #999999;
+  padding: 2%;
+  width: 280px;
+  height: 220px;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 .Home .startquiz {
@@ -144,15 +155,16 @@ a.start_button {
 
 .Home .startquiz h3 {
   font-weight: bold;
-  font-size: 40px;
+  font-size: 20px;
 }
 
 .Home .idea {
-  padding-top: 20px;
-  border-radius: 12px;
+  padding-top: 10px;
+  border: dashed 1px #999999;
+  /* border-radius: 12px; */
   margin-top: 20px;
   background-color: #D5DFFF;
-  text-align: center;
+  text-align: left;
 }
 
 
