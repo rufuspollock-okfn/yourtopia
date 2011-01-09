@@ -46,3 +46,28 @@ def validate_weight(key, value, db):
     except Exception, e:
         abort(400)
     return (category, (key, weight))
+
+def delete_all():
+    db = get_db()
+    for name in db.collection_names():
+        if name not in ['system.indexes']:
+            db.drop_collection(name)
+
+def load():
+    from openhdi import importer
+    print 'Loading indicators'
+    importer.load_indicator_from_file('data/indicator.csv')
+    print 'Completed indicators'
+    print 'Loading datasets'
+    importer.load_dataset_from_file('data/dataset.csv')
+    print 'Completed datasets'
+
+if __name__ == '__main__':
+    import sys
+    action = sys.argv[1]
+    if action == 'delete':
+        delete_all()
+    elif action == 'load':
+        load()
+
+
