@@ -55,12 +55,14 @@ def load_indicator_from_file(file_name):
         indicator.update(query)
         db.indicator.update(query, indicator, upsert=True)
     fh.close() 
+    db.indicator.ensure_index('id')
+    print 'Loaded: %s indicators' % db.indicator.count()
  
 def load_dataset_from_file(file_name):
     fh = open(file_name, 'rb') 
     db = get_db()
     reader = csv.DictReader(fh) 
-    for row in reader: 
+    for (count,row) in enumerate(reader): 
         if not row.get('indicator_name'):
             continue
         indicator_name = munge_name(row.get('indicator_name'))
@@ -75,9 +77,9 @@ def load_dataset_from_file(file_name):
         else: 
             dataset['normalized_value'] = dataset['value'] 
         indicator = db.indicator.find_one({'id': indicator_name})
-        if not indicator.get('good'):
-            dataset['normalized_value'] = 1.0 - dataset['normalized_value'] 
         assert indicator, "Indicator %s could not be found!" % row.get('indicator_name') 
+        if not indicator.get('good'):
+            dataset['normalized_value'] = 1.0 - dataset['normalized_value']
         try:    
             cc3 = row.get('country')
             cc3 = {'ROM': 'ROU',
@@ -92,12 +94,17 @@ def load_dataset_from_file(file_name):
                  'time': row.get('time')}
         dataset.update(query)
         dataset['indicator_id'] = indicator.get('id')
-        db.datum.update(query, dataset, upsert=True) 
+        # db.datum.update(query, dataset, upsert=True) 
+        db.datum.insert(query, dataset)
+        if count % 1000 == 0:
+            print 'Progress: %s' % count
+
     db.datum.ensure_index('country')
     db.datum.ensure_index('indicator')
     db.datum.ensure_index('time')
     db.datum.ensure_index('indicator_id')
     fh.close() 
+    print 'Loaded: %s data points' % db.datum.count()
    
 if __name__ == '__main__':
     if len(sys.argv) != 3:
