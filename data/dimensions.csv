@@ -1,0 +1,10 @@
+name,label,hdi
+economy,Economy,1
+health,Health,1
+education,Education,1
+inequality,Inequality,0
+social_cap,Social capital,0
+environ,Environment,0
+institutions,Institutions,0
+security,Security,0
+governance,Governance,0
