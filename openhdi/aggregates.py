@@ -3,6 +3,7 @@ from mongo import get_db
 from pprint import pprint
 from json import dumps
 from time import time
+from colors import color_range
 
 from importer import CATEGORIES
 
@@ -165,12 +166,15 @@ def get_weightings_by_user(db, user_id):
     by_name = lambda n: [w for w in weightings if w.get('category')==n]
     categories = {}
     for k, v in by_name('meta')[0].get('items'):
-        category = {'value': v/100}
+        category = {'value': v/100, 'color': CATEGORIES.get(k).get('color')}
         category['indicators'] = {}
-        inidcator = by_name(k) 
+        indicator = by_name(k) 
         if len(indicator):
-            for ik, iv in indicator[0].get('items'):
-                category['indicators'][ik] = iv/100
+            colors = list(color_range(category.get('color'), 
+                                 len(indicator[0].get('items'))))
+            for n, (ik, iv) in enumerate(indicator[0].get('items')):
+                category['indicators'][ik] = {'value': iv/100, 
+                                              'color': colors[n]}
         categories[k] = category
     return categories
     
@@ -185,4 +189,4 @@ if __name__ == '__main__':
              'user_id': u'fd35d20a-cbe4-41da-bcfd-5e4dae723a26'}
     #update(db, ind) 
     update_global(db)
-
+    #pprint(get_weightings(db))
