@@ -28,9 +28,14 @@ class TestAggregates:
     agg = aggregates.Aggregator()
 
     # not yet working
-    def _test_get_scores_by_user(self):
-        user_scores = aggregates.get_scores_by_user(db, our_user)
-        assert user_scores == [], user_scores
+    def test_get_scores_by_user(self):
+        self.agg.compute_user_score(our_user)
+        scores = dict(self.agg.scores(our_user))
+        assert len(scores) == 207, len(scores)
+        assert round(scores['US'], 4) == 0.0664, scores['US']
+
+        self.agg.compute_user_score(our_user2)
+        self.agg.compute_average_score()
 
     def test_get_weightings_by_user(self):
         # weightings = self.agg.weightings(our_user)

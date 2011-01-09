@@ -161,48 +161,10 @@ class Aggregator(object):
     def __init__(self):
         self.db = get_db()
         self.quiz = model.Quiz(u'yourtopia')
+        self.country_list = self.db.datum.distinct('country')
 
-    def countries(self, year):
-        '''
-        :return: list of tuples [country_id, float]
-        '''
-        results = []
-        for country in our_countries:
-            results.append([country, self.get_country(country, year)])
-    
-    def country(country, year):
-        total = 0
-        count = 0
-        for user in self.db.users:
-            count += 1
-            total += self.country_by_user(country, user)
-        return total / len(users) 
-
-    def countries_by_user(self, user_id, year):
-        sum = []
-        for indicator in self.INDICATORS:
-            # norm_value returns [value, ... ]
-            newvalue = [ [country, value* self.weighting(indicator_i, user) ] for country, value in self.norm_value(indicator, year) ]
-            # could do this ...
-            # sum.append(self.weighting(...) * self.norm_value(indicator, year)
-            sum.append(newvalue)
-        return sum/len(self.INDICATORS)
-
-    def country_by_user(country, user_id, year):
-        sum = 0
-        # omitted values (e.g. no weighting for that indicator or no value)
-        # in particular if user just completed first page will only have 4 indicators
-        # if there are no indicators: 
-        #    indicators = [proxy_indicator]
-        
     def _query(self, user_id):
         return dict(quiz_id=self.quiz['id'], user_id=user_id)
-
-    def scores(self, user_id='__AVG__', year='2007'):
-        weights = self.weights(user_id)
-        for indicator in self.query['indicator_list']:
-            sum += self.weighting(indicator_i, user) * self.norm_value(indicator_i, country, year)
-        return sum/len(self.INDICATORS)
 
     def compute_average_weighting(self):
         db = self.db
@@ -226,15 +188,56 @@ class Aggregator(object):
                 )
             )
 
-    def norm_value(indicator, country, year):
-        '''Interpolates if value is missing ...
-        
-        :return: float in [0,1]
-        '''
-        pass
+    def scores(self, user_id='__AVG__', year='2007'):
+        q = self._query(user_id)
+        q['time'] = year
+        out = [ [x['country'], x['score']] for x in
+            self.db.aggregate.find(q) ]
+        return out
 
-        
-    
+    def compute_average_score(self, year='2007'):
+        q = self._query('__AVG__')
+        q['time'] = year
+        for country in self.country_list:
+            q['country'] = country
+            avg = dict(q)
+            user_scores_q = dict(q)
+            user_scores_q['user_id'] = {'$ne': '__AVG__'}
+            count = 0
+            oursum = 0
+            for score in self.db.aggregate.find(user_scores_q):
+                count += 1
+                oursum += score['score']
+            avg['score'] = oursum / count
+            self.db.aggregate.update(q, avg, upsert=True)
+
+    def compute_user_score(self, user_id, year='2007'):
+        weights = self.weights(user_id)
+        # db.datum.find({'time': year}) 
+        for country in self.country_list:
+            oursum = 0
+            for indicator_id in self.quiz['indicator_list']:
+                w = weights[indicator_id] 
+                if not w > 0:
+                    continue
+                indicator = self.db.indicator.find_one({'id': indicator_id})
+                val = self.db.datum.find_one({
+                        'time': year,
+                        'country': country,
+                        'indicator': indicator['_id']},
+                    )
+                if val is None: # missing value
+                    oursum = 0
+                    break
+                else:
+                    oursum += w * val['normalized_value']
+            score = {'score': oursum/len(self.quiz['indicator_list'])}
+            q = self._query(user_id)
+            q['country'] = country
+            q['time'] = year
+            score.update(q)
+            self.db.aggregate.update(q, score, upsert=True)
+
 if __name__ == '__main__':
     db = get_db()
     ind = {'category': u'inequality',
