@@ -214,3 +214,41 @@ a.start_button {
   margin-bottom: 20px;
 }
 
+
+
+/*************************
+  * How Page
+  ************************/
+
+
+.How #primary {
+  display: none;
+}
+
+.How #content {
+  margin-right: 0;
+}
+
+
+.How .top .box_left {
+  background-color: #E2E2E2;
+  border: thin dashed #666;
+  text-align: left;
+  padding: 2%;
+  vertical-align: top;
+  width: 100%;
+  float: center;
+  margin-bottom: 20px;
+}
+
+.How .box_right {
+  background-color: #D5DFFF;
+  border: thin dashed #666;
+  text-align: center;
+  vertical-align: center;
+  width: 40%;
+  height: 350px;
+  float: right;
+  margin-bottom: 20px;
+}
+

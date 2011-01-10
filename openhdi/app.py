@@ -87,6 +87,10 @@ def quiz_submit():
 def about():
     return render_response('about.html')
 
+@app.route('/how')
+def how():
+    return render_response('how.html')
+
 @app.route('/result')
 def result():
     import iso3166
@@ -191,4 +195,3 @@ def datum_api():
 if __name__ == '__main__':
 
     app.run()
-
