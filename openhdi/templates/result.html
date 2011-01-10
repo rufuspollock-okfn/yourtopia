@@ -4,13 +4,38 @@
   <py:def function="page_title">Home</py:def>
 
   <py:def function="optional_head">
-    <script src="/static/vendor/protovis-r3.2.js"></script>
-    <script src="/static/countries.js"></script>
+    <script type='text/javascript' src='http://www.google.com/jsapi'></script>
+    <!--script src="/static/vendor/protovis-r3.2.js"></script-->
+    <!--script src="/static/countries.js"></script-->
     <script src="/static/app.js"></script>
     <script type="text/javascript">
 var scores = ${scores_data};
+google.load('visualization', '1', {'packages': ['geomap']});
+google.setOnLoadCallback(drawMap);
+
+function drawMap() {
+  var data = new google.visualization.DataTable();
+  data.addRows(scores.global.length);
+  data.addColumn('string', 'Country');
+  data.addColumn('number', 'Yourtopia score');
+  for(var idx in scores.global) {
+    var idx = parseInt(idx);
+    data.setValue(idx, 0, scores.global[idx][2]);
+    data.setValue(idx, 1, scores.global[idx][1]);
+  }
+
+  var options = {};
+  options['dataMode'] = 'regions';
+  options['colors'] = [0xFFFFFF, 0xA84542];
+
+  var container = document.getElementById('worldmap');
+  var geomap = new google.visualization.GeoMap(container);
+  geomap.draw(data, options);
+};
+
 jQuery(function() {
-  OpenHDI.setupApp();
+  // OpenHDI.setupApp();
+
 });
     </script>
 
@@ -81,48 +106,6 @@ jQuery(function() {
       ${score_bar_chart(user_scores)}
     </div>
     </py:if>
-
-
-
-  <script type="text/javascript+protovis">
-var fill = pv.Scale.linear()
-    .domain(0, 1)
-    .range("#ffffff", "#333333");
-
-/* Precompute the country's population density and color. */
-countries.forEach(function(c) {
-  c.color = scores.user[2007][c.code]
-      ? fill(scores.user[2007][c.code])
-      : "#ccc"; // unknown
-});
-
-var w = 700,
-    h = 3 / 5 * w,
-    geo = pv.Geo.scale("identity").range(w, h);
-
-var vis = new pv.Panel()
-  .width(w)
-  .height(h)
-  .canvas('worldmap')
-  ;
-
-/* Countries. */
-vis.add(pv.Panel)
-    .data(countries)
-  .add(pv.Panel)
-    .data(function(c) c.borders)
-  .add(pv.Line)
-    .data(function(b) b)
-    .left(geo.x)
-    .top(geo.y)
-    .title(function(d, b, c) c.name)
-    .fillStyle(function(d, b, c) c.color)
-    .lineWidth(0)
-    .antialias(true);
-
-vis.render();
-    </script>
-
   </div>
 
   <xi:include href="layout.html" />

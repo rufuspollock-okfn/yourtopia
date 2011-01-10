@@ -166,6 +166,12 @@ class Aggregator(object):
     def _query(self, user_id):
         return dict(quiz_id=self.quiz['id'], user_id=user_id)
 
+    def compute(self, user_id):
+        # order matters!
+        self.compute_user_score(user_id)
+        self.compute_average_weighting()
+        self.compute_user_score()
+
     def compute_average_weighting(self):
         db = self.db
         avg = model.Weighting.new(quiz_id=self.quiz['id'], user_id='__AVG__')
@@ -196,6 +202,7 @@ class Aggregator(object):
         return out
 
     def compute_average_score(self, year='2007'):
+        '''Don't need this with average weightings!'''
         q = self._query('__AVG__')
         q['time'] = year
         for country in self.country_list:
@@ -211,7 +218,7 @@ class Aggregator(object):
             avg['score'] = oursum / count
             self.db.aggregate.update(q, avg, upsert=True)
 
-    def compute_user_score(self, user_id, year='2007'):
+    def compute_user_score(self, user_id='__AVG__', year='2007'):
         weights = self.weights(user_id)
         # db.datum.find({'time': year}) 
         for country in self.country_list:

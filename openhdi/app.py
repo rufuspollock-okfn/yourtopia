@@ -31,7 +31,7 @@ QUIZ = app.config['QUIZ']
 @app.before_request
 def make_session():
     if not 'id' in session:
-        session['id'] = uuid4()
+        session['id'] = str(uuid4())
     g.user_id = session.get('id') 
 
 
@@ -49,8 +49,12 @@ def quiz():
     w = model.Weighting.load(QUIZ, g.user_id, create=True)
     step = len(w['sets_done']) + 1
     if step == 4:
-        # agg = aggregate.Aggregator()
-        return redirect(url_for('result'))
+        agg = aggregates.Aggregator()
+        agg.compute_user_score(g.user_id)
+        agg.compute_average_weighting()
+        agg.compute_user_score()
+        # agg.compute_average_score()
+        return redirect(url_for('result_me'))
     elif step == 1:
         dimension = '__dimension__'
         questions = quiz['structure']
@@ -94,24 +98,47 @@ def how():
 @app.route('/result')
 def result():
     import iso3166
-    db = get_db() 
-    from aggregates import get_scores, get_scores_by_user
-    user_scores = get_scores_by_user(db, unicode(session.get('id')))
-    global_scores = get_scores(db)
+    agg = aggregates.Aggregator()
+    user_scores = agg.scores(g.user_id)
+    global_scores = agg.scores()
     scores_data = json.dumps({
         'user': user_scores, 
         'global': global_scores
         })
-    last_year='2007'
+    # last_year='2007'
     def get_sorted(score_set):
-        if not last_year in score_set:
-            return []
-        s = score_set[last_year]
-        s = sorted(s.items(), cmp=lambda x,y: -cmp(x[1], y[1]))
+        s = score_set
+        s = sorted(s, cmp=lambda x,y: -cmp(x[1], y[1]))
         s = [ [x[0], x[1], iso3166.countries.get(x[0]).name] for x in s ]
         return s
     user_scores = get_sorted(user_scores)
     global_scores = get_sorted(global_scores)
+    return render_response('result.html', dict(
+        scores_data=scores_data,
+        user_scores=user_scores,
+        global_scores=global_scores
+        ))
+
+@app.route('/result/me')
+def result_me():
+    import iso3166
+    agg = aggregates.Aggregator()
+    user_scores = agg.scores(g.user_id)
+    global_scores = agg.scores()
+    def get_sorted(score_set):
+        s = score_set
+        s = sorted(s, cmp=lambda x,y: -cmp(x[1], y[1]))
+        # normalize too (avoid divide by 0)
+        ourmax = max(0.00000000001, s[0][1])
+        s = [ [x[0], x[1]/ourmax, iso3166.countries.get(x[0]).name] for x in s ]
+        return s
+    user_scores = get_sorted(user_scores)
+    global_scores = get_sorted(global_scores)
+    scores_data = json.dumps({
+        'user': user_scores, 
+        'global': global_scores
+        })
+    # last_year='2007'
     return render_response('result.html', dict(
         scores_data=scores_data,
         user_scores=user_scores,
@@ -149,12 +176,19 @@ def reset():
     #del session['id']
     return jsonify(app, {'status': 'ok'})
 
+def json_ready(obj):
+    newobj = dict(obj)
+    if '_id' in newobj:
+        del newobj['_id']
+    return newobj
+
 @app.route('/api/weighting', methods=['GET'])
 def weighting_get():
     db = get_db()
+    rows = [ json_ready(x) for x in db.weighting.find()]
     return jsonify(app, {
         'count': db.weighting.count(),
-        'rows': [ x.keys() for x in db.weighting.find()]
+        'rows': rows
         })
 
 # /api/weighting?NAME=[0.0...1.0]&NAME2=....
@@ -171,15 +205,14 @@ def weighting():
     model.save_weightings(weightings, g.user_id)
     return jsonify(app, {'status': 'ok', 'message': 'saved'})
 
-@app.route('/api/scores')
-def scores():
+@app.route('/api/aggregate')
+def aggregate_api():
     db = get_db() 
-    from aggregates import get_scores, get_scores_by_user
-    data = {
-        'user': get_scores_by_user(db, unicode(session.get('id'))),
-        'global': get_scores(db)
-        }
-    return jsonify(app, data)
+    rows = [ json_ready(x) for x in db.aggregate.find().limit(50) ]
+    return jsonify(app, {
+        'count': db.aggregate.count(),
+        'rows': rows
+        })
 
 @app.route('/api/datum')
 def datum_api():
@@ -195,3 +228,4 @@ def datum_api():
 if __name__ == '__main__':
 
     app.run()
+
