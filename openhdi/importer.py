@@ -105,6 +105,7 @@ def load_dataset_from_file(file_name):
     db.datum.ensure_index('indicator_id')
     fh.close() 
     print 'Loaded: %s data points' % db.datum.count()
+
    
 if __name__ == '__main__':
     if len(sys.argv) != 3:

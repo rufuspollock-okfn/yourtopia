@@ -51,9 +51,7 @@ def quiz():
     complete = 0
     if step == 5:
         agg = aggregates.Aggregator()
-        agg.compute_user_score(g.user_id)
-        agg.compute_average_weighting()
-        agg.compute_user_score()
+        agg.compute(g.user_id)
         complete = 1
         return redirect(url_for('result_me'))
 
@@ -184,6 +182,16 @@ def admin_weighting_delete():
     db = get_db()
     db.weighting.drop()
     db.aggregate.drop()
+    return jsonify(app, {
+        'error': '',
+        'status': 'ok'
+        })
+
+@app.route('/admin/aggregate/compute', methods=['GET'])
+def admin_aggregate_compute():
+    agg = aggregates.Aggregator()
+    agg.compute_all()
+    # return redirect(url_for('aggregate_api'))
     return jsonify(app, {
         'error': '',
         'status': 'ok'

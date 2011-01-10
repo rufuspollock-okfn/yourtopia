@@ -203,6 +203,43 @@ def load():
     importer.load_dataset_from_file('data/dataset.csv')
     print 'Completed datasets'
 
+def interpolate_data():
+    db = get_db()
+    q = Quiz(u'yourtopia')    
+    count = 0
+    count2 = 0
+    # 698 country indicator tuples with no data at all ...
+    for indicator in q['indicator_list']:
+        ind = db.indicator.find_one({'id': indicator})
+        print ind['label']
+        for country in db.datum.distinct('country'):
+            time = '2007'
+            # q = {'indicator_id': indicator, 'time': time}
+            # q = {'indicator_id': indicator, 'country': country, 'time': {'$in':
+            #     ['2007', '2006', '2005', '2004', '2003', '2002', '2001']}}
+            q = {'indicator_id': indicator, 'country': country}
+            found = sorted([[x['time'],x] for x in db.datum.find(q)])
+            # if found == 0:
+            #    count += 1
+            if found:
+                year = found[0][0]
+                if year != '2007':
+                    count += 1
+                    newdata = dict(found[0][1])
+                    del newdata['_id']
+                    newdata['time'] = '2007'
+                    newdata['interpolated'] = True
+                    newq = dict(q)
+                    newq['time'] = '2007'
+                    db.datum.update(newq, newdata, upsert=True)
+                # print ind['label'], country
+            else:
+                count2 += 1
+    print db.datum.count()
+    print count
+    print count2
+
+
 if __name__ == '__main__':
     import sys
     action = sys.argv[1]
@@ -210,6 +247,8 @@ if __name__ == '__main__':
         delete_all()
     elif action == 'load':
         load()
+    elif action == 'interpolate':
+        interpolate_data()
     elif action == 'quiz':
         setup_quiz()
 

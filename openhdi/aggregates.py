@@ -172,6 +172,12 @@ class Aggregator(object):
         self.compute_average_weighting()
         self.compute_user_score()
 
+    def compute_all(self):
+        for user_id in self.db.weighting.distinct('user_id'):
+            self.compute_user_score(user_id)
+        self.compute_average_weighting()
+        self.compute_user_score()
+
     def compute_average_weighting(self):
         db = self.db
         avg = model.Weighting.new(quiz_id=self.quiz['id'], user_id='__AVG__')
@@ -182,7 +188,7 @@ class Aggregator(object):
             for idx, weight in enumerate(weighting['weights']):
                 weightsum[idx] = weightsum[idx] + weight 
             count += 1
-        avg['weights'] = [ x/float(count) for x in weightsum ]
+        avg['weights'] = [ x/float(max(1,count)) for x in weightsum ]
         avg['count'] = count
         avg.save()
         return avg
@@ -227,17 +233,24 @@ class Aggregator(object):
                 w = weights[indicator_id] 
                 if not w > 0:
                     continue
-                indicator = self.db.indicator.find_one({'id': indicator_id})
+                # indicator = self.db.indicator.find_one({'id': indicator_id})
                 val = self.db.datum.find_one({
                         'time': year,
                         'country': country,
-                        'indicator': indicator['_id']},
-                    )
+                        'indicator_id': indicator_id
+                        })
                 if val is None: # missing value
-                    oursum = 0
-                    break
-                else:
-                    oursum += w * val['normalized_value']
+                    val = self.db.datum.find_one({
+                            'country': country,
+                            'indicator_id': indicator_id
+                            })
+                if val is None:
+                    # ignore this indicator!
+                    continue
+                    # val = {'normalized_value': 0.2}
+                    # oursum = 0
+                    # break
+                oursum += w * val['normalized_value']
             score = {'score': oursum/len(self.quiz['indicator_list'])}
             q = self._query(user_id)
             q['country'] = country
