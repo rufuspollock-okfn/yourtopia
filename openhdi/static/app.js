@@ -1,26 +1,5 @@
 var OpenHDI = (function($, my) {
 
-  var User = Backbone.Model.extend({});
-  var WeightingSet = Backbone.Model.extend({});
-  var UserList = Backbone.Collection.extend({
-    model: User,
-    initialize: function () {
-    }
-  });
-  var WeightingSetList = Backbone.Collection.extend({
-    model: WeightingSet,
-    url: '/api/weighting',
-    initialize: function () {
-    }
-  });
-
-  my.Users = new UserList();
-  my.WeightingSets = new WeightingSetList();
-
-  //Backbone.sync = function(method, model) {
-  //  console.log(method + ": " + JSON.stringify(model));
-  //};
-
   my.getWeightings = function() {
     var weightings = [];
     $('.weighting').each(function(idx, div) {
@@ -99,6 +78,7 @@ var OpenHDI = (function($, my) {
       min: 0,
       max: 100,
       step: 1,
+      animate: true,
       create: function( event, ui ) {
         $(".weighting").each(function(i) {
           var val = Math.floor(100 / $(".weighting").size());

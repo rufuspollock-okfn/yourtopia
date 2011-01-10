@@ -9,19 +9,25 @@
     <!--script src="/static/countries.js"></script-->
     <script src="/static/app.js"></script>
     <script type="text/javascript">
-var scores = ${scores_data};
+var global_scores = ${global_scores_json};
+var scores = global_scores;
+var user_scores = ${user_scores_json};
+<py:if test="user_scores">
+var scores = user_scores;
+</py:if>
+
 google.load('visualization', '1', {'packages': ['geomap']});
 google.setOnLoadCallback(drawMap);
 
 function drawMap() {
   var data = new google.visualization.DataTable();
-  data.addRows(scores.global.length);
+  data.addRows(scores.length);
   data.addColumn('string', 'Country');
   data.addColumn('number', 'Yourtopia score');
-  for(var idx in scores.global) {
+  for(var idx in scores) {
     var idx = parseInt(idx);
-    data.setValue(idx, 0, scores.global[idx][2]);
-    data.setValue(idx, 1, scores.global[idx][1]);
+    data.setValue(idx, 0, scores[idx][2]);
+    data.setValue(idx, 1, scores[idx][1]);
   }
 
   var options = {};
@@ -71,25 +77,22 @@ jQuery(function() {
 
   <div py:def="content">
     <div class="yourtopia">
-      <py:if test="not user_scores">
-      <h1>You haven't yet taken the <a href="${url_for('quiz')}">quiz</a> so we can't tell which country is your(u)topia.</h1>
-      </py:if>
       <py:if test="user_scores">
-      <h1>The country closest to <strong>yourtopia</strong> (your utopia) is the ${user_scores[0][2]}</h1>
-
-      <div id="worldmap-outer">
-        <div id="worldmap"></div>
-      </div>
+      <h1>The country closest to <strong>yourtopia</strong> (your utopia) is ${user_scores[0][2]}</h1>
       </py:if>
+    </div>
+
+    <div id="worldmap-outer">
+      <div id="worldmap"></div>
     </div>
 
     <py:def function="score_bar_chart(_scores)">
       <ul class="chartlist">
-      <py:for each="code,v,country in _scores" py:with="divisor = _scores[0][1]">
+      <py:for each="code,v,country in _scores">
         <li>
           <a href="#">${country}</a>
-          <span class="count">${round(v/divisor, 2)}</span>
-          <span class="index" style="width: ${100*v/divisor}%">${v/divisor}</span>
+          <span class="count">${v}</span>
+          <span class="index" style="width: ${100*v}%">${v}</span>
         </li>
       </py:for>
       </ul>

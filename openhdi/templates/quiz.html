@@ -20,12 +20,17 @@ jQuery(function() {
     <li class="widget-container widget_text">
       <h3 class="widget-title">Step ${step}</h3>
         <div class="textwidget">
-          You are at step ${step} of 3
+          You are at step ${step} of 4
         </div>
     </li>
   </py:def>
 
   <div py:def="content">
+    <h2 py:if="complete">
+      You have completed the quiz! <a href="${url_for('result_me')}">Click
+        here</a> to see the results including 'yourtopia'.
+    </h2>
+
     <h2>
       What is the relative importance you attach to each of the following:
     </h2>

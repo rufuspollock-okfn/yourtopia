@@ -48,28 +48,32 @@ def quiz():
     quiz = model.Quiz(QUIZ)
     w = model.Weighting.load(QUIZ, g.user_id, create=True)
     step = len(w['sets_done']) + 1
-    if step == 4:
+    complete = 0
+    if step == 5:
         agg = aggregates.Aggregator()
         agg.compute_user_score(g.user_id)
         agg.compute_average_weighting()
         agg.compute_user_score()
-        # agg.compute_average_score()
+        complete = 1
         return redirect(url_for('result_me'))
-    elif step == 1:
+
+    if step == 1 or step == 5:
         dimension = '__dimension__'
         questions = quiz['structure']
     else:
         # use order of dimensions in quiz
-        dimension = quiz['structure'][step-1]['id']
-        questions = quiz['structure'][step-1]['structure']
+        dimension = quiz['structure'][step-2]['id']
+        questions = quiz['structure'][step-2]['structure']
     return render_response('quiz.html', dict(
         questions=questions,
         step=step,
-        dimension=dimension
+        dimension=dimension,
+        complete=complete
         ))
 
 @app.route('/quiz', methods=['POST'])
 def quiz_submit():
+    db = get_db()
     def indicator(field_name):
         return field_name.split('-')[1]
     weightings = [
@@ -85,6 +89,7 @@ def quiz_submit():
     w.compute_weights()
     w.save()
     flash('Saved your weightings')
+    # redirect('quiz')
     return quiz()
 
 @app.route('/about')
@@ -96,54 +101,36 @@ def how():
     return render_response('how.html')
 
 @app.route('/result')
-def result():
+def result(user_id=None):
     import iso3166
     agg = aggregates.Aggregator()
-    user_scores = agg.scores(g.user_id)
-    global_scores = agg.scores()
-    scores_data = json.dumps({
-        'user': user_scores, 
-        'global': global_scores
-        })
-    # last_year='2007'
-    def get_sorted(score_set):
-        s = score_set
-        s = sorted(s, cmp=lambda x,y: -cmp(x[1], y[1]))
-        s = [ [x[0], x[1], iso3166.countries.get(x[0]).name] for x in s ]
-        return s
-    user_scores = get_sorted(user_scores)
-    global_scores = get_sorted(global_scores)
-    return render_response('result.html', dict(
-        scores_data=scores_data,
-        user_scores=user_scores,
-        global_scores=global_scores
-        ))
-
-@app.route('/result/me')
-def result_me():
-    import iso3166
-    agg = aggregates.Aggregator()
-    user_scores = agg.scores(g.user_id)
     global_scores = agg.scores()
     def get_sorted(score_set):
+        if not score_set:
+            return []
         s = score_set
         s = sorted(s, cmp=lambda x,y: -cmp(x[1], y[1]))
         # normalize too (avoid divide by 0)
         ourmax = max(0.00000000001, s[0][1])
-        s = [ [x[0], x[1]/ourmax, iso3166.countries.get(x[0]).name] for x in s ]
+        s = [ [x[0], round(x[1]/ourmax, 3), iso3166.countries.get(x[0]).name] for x in s ]
         return s
-    user_scores = get_sorted(user_scores)
     global_scores = get_sorted(global_scores)
-    scores_data = json.dumps({
-        'user': user_scores, 
-        'global': global_scores
-        })
+    if user_id:
+        user_scores = agg.scores(g.user_id)
+        user_scores = get_sorted(user_scores)
+    else:
+        user_scores = []
     # last_year='2007'
     return render_response('result.html', dict(
-        scores_data=scores_data,
         user_scores=user_scores,
-        global_scores=global_scores
+        global_scores=global_scores,
+        user_scores_json=json.dumps(user_scores),
+        global_scores_json=json.dumps(global_scores)
         ))
+
+@app.route('/result/me')
+def result_me():
+    return result(g.user_id)
 
 
 ## -------------------------
@@ -186,24 +173,21 @@ def json_ready(obj):
 def weighting_get():
     db = get_db()
     rows = [ json_ready(x) for x in db.weighting.find()]
+    print rows
     return jsonify(app, {
         'count': db.weighting.count(),
         'rows': rows
         })
 
-# /api/weighting?NAME=[0.0...1.0]&NAME2=....
-@app.route('/api/weighting', methods=['POST'])
-def weighting():
+@app.route('/admin/weighting/delete', methods=['GET'])
+def admin_weighting_delete():
     db = get_db()
-    if not request.json or not isinstance(request.json, dict): 
-        return jsonify(app, {'status': 'error', 
-                             'message': 'No data given'})
-    if not len(request.json.get('weightings')):
-        return jsonify(app, {'status': 'ok', 'message': 'no data'})
-    
-    weightings = request.json.get('weightings')
-    model.save_weightings(weightings, g.user_id)
-    return jsonify(app, {'status': 'ok', 'message': 'saved'})
+    db.weighting.drop()
+    db.aggregate.drop()
+    return jsonify(app, {
+        'error': '',
+        'status': 'ok'
+        })
 
 @app.route('/api/aggregate')
 def aggregate_api():
@@ -222,6 +206,15 @@ def datum_api():
         del x['indicator'] 
         rows.append(x)
     return jsonify(app, rows)
+
+@app.route('/api/quiz')
+def quiz_api():
+    db = get_db() 
+    rows = [ json_ready(x) for x in db.quiz.find().limit(50) ]
+    return jsonify(app, {
+        'count': db.quiz.count(),
+        'rows': rows
+        })
 
 
 

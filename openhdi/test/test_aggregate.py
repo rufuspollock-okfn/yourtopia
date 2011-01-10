@@ -19,7 +19,7 @@ def setup():
     w = model.Weighting.new(quiz_id, our_user)
     w2 = model.Weighting.new(quiz_id, our_user2)
     # mess with it
-    w2['weights'] = [0] * 11
+    w2['weights'] = [0] * 12
     w2['weights'][0] = 1.0
     db.weighting.insert(w)
     db.weighting.insert(w2)
@@ -38,7 +38,7 @@ class TestAggregates:
         agg.compute_user_score(our_user)
         scores = dict(agg.scores(our_user))
         assert len(scores) == 207, len(scores)
-        assert round(scores['US'], 4) == 0.0664, scores['US']
+        assert round(scores['US'], 4) == 0.0609, scores['US']
 
         agg.compute_user_score(our_user2)
         agg.compute_average_score()
@@ -48,7 +48,7 @@ class TestAggregates:
         w = model.Weighting.load(quiz_id, our_user)
         assert len(w['question_sets']) == 4
         weights = w['weights']
-        assert len(weights) == 11, len(weights)
+        assert len(weights) == 12, len(weights)
 
         assert round(sum(weights),5) == 1, sum(weights) 
 
@@ -73,8 +73,13 @@ class TestAggregates:
         econ_struct = econ['structure']
         assert len(econ_struct) == 4, pprint.pprint(econ_struct)
 
+        for struct in out['structure']:
+            assert len(struct['structure']) == 4
+
         qs = out['indicator_list']
-        assert len(qs)  == 11, qs
+        assert len(qs)  == 12, qs
+
+        
 
 if __name__ == '__main__':
     setup()
