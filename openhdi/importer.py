@@ -40,11 +40,11 @@ def load_indicator_from_file(file_name):
             'label': row.get('label'),
             'question': row.get('question'),
             'good': row.get('good').strip()=='1', 
-            'select': row.get('select').strip()>'0',
+            'select': row.get('select').strip() == '1',
             'description': row.get('description').decode('iso-8859-1'), 
             'source': row.get('source').decode('iso-8859-1'),
             'category': {
-                'id': row.get('category'), 
+                'id': row.get('category', '').strip().lower(), 
                 'label': category.get('label'),
                 'set': category.get('set')
             }, 
