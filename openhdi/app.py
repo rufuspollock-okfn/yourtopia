@@ -101,8 +101,6 @@ def how():
 @app.route('/result')
 def result(user_id=None):
     import iso3166
-    agg = aggregates.Aggregator()
-    global_scores = agg.scores()
     def get_sorted(score_set):
         if not score_set:
             return []
@@ -112,18 +110,30 @@ def result(user_id=None):
         ourmax = max(0.00000000001, s[0][1])
         s = [ [x[0], round(x[1]/ourmax, 3), iso3166.countries.get(x[0]).name] for x in s ]
         return s
+    agg = aggregates.Aggregator()
+    global_scores = agg.scores()
     global_scores = get_sorted(global_scores)
     if user_id:
         user_scores = agg.scores(g.user_id)
         user_scores = get_sorted(user_scores)
+        weights = agg.weights(g.user_id)
     else:
+        weights = agg.weights()
         user_scores = []
+    quiz = model.Quiz('yourtopia')
+    treeweights = {}
+    for dim in quiz['structure']:
+        subtree = {}
+        for ind in dim['structure']:
+            subtree[ind['label']] = weights[ind['id']]
+        treeweights[dim['id']] = subtree
     # last_year='2007'
     return render_response('result.html', dict(
         user_scores=user_scores,
         global_scores=global_scores,
         user_scores_json=json.dumps(user_scores),
-        global_scores_json=json.dumps(global_scores)
+        global_scores_json=json.dumps(global_scores),
+        weights=json.dumps(treeweights)
         ))
 
 @app.route('/result/me')

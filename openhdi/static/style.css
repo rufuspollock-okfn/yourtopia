@@ -7,6 +7,10 @@
   height: 60px;
 }
 
+#login-and-search .login-form {
+  display: none;
+}
+
 /*************************
   * Quiz
   ************************/
