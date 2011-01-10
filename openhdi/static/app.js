@@ -88,7 +88,13 @@ var OpenHDI = (function($, my) {
   }
 
   my.setupApp = function() {
-    $('.weighting').slider({
+    var $notification = $('#inline-notification');
+    $notification
+      .find('button').one('click', function() {
+        $(this).parent().slideUp(200);
+      }).end()
+
+   $('.weighting').slider({
       value: 100/$(".weighting").size(),
       min: 0,
       max: 100,
@@ -123,18 +129,6 @@ var OpenHDI = (function($, my) {
 
         my.renderPieChart();
       }
-    });
-
-    $('#save').click(function(e) {
-      // e.preventDefault();
-      // var weightings = my.getWeightings();
-      // my.WeightingSets.create(
-      //  {weightings: weightings}
-      //  );
-      my.showNotification('alert', 'Saved your weightings');
-      
-      // TEMP HACK make this ajax
-      // document.location.reload();
     });
   }
   return my;

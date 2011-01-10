@@ -14,7 +14,6 @@ jQuery(function() {
   OpenHDI.renderPieChart();
 });
     </script>
-
   </py:def>
 
   <py:def function="primary_sidebar_extras">
@@ -28,12 +27,13 @@ jQuery(function() {
 
   <div py:def="content">
     <h2>
-      How important are each of the following aspects of your ideal country?
+      What is the relative importance you attach to each of the following:
     </h2>
     <div id="pie"></div>
 
     <div id="div-question-list">
       <form id="question-form" action="" method="POST">
+        <input type="hidden" name="dimension" value="${dimension}" />
         <ul id="question-listing">
           <li py:for="question in questions" class="question" id="question-${question['id']}">
             <h3>${question['label']}</h3>

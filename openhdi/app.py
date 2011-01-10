@@ -4,7 +4,7 @@ import os
 from uuid import uuid4
 from datetime import datetime
 
-from flask import Flask, request, session, abort, redirect, g, url_for
+from flask import Flask, request, session, abort, redirect, g, url_for, flash
 from flaskext.genshi import Genshi, render_response
 from flask import json
 
@@ -26,6 +26,7 @@ configure_app()
 
 genshi = Genshi(app)
 secret_key = app.config['SECRET_KEY']
+QUIZ = app.config['QUIZ']
 
 @app.before_request
 def make_session():
@@ -44,12 +45,23 @@ def home():
 @app.route('/quiz')
 def quiz():
     # step = int(request.args.get('stage', '1'))
-    step, questions = model.get_questions(g.user_id)
+    quiz = model.Quiz(QUIZ)
+    w = model.Weighting.load(QUIZ, g.user_id, create=True)
+    step = len(w['sets_done']) + 1
     if step == 4:
+        # agg = aggregate.Aggregator()
         return redirect(url_for('result'))
+    elif step == 1:
+        dimension = '__dimension__'
+        questions = quiz['structure']
+    else:
+        # use order of dimensions in quiz
+        dimension = quiz['structure'][step-1]['id']
+        questions = quiz['structure'][step-1]['structure']
     return render_response('quiz.html', dict(
         questions=questions,
-        step=step
+        step=step,
+        dimension=dimension
         ))
 
 @app.route('/quiz', methods=['POST'])
@@ -57,11 +69,18 @@ def quiz_submit():
     def indicator(field_name):
         return field_name.split('-')[1]
     weightings = [
-            {'id': indicator(x[0]), 'weighting': int(x[1])}
+            [indicator(x[0]), int(x[1])/float(100)]
             for x in request.form.items()
             if x[0].startswith('weighting-')
             ]
-    model.save_weightings(weightings, g.user_id)
+    dimension = request.form['dimension']
+    # TODO: should be stricter about it existing already
+    w = model.Weighting.load(QUIZ, g.user_id, create=True)
+    w['question_sets'][dimension] = weightings
+    w['sets_done'].append(dimension)
+    w.compute_weights()
+    w.save()
+    flash('Saved your weightings')
     return quiz()
 
 @app.route('/about')
@@ -131,8 +150,8 @@ def weighting_get():
     db = get_db()
     return jsonify(app, {
         'count': db.weighting.count(),
-        'rows': [x for x in db.weighting.find()]
-        }, indent=2)
+        'rows': [ x.keys() for x in db.weighting.find()]
+        })
 
 # /api/weighting?NAME=[0.0...1.0]&NAME2=....
 @app.route('/api/weighting', methods=['POST'])
@@ -157,6 +176,15 @@ def scores():
         'global': get_scores(db)
         }
     return jsonify(app, data)
+
+@app.route('/api/datum')
+def datum_api():
+    db = get_db() 
+    rows = []
+    for x in db.datum.find().limit(50):
+        del x['indicator'] 
+        rows.append(x)
+    return jsonify(app, rows)
 
 
 

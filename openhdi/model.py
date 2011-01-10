@@ -23,13 +23,15 @@ class Quiz(dict):
 
 class Weighting(dict):
     @classmethod
-    def load(self, quiz_id, user_id):
+    def load(self, quiz_id, user_id, create=False):
         db = get_db()
         query = {'quiz_id': quiz_id, 'user_id': user_id} 
         w = db.weighting.find_one(query)
-        assert w, 'not found in db'
-        w = Weighting(w)
-        return w
+        if not w and create:
+            return self.new(quiz_id, user_id)
+        else:
+            w = Weighting(w)
+            return w
 
     def save(self):
         db = get_db()

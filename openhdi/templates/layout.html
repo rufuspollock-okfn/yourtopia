@@ -27,10 +27,14 @@
 </head>
 
 <body class="${page_title()}">
-<div id="inline-notification" class="notification" style="display:none;">
+<py:with vars="messages = get_flashed_messages()">
+<py:if test="messages">
+<div id="inline-notification" class="notification" style="">
   <button>X</button>
-  <div class="message">&nbsp;</div>
+  <div class="message"><span py:for="message in messages">${message}</span></div>
 </div>
+</py:if>
+</py:with>
 <div id="wrapper" class="hfeed"> 
   <div id="header">
   <div id="masthead">
