@@ -3,6 +3,7 @@
 from flask import Module, request, session, abort, redirect, g, url_for, flash, Response
 
 from .mongo import get_db, MongoEncoder
+import openhdi.aggregates as aggregates
 
 api = Module(__name__)
 
@@ -109,6 +110,4 @@ def quiz():
         'count': db.quiz.count(),
         'rows': rows
         })
-
-
 

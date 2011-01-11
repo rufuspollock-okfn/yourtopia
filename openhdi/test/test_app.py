@@ -78,3 +78,8 @@ class TestApi():
         data = json.loads(res.data)['rows']
         assert data[0]['id'] == u'yourtopia', data[0]
 
+    def test_admin(self):
+        res = self.app.get('/api/admin/aggregate/compute')
+        data = json.loads(res.data)
+        assert data['status'] == 'ok', data
+
