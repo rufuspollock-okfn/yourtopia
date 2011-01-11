@@ -37,8 +37,8 @@ class TestAggregates:
     def test_get_scores_by_user(self):
         agg.compute_user_score(our_user)
         scores = dict(agg.scores(our_user))
-        assert len(scores) == 207, len(scores)
-        assert round(scores['US'], 4) == 0.0491, scores['US']
+        assert len(scores) == 186, len(scores)
+        assert round(scores['US'], 4) == 0.0583, scores['US']
 
         agg.compute_user_score(our_user2)
         agg.compute_average_score()
