@@ -1,6 +1,6 @@
 from flask import json, url_for
 
-from openhdi.app import app, g, QUIZ
+from openhdi.app import app, g, QUIZ, url_for
 from openhdi.mongo import get_db
 db = get_db()
 
@@ -56,15 +56,25 @@ class TestApi():
     def teardown(self):
         pass
 
-    def test_indicator(self):
-        res = self.app.get('/api/indicators')
+    def test_doc(self):
+        res = self.app.get('/api/')
+        print res.data
         data = json.loads(res.data)
-        data = data[1]
-        assert len(data) == 3, data
-        labels = sorted([x['label'] for x in data ])
-        assert labels == ['Economy', 'Education', 'Health'], labels
+        assert len(data['doc']) == 5, data
+
+    def test_indicator(self):
+        res = self.app.get('/api/indicator')
+        data = json.loads(res.data)['rows']
+        indicator = data[0]
+        assert len(data) == 20, len(data)
+        labels = sorted([x['label'] for x in data])
+        # assert labels == ['Economy', 'Education', 'Health'], labels
 
     def test_weighting(self):
-        res = self.app.post('/api/indicators')
-        pass
+        res = self.app.get('/api/weighting')
+
+    def test_quiz(self):
+        res = self.app.get('/api/quiz')
+        data = json.loads(res.data)['rows']
+        assert data[0]['id'] == u'yourtopia', data[0]
 

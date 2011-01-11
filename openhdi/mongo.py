@@ -18,13 +18,6 @@ class MongoEncoder(JSONEncoder):
             return o.isoformat()
         return JSONEncoder.default(self, o)
 
-def jsonify(app, obj):
-    from flask import request
-    content = MongoEncoder().encode(obj) 
-    if 'callback' in request.args:
-        content = str(request.args.get('callback')) + '(' + content+ ')'
-    return app.response_class(content, mimetype='application/json')
-
 
 def get_db():
     from openhdi.app import app

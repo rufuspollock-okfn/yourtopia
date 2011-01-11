@@ -8,9 +8,11 @@ from flask import Flask, request, session, abort, redirect, g, url_for, flash
 from flaskext.genshi import Genshi, render_response
 from flask import json
 
-from openhdi.mongo import get_db, jsonify
+from openhdi.mongo import get_db
 import openhdi.model as model
 import openhdi.aggregates as aggregates
+from openhdi.api import api
+
 
 app = Flask(__name__)
 def configure_app():
@@ -25,11 +27,14 @@ def configure_app():
 configure_app()
 
 genshi = Genshi(app)
-secret_key = app.config['SECRET_KEY']
 QUIZ = app.config['QUIZ']
+
+app.register_module(api, url_prefix='/api')
+
 
 @app.before_request
 def make_session():
+    g.db = get_db()
     if not 'id' in session:
         session['id'] = str(uuid4())
     g.user_id = session.get('id') 
@@ -141,102 +146,6 @@ def result_me():
     return result(g.user_id)
 
 
-## -------------------------
-## API
-
-@app.route('/api/indicators')
-def questions():
-    questions = model.get_questions(g.user_id)
-    return jsonify(app, questions)
-
-@app.route('/api/profile', methods=['GET', 'POST'])
-def profile():
-    db = get_db()
-    if request.method == 'POST': 
-        if not (request.form and 'label' in request.form):
-            abort(400)
-        db.user.update({'user_id': g.user_id}, 
-                       {'$set': {'label': request.form.get('label')}}, upsert=True)
-    user = db.user.find_one({'user_id': g.user_id})
-    if not user:
-        return jsonify(app, {})
-    return jsonify(app, user)
-
-@app.route('/api/reset', methods=['GET'])
-def reset():
-    db = get_db()
-    db.weighting.remove({'user_id': g.user_id})
-    # could keep this as well 
-    #db.user.remove({'user_id': user_id}) 
-    #del session['id']
-    return jsonify(app, {'status': 'ok'})
-
-def json_ready(obj):
-    newobj = dict(obj)
-    if '_id' in newobj:
-        del newobj['_id']
-    return newobj
-
-@app.route('/api/weighting', methods=['GET'])
-def weighting_get():
-    db = get_db()
-    rows = [ json_ready(x) for x in db.weighting.find()]
-    print rows
-    return jsonify(app, {
-        'count': db.weighting.count(),
-        'rows': rows
-        })
-
-@app.route('/admin/weighting/delete', methods=['GET'])
-def admin_weighting_delete():
-    db = get_db()
-    db.weighting.drop()
-    db.aggregate.drop()
-    return jsonify(app, {
-        'error': '',
-        'status': 'ok'
-        })
-
-@app.route('/admin/aggregate/compute', methods=['GET'])
-def admin_aggregate_compute():
-    agg = aggregates.Aggregator()
-    agg.compute_all()
-    # return redirect(url_for('aggregate_api'))
-    return jsonify(app, {
-        'error': '',
-        'status': 'ok'
-        })
-
-@app.route('/api/aggregate')
-def aggregate_api():
-    db = get_db() 
-    rows = [ json_ready(x) for x in db.aggregate.find().limit(50) ]
-    return jsonify(app, {
-        'count': db.aggregate.count(),
-        'rows': rows
-        })
-
-@app.route('/api/datum')
-def datum_api():
-    db = get_db() 
-    rows = []
-    for x in db.datum.find().limit(50):
-        del x['indicator'] 
-        rows.append(x)
-    return jsonify(app, rows)
-
-@app.route('/api/quiz')
-def quiz_api():
-    db = get_db() 
-    rows = [ json_ready(x) for x in db.quiz.find().limit(50) ]
-    return jsonify(app, {
-        'count': db.quiz.count(),
-        'rows': rows
-        })
-
-
-
 if __name__ == '__main__':
-
     app.run()
 
