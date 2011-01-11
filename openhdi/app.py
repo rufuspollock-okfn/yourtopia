@@ -74,6 +74,33 @@ def quiz():
         complete=complete
         ))
 
+@app.route('/quiz/<int:step>')
+def quiz():
+    # step = int(request.args.get('stage', '1'))
+    quiz = model.Quiz(QUIZ)
+    w = model.Weighting.load(QUIZ, g.user_id, create=True)
+    step = len(w['sets_done']) + 1
+    complete = 0
+    if step == 5:
+        agg = aggregates.Aggregator()
+        agg.compute(g.user_id)
+        complete = 1
+        return redirect(url_for('result_me'))
+
+    if step == 1 or step == 5:
+        dimension = '__dimension__'
+        questions = quiz['structure']
+    else:
+        # use order of dimensions in quiz
+        dimension = quiz['structure'][step-2]['id']
+        questions = quiz['structure'][step-2]['structure']
+    return render_response('quiz.html', dict(
+        questions=questions,
+        step=step,
+        dimension=dimension,
+        complete=complete
+        ))
+
 @app.route('/quiz', methods=['POST'])
 def quiz_submit():
     db = get_db()
