@@ -9,7 +9,7 @@ var OpenHDI = (function($, my) {
 
     function shortenLabel(label) {
       if(label && label.length>0) {
-        return label.split(' ').slice(0,3).join(' ');
+        return label.slice(0,15) + ' ...';
       } else {
         return '';
       }
