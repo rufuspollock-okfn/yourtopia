@@ -50,13 +50,13 @@ input.weighting-val {
   padding: 0px;
   -webkit-box-shadow: none;
   background: transparent;
-  width: 25px;
+  width: 28px;
 }
 
 div.ui-slider {
   margin-top: 10px;
   height: 0.2em;
-  width: 200px;
+  width: 90%;
 } 
 
 .ui-slider-horizontal .ui-slider-handle {
@@ -66,12 +66,12 @@ div.ui-slider {
 
 #pie {
   float: right;
-  height: 200px;
-  width: 200px;
+  height: 250px;
+  width: 250px;
 }
 
 #div-question-list {
-  margin-right: 220px;
+  margin-right: 270px;
 }
 
 h3 {
