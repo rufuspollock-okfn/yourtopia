@@ -169,8 +169,8 @@ class Aggregator(object):
     def compute(self, user_id):
         # order matters!
         self.compute_user_score(user_id)
-        self.compute_average_weighting()
-        self.compute_user_score()
+        # self.compute_average_weighting()
+        # self.compute_user_score()
 
     def compute_all(self):
         for user_id in self.db.weighting.distinct('user_id'):
