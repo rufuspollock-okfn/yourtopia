@@ -8,11 +8,14 @@
     <div class="row top">
       <div class="box">
         <div class="startquiz">
-        <h3>Which country is closest to your (u)topia?</h3>
+        <h3>Which country is closest to Your(u)Topia?</h3>
         <a href="${url_for('quiz')}" class="start_button">Start quiz</a>
         </div>
 
-        <div class="teaser"></div>
+        <div class="teaser">
+          ${total_so_far} YourTopias <a
+            href="${url_for('result')}">calculated so far ...</a>
+        </div>
     </div>
 
     <div class="right">

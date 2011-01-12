@@ -54,7 +54,10 @@ def make_session():
 
 @app.route('/')
 def home():
-    return render_response('index.html')
+    total_so_far = g.db.weighting.count()
+    return render_response('index.html', dict(
+        total_so_far=total_so_far
+        ))
 
 @app.route('/quiz')
 def quiz():
