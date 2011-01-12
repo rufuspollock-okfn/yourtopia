@@ -51,7 +51,8 @@ jQuery(function() {
 
     <style type="text/css">
 #content .yourtopia {
-  margin-top: 2em;
+  margin-top: 0.5em;
+  margin-bottom: 1.5em;
 }
 
 #content .yourtopia h1 {
@@ -73,6 +74,11 @@ jQuery(function() {
 .category-counts {
   width: 48%;
   float: left;
+  padding-right: 2%;
+}
+
+ul.chartlist {
+  width: 100%;
 }
 
 .chartlist li a {
@@ -90,7 +96,10 @@ jQuery(function() {
   <div py:def="content">
     <div class="yourtopia">
       <py:if test="user_scores">
-      <h1>The country closest to <strong>yourtopia</strong> (your utopia) is ${user_scores[0][2]}</h1>
+      <h1>The country closest to <strong>YourTopia</strong> (your utopia) is <strong>${user_scores[0][2]}</strong></h1>
+      </py:if>
+      <py:if test="not user_scores">
+      <h1>WorldTopia! YourTopia Based on the <strong>Average</strong></h1>
       </py:if>
     </div>
 
