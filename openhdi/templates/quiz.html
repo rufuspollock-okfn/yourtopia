@@ -4,55 +4,45 @@
   <py:def function="page_title">Quiz</py:def>
 
   <py:def function="optional_head">
-    <script src="http://assets.okfn.org/ext/flot/0.6/jquery.flot.min.js"></script>
-    <script src="/static/vendor/jquery.flot.pie.js"></script>
-
-    <script src="/static/app.js"></script>
-    <script type="text/javascript">
-jQuery(function() {
-  OpenHDI.setupApp();
-  OpenHDI.renderPieChart();
-});
-    </script>
   </py:def>
 
   <py:def function="primary_sidebar_extras">
     <li class="widget-container widget_text">
-      <h3 class="widget-title">Step ${step}</h3>
+      <h3 class="widget-title">Want to change an answer?</h3>
         <div class="textwidget">
-          You are at step ${step} of 4
+          <ul>
+            <li py:for="step in range(1,num_steps+1)">
+            <a href="${url_for('quiz_question', step=step)}">
+              Step ${step}</a>
+            </li>
+          </ul>
         </div>
     </li>
   </py:def>
 
   <div py:def="content">
-    <h2 py:if="complete">
-      You have completed the quiz! <a href="${url_for('result_me')}">Click
-        here</a> to see the results including 'yourtopia'.
-    </h2>
-
     <h2>
-      What is the relative importance you attach to each of the following:
+      You have completed the quiz!
     </h2>
-    <div id="pie"></div>
-
-    <div id="div-question-list">
-      <form id="question-form" action="" method="POST">
-        <input type="hidden" name="dimension" value="${dimension}" />
-        <ul id="question-listing">
-          <li py:for="question in questions" class="question" id="question-${question['id']}">
-            <h3>${question['label']}</h3>
-            Current weighting:
-            <input type="text"
-              id="weighting-${question['id']}-percent"
-              name="weighting-${question['id']}-percent"
-              class="weighting-val" />%
-            <div id="weighting-${question['id']}" class="weighting"></div>
-          </li>
-        </ul>
-        <input type="submit" id="save" name="save" value="Next &raquo;"/>
-      </form>
+    <div>
+      <p>
+      <a href="${url_for('result_me')}">Click here to view
+        your YourTopia country rankings &raquo;</a>
+      </p>
+      <p>
+      (Please be patient after you click as we'll be doing some
+      number-crunching to compute the YourTopia scores)
+      </p>
     </div>
+    <h3>Want to change an answer?</h3>
+    <p>To return to a previous step and change a value just click on one of the
+    following links.</p>
+    <ul>
+      <li py:for="step in range(1,num_steps+1)">
+      <a href="${url_for('quiz_question', step=step)}">
+        Step ${step}</a>
+      </li>
+    </ul>
   </div>
 
   <xi:include href="layout.html" />

@@ -11,12 +11,33 @@
   display: none;
 }
 
+#primary {
+  display: none;
+}
+
+#content {
+  margin-right: 0;
+}
+
+#content h1, #content h2, #content h3, #content h4, #content h5, #content h6 {
+  margin-bottom: 10px;
+}
+
+#content p, #content ul, #content ol, #content dd, #content pre, #content hr 
+{
+  margin-bottom: 15px;
+  margin-top: 5px;
+}
+
 /*************************
   * Quiz
   ************************/
 
+.Quiz 
+
 #question-listing {
   list-style-type: none;
+  margin-left: 0px;
 }
 
 #question-listing li {
@@ -29,7 +50,7 @@ input.weighting-val {
   padding: 0px;
   -webkit-box-shadow: none;
   background: transparent;
-  width: 20px;
+  width: 25px;
 }
 
 div.ui-slider {

@@ -53,52 +53,46 @@ def quiz():
     quiz = model.Quiz(QUIZ)
     w = model.Weighting.load(QUIZ, g.user_id, create=True)
     step = len(w['sets_done']) + 1
-    complete = 0
-    if step == 5:
+    if step <= 4:
+        return redirect(url_for('quiz_question', step=step))
+    if request.args.get('compute', False):
         agg = aggregates.Aggregator()
         agg.compute(g.user_id)
         complete = 1
         return redirect(url_for('result_me'))
 
-    if step == 1 or step == 5:
-        dimension = '__dimension__'
-        questions = quiz['structure']
-    else:
-        # use order of dimensions in quiz
-        dimension = quiz['structure'][step-2]['id']
-        questions = quiz['structure'][step-2]['structure']
     return render_response('quiz.html', dict(
-        questions=questions,
-        step=step,
-        dimension=dimension,
-        complete=complete
+        num_steps=4
         ))
 
 @app.route('/quiz/<int:step>')
-def quiz():
-    # step = int(request.args.get('stage', '1'))
+def quiz_question(step):
     quiz = model.Quiz(QUIZ)
     w = model.Weighting.load(QUIZ, g.user_id, create=True)
-    step = len(w['sets_done']) + 1
-    complete = 0
-    if step == 5:
-        agg = aggregates.Aggregator()
-        agg.compute(g.user_id)
-        complete = 1
-        return redirect(url_for('result_me'))
-
-    if step == 1 or step == 5:
+    if step == 1:
         dimension = '__dimension__'
         questions = quiz['structure']
+    elif step > 4: # should not be here ..
+        return redirect(url_for('quiz'))
     else:
         # use order of dimensions in quiz
         dimension = quiz['structure'][step-2]['id']
         questions = quiz['structure'][step-2]['structure']
-    return render_response('quiz.html', dict(
+    total = 0
+    for idx,qu in enumerate(questions):
+        _weight = w['question_sets'][dimension][idx][1]
+        # percentages
+        _weight = int(100*_weight)
+        total += _weight
+        qu['weight'] = _weight
+    # make sure we sum to 100
+    # add to random question?
+    if total < 100:
+        questions[0]['weight'] = questions[0]['weight'] + (100-total)
+    return render_response('quiz_question.html', dict(
         questions=questions,
         step=step,
         dimension=dimension,
-        complete=complete
         ))
 
 @app.route('/quiz', methods=['POST'])
@@ -106,6 +100,7 @@ def quiz_submit():
     db = get_db()
     def indicator(field_name):
         return field_name.split('-')[1]
+    print request.form
     weightings = [
             [indicator(x[0]), int(x[1])/float(100)]
             for x in request.form.items()
@@ -118,7 +113,7 @@ def quiz_submit():
     w['sets_done'].append(dimension)
     w.compute_weights()
     w.save()
-    flash('Saved your weightings')
+    # flash('Saved your weightings')
     # redirect('quiz')
     return quiz()
 

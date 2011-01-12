@@ -19,12 +19,24 @@ class TestApp():
         assert 'Which country is closest' in res.data, res.data
 
     def test_quiz(self):
-        res =  self.app.get('/quiz')
+        res =  self.app.get('/quiz/1')
         assert 'Economy' in res.data, res.data
         assert 'Education' in res.data, res.data
         assert 'Current weighting' in res.data, res.data
         assert 'Step 1' in res.data, res.data
         assert '__dimension__' in res.data, res.data
+        # Economy weight
+        assert 'value="33"' in res.data, res.data
+        assert 'value="34"' in res.data, res.data
+
+        res =  self.app.get('/quiz/2')
+        assert 'Household final consumption' in res.data, res.data
+
+        res =  self.app.get('/quiz/3')
+        assert 'Prevalence of undernourishment' in res.data, res.data
+
+        res =  self.app.get('/quiz/4')
+        assert 'Mean years of schooling' in res.data, res.data
 
     def test_quiz_post(self):
         data = dict([
@@ -41,6 +53,9 @@ class TestApp():
             assert out, out
             assert out['sets_done'] == ['__dimension__'], out
             assert out['question_sets']['__dimension__'][0] == [u'economy', 0.30]
+
+            assert res.status == '302 FOUND', res.status
+            assert 'quiz/2' in res.data, res.data
     
     def _test_quiz_multistep(self):
         for stage in range(4):

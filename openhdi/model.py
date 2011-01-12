@@ -68,7 +68,10 @@ class Weighting(dict):
         'sets_done': [],
         # answers keyed by question set ids
         # __dimension__ is special_
+        # we use this so we can remember sets and order within sets
+        # (so we can look at framing problems)
         'question_sets': {},
+        # computed weight in same order as indicators on quiz
         'weights': [
         ]
     }
