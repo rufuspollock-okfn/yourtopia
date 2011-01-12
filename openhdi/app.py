@@ -24,6 +24,15 @@ def configure_app():
         app.config.from_envvar('OPENHDI_CONFIG')
     elif os.path.exists(config_path):
         app.config.from_pyfile(config_path)
+    ADMINS = ['rufus.pollock@okfn.org']
+    if not app.debug:
+        import logging
+        from logging.handlers import SMTPHandler
+        mail_handler = SMTPHandler('127.0.0.1',
+                                   'server-error@yourtopia.net',
+                                   ADMINS, 'yourtopia.net error')
+        mail_handler.setLevel(logging.ERROR)
+        app.logger.addHandler(mail_handler)
 configure_app()
 
 genshi = Genshi(app)
@@ -100,7 +109,6 @@ def quiz_submit():
     db = get_db()
     def indicator(field_name):
         return field_name.split('-')[1]
-    print request.form
     weightings = [
             [indicator(x[0]), int(x[1])/float(100)]
             for x in request.form.items()
@@ -110,11 +118,12 @@ def quiz_submit():
     # TODO: should be stricter about it existing already
     w = model.Weighting.load(QUIZ, g.user_id, create=True)
     w['question_sets'][dimension] = weightings
-    w['sets_done'].append(dimension)
+    if dimension not in w['sets_done']:
+        w['sets_done'].append(dimension)
     w.compute_weights()
     w.save()
     # flash('Saved your weightings')
-    # redirect('quiz')
+    # return redirect('quiz')
     return quiz()
 
 @app.route('/about')
