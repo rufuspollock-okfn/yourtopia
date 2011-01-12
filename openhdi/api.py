@@ -87,7 +87,7 @@ def admin_aggregate_compute():
 @api.route('/aggregate')
 def aggregate():
     db = get_db() 
-    rows = aggregate.find().limit(20)
+    rows = db.aggregate.find().limit(20)
     return jsonify({
         'count': db.aggregate.count(),
         'rows': rows
