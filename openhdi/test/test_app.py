@@ -19,15 +19,18 @@ class TestApp():
         assert 'Which country is closest' in res.data, res.data
 
     def test_quiz(self):
-        res =  self.app.get('/quiz/1')
-        assert 'Economy' in res.data, res.data
-        assert 'Education' in res.data, res.data
-        assert 'Current weighting' in res.data, res.data
-        assert 'Step 1' in res.data, res.data
-        assert '__dimension__' in res.data, res.data
-        # Economy weight
-        assert 'value="33"' in res.data, res.data
-        assert 'value="34"' in res.data, res.data
+        with app.test_client() as c:
+            res =  c.get('/quiz/1')
+            assert 'Economy' in res.data, res.data
+            assert 'Education' in res.data, res.data
+            assert 'Current weighting' in res.data, res.data
+            assert 'Step 1' in res.data, res.data
+            assert '__dimension__' in res.data, res.data
+            print g.user_id
+            assert g.user_id in res.data, res.data
+            # Economy weight
+            assert 'value="33"' in res.data, res.data
+            assert 'value="34"' in res.data, res.data
 
         res =  self.app.get('/quiz/2')
         assert 'Household final consumption' in res.data, res.data

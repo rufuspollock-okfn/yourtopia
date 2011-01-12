@@ -19,6 +19,11 @@
   <script src="/static/vendor/jquery.json-2.2.min.js"></script>
 <!--[if IE]><script language="javascript" type="text/javascript" src="http://assets.okfn.org/ext/flot/0.6/excanvas.min.js"></script><![endif]-->
 
+<script type="text/javascript">
+  var OpenHDI = OpenHDI || {};
+  OpenHDI.user_id = '${g.user_id}';
+</script>
+
   <py:if test="defined('optional_head')">
     ${optional_head()}
   </py:if>
