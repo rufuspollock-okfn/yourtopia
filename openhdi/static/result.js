@@ -1,7 +1,7 @@
 function yourtopiaSunburst() {
   var vis = new pv.Panel()
-    .width(400)
-    .height(400)
+    .width(sunburstWidth)
+    .height(sunburstWidth)
 		.canvas('weights')
     ;
 

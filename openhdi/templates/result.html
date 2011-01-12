@@ -18,6 +18,8 @@ var scores = user_scores;
 
 google.load('visualization', '1', {'packages': ['geomap']});
 google.setOnLoadCallback(drawMap);
+var sunburstWidth = 350;
+var mapWidth = 450;
 
 function drawMap() {
   var data = new google.visualization.DataTable();
@@ -33,6 +35,8 @@ function drawMap() {
   var options = {};
   options['dataMode'] = 'regions';
   options['colors'] = [0xFFFFFF, 0xA84542];
+  options['width'] = mapWidth + 'px';
+  options['height'] = mapWidth / 556 * 347 + 'px';
 
   var container = document.getElementById('worldmap');
   var geomap = new google.visualization.GeoMap(container);
@@ -56,12 +60,13 @@ jQuery(function() {
 }
 
 #worldmap-outer {
+  /* must be same as set directly on map widget in js */
   width: 400px;
   float: left;
 }
 
 #weights-outer {
-  width: 400px;
+  width: 350px;
   float: right;
 }
 
