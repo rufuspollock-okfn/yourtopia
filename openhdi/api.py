@@ -64,6 +64,15 @@ def weighting_get():
         'rows': rows
         })
 
+@api.route('/weighting/<user_id>', methods=['GET'])
+def weighting_get_by_user(user_id):
+    db = get_db()
+    data = db.weighting.find_one({'user_id': user_id})
+    if not data:
+        return abort(404)
+    return jsonify(data)
+
+
 @api.route('/admin/weighting/delete', methods=['GET'])
 def admin_weighting_delete():
     db = get_db()

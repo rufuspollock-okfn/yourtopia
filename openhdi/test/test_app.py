@@ -2,6 +2,8 @@ from flask import json, url_for
 
 from openhdi.app import app, g, QUIZ, url_for
 from openhdi.mongo import get_db
+import openhdi.model as model
+
 db = get_db()
 
 def setup():
@@ -70,9 +72,12 @@ class TestApp():
 class TestApi():
     def setup(self):
         self.app = app.test_client()
+        self.userid = 'testapiuser'
+        w = model.Weighting.new(u'yourtopia', self.userid)
+        db.weighting.insert(w)
 
     def teardown(self):
-        pass
+        db.weighting.drop()
 
     def test_doc(self):
         res = self.app.get('/api/')
@@ -90,6 +95,12 @@ class TestApi():
 
     def test_weighting(self):
         res = self.app.get('/api/weighting')
+        data = json.loads(res.data)
+        assert len(data['rows']) == 1, data
+
+        res = self.app.get('/api/weighting/%s' % self.userid)
+        data = json.loads(res.data)
+        assert data['user_id'] == self.userid, data
 
     def test_quiz(self):
         res = self.app.get('/api/quiz')
