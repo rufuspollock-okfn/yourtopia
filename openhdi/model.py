@@ -1,6 +1,7 @@
 """Model and 'business' logic.
 """
 from random import choice, shuffle
+import datetime
 
 from openhdi.mongo import get_db
 from openhdi.importer import CATEGORIES
@@ -61,27 +62,26 @@ class Weighting(dict):
             weights.append(ind_weight*dim_weight)
         self['weights'] = weights
 
-    DEFAULT_WEIGHTING =  {
-        'quiz_id': None,
-        'user_id' : None,
-        # question sets done
-        'sets_done': [],
-        # answers keyed by question set ids
-        # __dimension__ is special_
-        # we use this so we can remember sets and order within sets
-        # (so we can look at framing problems)
-        'question_sets': {},
-        # computed weight in same order as indicators on quiz
-        'weights': [
-        ]
-    }
-
     @classmethod
     def new(self, quiz_id=None, user_id=None):
-        '''Clean new object'''
-        w = Weighting(self.DEFAULT_WEIGHTING)
+        '''New object'''
+        w = Weighting({
+            'quiz_id': None,
+            'user_id' : None,
+            # question sets done
+            'sets_done': [],
+            # answers keyed by question set ids
+            # __dimension__ is special_
+            # we use this so we can remember sets and order within sets
+            # (so we can look at framing problems)
+            'question_sets': {},
+            # computed weight in same order as indicators on quiz
+            'weights': [
+            ]
+        })
         w['quiz_id'] = quiz_id
         w['user_id'] = user_id
+        w['created'] = datetime.datetime.now().isoformat()
         if not quiz_id:
             return
         quiz = w.quiz
