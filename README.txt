@@ -20,9 +20,14 @@ Run the app::
 
     python openhdi/app.py
 
-Loading data
-============
+Setup Database
+==============
  
-python openhdi/importer.py indicator data/indicator.csv
-python openhdi/importer.py dataset data/datasets.csv
+Run the following command::
+
+  python openhdi/model.py load
+
+If you want to delete everything (WARNING: irreversible)::
+
+  python openhdi/model.py delete
 

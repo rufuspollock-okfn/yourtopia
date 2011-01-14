@@ -206,6 +206,10 @@ def load():
     importer.load_dataset_from_file('data/dataset.csv')
     print 'Completed datasets'
 
+    print 'Loading quiz'
+    setup_quiz()
+    print 'Completed quiz'
+
 def interpolate_data():
     db = get_db()
     q = Quiz(u'yourtopia')    
