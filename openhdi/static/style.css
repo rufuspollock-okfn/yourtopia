@@ -1,5 +1,3 @@
-@import url(http://assets.okfn.org/themes/common/chartlist.css);
-
 #wrapper {
   width: 960px;
 }
@@ -174,7 +172,6 @@ a.start_button {
 .Home .top .right {
   float: right;
   background-color: #f0f0f0;
-  border: dashed 1px #999999;
   padding: 2%;
   width: 280px;
   height: 220px;

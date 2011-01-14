@@ -3,22 +3,26 @@ function yourtopiaSunburst() {
     .width(sunburstWidth)
     .height(sunburstWidth)
 		.canvas('weights')
+	
     ;
 
   var partition = vis.add(pv.Layout.Partition.Fill)
     .nodes(pv.dom(weights).root("Weightings").nodes())
+	
     .size(function(d) {
       return d.nodeValue
       })
       .order("descending")
       .orient("radial");
-
+	
   partition.node.add(pv.Wedge)
-    .fillStyle(pv.Colors.category19().by(function(d) {
+    .fillStyle(pv.colors("#f0f0f0", "#999999", "#cb4b4b", "#afd8f8", "#edc240", "green", "blue", "yellow", "white", "blue", "black", "red", "green", "pink", "yellow", "blue").by(function(d) {
         return d.parentNode && d.parentNode.nodeName
       }))
       .strokeStyle("#fff")
       .lineWidth(.5)
+	
+	  
       .title(function(d) {
           return d.nodeName
         })

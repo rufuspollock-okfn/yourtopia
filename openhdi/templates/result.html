@@ -4,6 +4,8 @@
   <py:def function="page_title">Home</py:def>
 
   <py:def function="optional_head">
+  
+	<link rel="stylesheet" href="/static/chart.css" media="screen,print" title="Master stylesheet" charset="utf-8" />
     <script type='text/javascript' src='http://www.google.com/jsapi'></script>
     <script src="/static/vendor/protovis-r3.2.js"></script>
     <script src="/static/result.js"></script>
@@ -18,8 +20,8 @@ var scores = user_scores;
 
 google.load('visualization', '1', {'packages': ['geomap']});
 google.setOnLoadCallback(drawMap);
-var sunburstWidth = 350;
-var mapWidth = 450;
+var sunburstWidth = 270;
+var mapWidth = 430;
 
 function drawMap() {
   var data = new google.visualization.DataTable();
@@ -34,7 +36,7 @@ function drawMap() {
 
   var options = {};
   options['dataMode'] = 'regions';
-  options['colors'] = [0xFFFFFF, 0xA84542];
+  options['colors'] = [0xcb4b4b, 0xedc240, 0x89c141];
   options['width'] = mapWidth + 'px';
   options['height'] = mapWidth / 556 * 347 + 'px';
 
@@ -94,31 +96,27 @@ ul.chartlist {
   </py:def>
 
   <div py:def="content">
-    <div class="yourtopia">
+    <div class="yourtopia" style="width: 765px; border: dashed 1px #999999; background-color: #D5DFFF; padding: 2%">
       <py:if test="user_scores">
-      <h1>The country closest to <strong>YourTopia</strong> (your utopia) is <strong>${user_scores[0][2]}</strong></h1>
+      <div style="color: #333333">The country closest to <strong>YourTopia</strong> (your utopia) is <strong>${user_scores[0][2]}</strong></div>
       </py:if>
       <py:if test="not user_scores">
       <h1>WorldTopia! YourTopia Based on the <strong>Average</strong></h1>
       </py:if>
     </div>
 
-    <div id="worldmap-outer">
-      <div id="worldmap"></div>
-    </div>
-
-    <div id="weights-outer">
-      <div id="weights">
-      </div>
-    </div>
-
+	<div style="background-color: #e2e2e2; float: left; width: 800px; border: dashed 1px #999999">
+         <div style="padding:2%; float: left">Your <strong>preferred countries</strong> and <strong>weighting scheme</strong><div id="worldmap" style="background-color: #eaf7fe; border: dashed 1px #999999;"></div></div>
+		<div style="padding:2%; float: right; padding-top: 40px"><div id="weights"></div></div>
+    </div>	
+	
     <div class="clear"></div>
 
     <py:def function="score_bar_chart(_scores)">
-      <ul class="chartlist">
+      <ul class="chartlist" style="width: 300px">
       <py:for each="code,v,country in _scores">
         <li>
-          <a href="#">${country}</a>
+          <a href="http://en.wikipedia.org/wiki/${country}" target="_blank">${country}</a>
           <span class="count">${v}</span>
           <span class="index" style="width: ${100*v}%">${v}</span>
         </li>
@@ -126,18 +124,23 @@ ul.chartlist {
       </ul>
     </py:def>
 
-    <div class="category-counts">
-      <h3>Global Rankings</h3>
+	<br />
+	<div style="width: 765px; float: left; background-color:#f0f0f0; padding: 2%; border: dashed 1px #999999">
+    <div style="width: 300px; float: left">
+      <strong>Global Rankings</strong>
       ${score_bar_chart(global_scores)}
     </div>
 
+	
     <py:if test="user_scores">
-    <div class="category-counts">
-      <h3>Your Rankings</h3>
+    <div  style="width: 300px; float: right">
+      <strong>Your Rankings</strong>
       ${score_bar_chart(user_scores)}
     </div>
     </py:if>
-  </div>
+	</div>
+
+</div>
 
   <xi:include href="layout.html" />
 </html>
