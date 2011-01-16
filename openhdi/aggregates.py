@@ -158,13 +158,18 @@ def get_scores_by_user(db, user_id):
     return by_time
 
 class Aggregator(object):
-    def __init__(self):
+    def __init__(self, verbose=False):
         self.db = get_db()
         self.quiz = model.Quiz(u'yourtopia')
         self.country_list = self.db.datum.distinct('country')
+        self.verbose = verbose
 
     def _query(self, user_id):
         return dict(quiz_id=self.quiz['id'], user_id=user_id)
+
+    def _print(self, msg):
+        if self.verbose:
+            print(msg)
 
     def compute(self, user_id):
         # order matters!
@@ -188,6 +193,8 @@ class Aggregator(object):
             for idx, weight in enumerate(weighting['weights']):
                 weightsum[idx] = weightsum[idx] + weight 
             count += 1
+            if (count % 10) == 0:
+                self._print('Weightings processed: %s' % count)
         avg['weights'] = [ x/float(max(1,count)) for x in weightsum ]
         avg['count'] = count
         avg.save()
@@ -228,6 +235,7 @@ class Aggregator(object):
         weights = self.weights(user_id)
         # db.datum.find({'time': year}) 
         for country in self.country_list:
+            self._print('Computing score for country: %s' % country)
             oursum = 0
             for indicator_id in self.quiz['indicator_list']:
                 w = weights[indicator_id] 
@@ -259,14 +267,12 @@ class Aggregator(object):
             self.db.aggregate.update(q, score, upsert=True)
 
 if __name__ == '__main__':
-    db = get_db()
-    ind = {'category': u'inequality',
-           'indicators': [u'SIPOVGAP2', u'SPPOPDPND', u'SIPOVGINI', u'SIDST10TH10'],
-           'items': [(u'SPPOPDPND', 15.0),
-           (u'SIPOVGINI', 15.0),
-           (u'SIPOVGAP2', 57.0),
-           (u'SIDST10TH10', 15.0)],
-             'user_id': u'fd35d20a-cbe4-41da-bcfd-5e4dae723a26'}
-    #update(db, ind) 
-    update_global(db)
-    #pprint(get_weightings(db))
+    import sys
+    action = sys.argv[1]
+    agg = Aggregator(verbose=True)
+    if action == 'compute':
+        print 'Computing average weighting'
+        agg.compute_average_weighting()
+        print 'Computing average score'
+        agg.compute_user_score()
+
