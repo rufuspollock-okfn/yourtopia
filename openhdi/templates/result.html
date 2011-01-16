@@ -80,7 +80,7 @@ jQuery(function() {
 }
 
 ul.chartlist {
-  width: 100%;
+  width: 98%;
 }
 
 .chartlist li a {
@@ -113,7 +113,7 @@ ul.chartlist {
     <div class="clear"></div>
 
     <py:def function="score_bar_chart(_scores)">
-      <ul class="chartlist" style="width: 300px">
+      <ul class="chartlist">
       <py:for each="code,v,country in _scores">
         <li>
           <a href="http://en.wikipedia.org/wiki/${country}" target="_blank">${country}</a>
@@ -126,13 +126,19 @@ ul.chartlist {
 
 	<br />
 	<div style="width: 765px; float: left; background-color:#f0f0f0; padding: 2%; border: dashed 1px #999999">
+    <py:if test="not user_scores">
+    <div>
+      <strong>Global Rankings</strong>
+      ${score_bar_chart(global_scores)}
+    </div>
+    </py:if>
+	
+    <py:if test="user_scores">
     <div style="width: 300px; float: left">
       <strong>Global Rankings</strong>
       ${score_bar_chart(global_scores)}
     </div>
 
-	
-    <py:if test="user_scores">
     <div  style="width: 300px; float: right">
       <strong>Your Rankings</strong>
       ${score_bar_chart(user_scores)}
