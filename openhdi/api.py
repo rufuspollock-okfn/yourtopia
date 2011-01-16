@@ -86,7 +86,9 @@ def admin_weighting_delete():
 @api.route('/admin/aggregate/compute', methods=['GET'])
 def admin_aggregate_compute():
     agg = aggregates.Aggregator()
-    agg.compute_all()
+    # agg.compute_all()
+    agg.compute_average_weighting()
+    agg.compute_user_score()
     # return redirect(url_for('aggregate_api'))
     return jsonify({
         'error': '',
