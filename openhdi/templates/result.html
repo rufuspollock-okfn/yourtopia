@@ -114,9 +114,9 @@ ul.chartlist {
 
     <py:def function="score_bar_chart(_scores)">
       <ul class="chartlist">
-      <py:for each="code,v,country in _scores">
+      <py:for each="idx, (code,v,country) in enumerate(_scores)">
         <li>
-          <a href="http://en.wikipedia.org/wiki/${country}" target="_blank">${country}</a>
+          <a href="http://en.wikipedia.org/wiki/${country}" target="_blank">${idx+1}. ${country}</a>
           <span class="count">${v}</span>
           <span class="index" style="width: ${100*v}%">${v}</span>
         </li>
