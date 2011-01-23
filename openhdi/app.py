@@ -53,6 +53,21 @@ def make_session():
         session['id'] = str(uuid4())
     g.user_id = session.get('id') 
 
+# generic stuff
+@app.errorhandler(404)
+def page_not_found(e):
+    values = dict(error='404 - Not Found',
+        message='Sorry, what you are looking for is not here'
+        )
+    return render_response('error.html', values), 404
+
+@app.errorhandler(500)
+def apperror(e):
+    values = dict(error='500 - Error',
+        message='Sorry, there was an error. We will be looking into it!'
+        )
+    return render_response('error.html', values), 500
+
 
 ## ======================
 ## Routes and Controllers

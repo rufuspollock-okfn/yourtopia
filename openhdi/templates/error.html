@@ -1,0 +1,16 @@
+<html xmlns:py="http://genshi.edgewall.org/"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <py:def function="page_title">${error}</py:def>
+  
+  <div py:def="content">
+    <h1>${error}</h1>
+    <p>${message}</p>
+    <p><a href="${url_for('home')}">Go to the home page &raquo;</a></p>
+  </div>
+
+  <xi:include href="layout.html" />
+</html>
+
+
+
