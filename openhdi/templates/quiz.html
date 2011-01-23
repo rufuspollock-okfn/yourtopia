@@ -21,22 +21,23 @@
   </py:def>
 
   <div py:def="content">
-    <h2>
-      You have completed the quiz!
-    </h2>
-    <div>
-      <p>
+    <div class="quiz-compute">
+      <h2>
+        You have completed the quiz!
+      </h2>
+
+      <h3>
       <a href="${url_for('quiz', compute=1)}">Click here to view
         your YourTopia country rankings &raquo;</a>
-      </p>
-      <p>
-      (Please be patient after you click as we'll be doing some
-      number-crunching to compute the YourTopia scores)
+      </h3>
+      <p class="instructions">
+      Please be <strong>patient after clicking</strong> &ndash; we'll be doing some
+      number-crunching to compute the YourTopia scores and it may take a few seconds
       </p>
     </div>
     <h3>Want to change an answer?</h3>
-    <p>To return to a previous step and change a value just click on one of the
-    following links.</p>
+    <p>To return to a previous step and change a value click on one of the
+    following links:</p>
     <ul>
       <li py:for="step in range(1,num_steps+1)">
       <a href="${url_for('quiz_question', step=step)}">

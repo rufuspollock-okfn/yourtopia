@@ -32,7 +32,19 @@
   * Quiz
   ************************/
 
-.Quiz 
+.quiz-compute {
+  text-align: center;
+  width: 70%;
+  border: dashed 1px #999999;
+  background-color: #e2e2e2;
+  margin: auto;
+  margin-bottom: 20px;
+  padding: 15px;
+}
+
+.quiz-compute .instructions {
+  font-size: 85%;
+}
 
 #question-listing {
   list-style-type: none;
