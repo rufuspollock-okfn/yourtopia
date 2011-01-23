@@ -77,7 +77,7 @@ def quiz():
         agg = aggregates.Aggregator()
         agg.compute(g.user_id)
         complete = 1
-        return redirect(url_for('result_me'))
+        return redirect(url_for('result_user', user_id=g.user_id))
 
     return render_response('quiz.html', dict(
         num_steps=4
@@ -194,10 +194,17 @@ def result(user_id=None):
         weights=json.dumps(treeweights)
         ))
 
+# DEPRECATED. Here for backwards compatibility
 @app.route('/result/me')
 def result_me():
     return result(g.user_id)
 
+@app.route('/result/<user_id>')
+def result_user(user_id):
+    db = get_db()
+    if not db.weighting.find_one({'user_id': user_id}):
+        abort(404)
+    return result(user_id)
 
 if __name__ == '__main__':
     app.run()
