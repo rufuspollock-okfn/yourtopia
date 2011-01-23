@@ -39,9 +39,9 @@ def profile():
     if request.method == 'POST': 
         if not (request.form and 'label' in request.form):
             abort(400)
-        db.user.update({'user_id': g.user_id}, 
+        db.user.update({'id': g.user_id}, 
                        {'$set': {'label': request.form.get('label')}}, upsert=True)
-    user = db.user.find_one({'user_id': g.user_id})
+    user = db.user.find_one({'id': g.user_id})
     if not user:
         return jsonify({})
     return jsonify(user)

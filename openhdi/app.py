@@ -7,6 +7,7 @@ from datetime import datetime
 from flask import Flask, request, session, abort, redirect, g, url_for, flash
 from flaskext.genshi import Genshi, render_response
 from flask import json
+from werkzeug.contrib.fixers import ProxyFix
 
 from openhdi.mongo import get_db
 import openhdi.model as model
@@ -15,6 +16,10 @@ from openhdi.api import api
 
 
 app = Flask(__name__)
+# fix for REMOTE_ADDR and HTTP_HOST on reverse proxies
+# However causes problems with testing when running on localhost!
+# app.wsgi_app = ProxyFix(app.wsgi_app)
+
 def configure_app():
     app.config.from_object('openhdi.settings_default')
     here = os.path.dirname(os.path.abspath( __file__ ))
@@ -63,6 +68,7 @@ def home():
 def quiz():
     # step = int(request.args.get('stage', '1'))
     quiz = model.Quiz(QUIZ)
+    
     w = model.Weighting.load(QUIZ, g.user_id, create=True)
     step = len(w['sets_done']) + 1
     if step <= 4:
@@ -77,9 +83,22 @@ def quiz():
         num_steps=4
         ))
 
+
 @app.route('/quiz/<int:step>')
 def quiz_question(step):
+    db = get_db()
     quiz = model.Quiz(QUIZ)
+
+    query = {'id': g.user_id}
+    user = db.user.find_one(query)
+    if user is None:
+        _user = {
+            'id': g.user_id,
+            'ipaddr': request.remote_addr,
+            'created': datetime.now().isoformat()
+            }
+        db.user.insert(_user)
+
     w = model.Weighting.load(QUIZ, g.user_id, create=True)
     if step == 1:
         dimension = '__dimension__'
