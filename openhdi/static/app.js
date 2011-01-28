@@ -41,8 +41,8 @@ var OpenHDI = (function($, my) {
       hooks: {
         draw: [
           function(plot, options) {
-              plot.getData().forEach(function(i) {
-                  $("#question-" + i.label).css('color', i.color);
+              $.each(plot.getData(), function(idx, item) {
+                  $("#question-" + item.label).css('color', item.color);
               }); 
           }
         ]
