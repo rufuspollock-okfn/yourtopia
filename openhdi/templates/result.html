@@ -30,7 +30,7 @@ function drawMap() {
   data.addColumn('number', 'Yourtopia score');
   for(var idx in scores) {
     var idx = parseInt(idx);
-    data.setValue(idx, 0, scores[idx][2]);
+    data.setValue(idx, 0, scores[idx][0]);
     data.setValue(idx, 1, scores[idx][1]);
   }
 
