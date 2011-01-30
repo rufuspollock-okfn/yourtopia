@@ -62,6 +62,7 @@ input.weighting-val {
   -webkit-box-shadow: none;
   background: transparent;
   width: 28px;
+  text-align:right
 }
 
 div.ui-slider {

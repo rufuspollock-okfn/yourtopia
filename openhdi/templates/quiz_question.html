@@ -37,12 +37,12 @@ jQuery(function() {
         <ul id="question-listing">
           <li py:for="question in questions" class="question" id="question-${question['id']}">
             <h3>${question['label']}</h3>
-            Current weighting:
+            Your weighting:
             <input type="text"
               id="weighting-${question['id']}-percent"
               name="weighting-${question['id']}-percent"
               value="${question['weight']}"
-              class="weighting-val" />
+              class="weighting-val" />%
             <div id="weighting-${question['id']}" class="weighting"></div>
           </li>
         </ul>
