@@ -28,10 +28,12 @@ function drawMap() {
   data.addRows(scores.length);
   data.addColumn('string', 'Country');
   data.addColumn('number', 'Yourtopia score');
+  data.addColumn('string', 'Country name');
   for(var idx in scores) {
     var idx = parseInt(idx);
     data.setValue(idx, 0, scores[idx][0]);
     data.setValue(idx, 1, scores[idx][1]);
+    data.setValue(idx, 2, scores[idx][2]);
   }
 
   var options = {};
