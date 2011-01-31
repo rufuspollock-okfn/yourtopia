@@ -25,7 +25,6 @@ class TestApp():
             res =  c.get('/quiz/1')
             assert 'Economy' in res.data, res.data
             assert 'Education' in res.data, res.data
-            assert 'Current weighting' in res.data, res.data
             assert 'Step 1' in res.data, res.data
             assert '__dimension__' in res.data, res.data
             print g.user_id
