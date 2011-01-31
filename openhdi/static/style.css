@@ -268,3 +268,7 @@ a.start_button {
   margin-bottom: 20px;
 }
 
+ol.notes li:target {
+    outline: 1px solid #333;
+}
+
