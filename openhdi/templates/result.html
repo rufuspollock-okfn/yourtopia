@@ -94,6 +94,17 @@ ul.chartlist {
 .clear {
   clear: both;
 }
+
+.hdi-gni-infos {
+    position:relative;
+    font-size:80%;
+    padding-left:2%;
+    display:none;
+}
+
+.country-item:hover .hdi-gni-infos {
+    display:block;
+}
     </style>
   </py:def>
 
@@ -115,15 +126,22 @@ ul.chartlist {
     <div class="clear"></div>
 
     <py:def function="score_bar_chart(_scores)">
-      <ul class="chartlist">
-      <py:for each="idx, (code,v,country) in enumerate(_scores)">
-        <li>
+      <ol class="chartlist">
+      <py:for each="idx, (code,v,country, hdi_rank, gni_rank) in enumerate(_scores)">
+        <li class="country-item">
           <a href="http://en.wikipedia.org/wiki/${country}" target="_blank">${idx+1}. ${country}</a>
           <span class="count">${v}</span>
           <span class="index" style="width: ${100*v}%">${v}</span>
+          <div class="hdi-gni-infos">
+              <py:if test="hdi_rank">
+                Rank <strong>${hdi_rank}</strong> in Human Development Index<br/>
+                Rank <strong>${gni_rank}</strong> based on only economic factors
+              </py:if>
+              <py:if test="not hdi_rank">No Rank data available</py:if>
+          </div>
         </li>
       </py:for>
-      </ul>
+      </ol>
     </py:def>
 
 	<br />

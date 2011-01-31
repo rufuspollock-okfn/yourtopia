@@ -174,6 +174,7 @@ def how():
 @app.route('/result')
 def result(user_id=None):
     import iso3166
+    from openhdi.hdi_gni import data as hdi_gni_data
     def get_sorted(score_set):
         if not score_set:
             return []
@@ -181,8 +182,12 @@ def result(user_id=None):
         s = sorted(s, cmp=lambda x,y: -cmp(x[1], y[1]))
         # normalize too (avoid divide by 0)
         ourmax = max(0.00000000001, s[0][1])
-        s = [ [x[0], round(x[1]/ourmax, 3), iso3166.countries.get(x[0]).name] for x in s ]
-        return s
+        result = []
+        for x in s:
+            iso_country = iso3166.countries.get(x[0])
+            hdi_gni = hdi_gni_data.get(iso_country.alpha3, {"HDI": None, "GNI": None})
+            result.append((x[0], round(x[1]/ourmax, 3), iso_country.name, hdi_gni["HDI"], hdi_gni["GNI"]))
+        return result
     agg = aggregates.Aggregator()
     global_scores = agg.scores()
     global_scores = get_sorted(global_scores)
