@@ -3,7 +3,7 @@ var OpenHDI = (function($, my) {
   my.renderPieChart = function() {
     var data = $('.question').map(function(idx, el) {
       var sliderDiv = $(el).find('.weighting');
-      var questionLabel = $(el).find('h3').first().text();
+      var questionLabel = $(el).find('h3 span').first().text();
       return { label: questionLabel, data: sliderDiv.slider('value') }
     });
 

@@ -278,6 +278,7 @@ ol.notes li:target {
     font-family:serif;
     margin-left:1em;
     cursor:help;
+    position:absolute;
 }
 
 .description-box:before {
@@ -299,10 +300,6 @@ ol.notes li:target {
     display:block;
 }
 
-.description-box {
-    position:absolute;
-}
-
 .description-box p {
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
@@ -321,4 +318,5 @@ ol.notes li:target {
     font-family: "Helvetica Neue", "Helvetica", sans-serif !important;
     font-style:normal;
     font-size:80%;
+    cursor:default;
 }
