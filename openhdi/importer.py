@@ -42,6 +42,7 @@ def load_indicator_from_file(file_name):
             'good': row.get('good').strip()=='1', 
             'select': row.get('select').strip() == '1',
             'description': row.get('description').decode('iso-8859-1'), 
+            'piechart': row.get('piechart'), 
             'source': row.get('source').decode('iso-8859-1'),
             'category': {
                 'id': row.get('category', '').strip().lower(), 
