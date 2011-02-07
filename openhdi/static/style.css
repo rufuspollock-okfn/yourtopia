@@ -272,3 +272,53 @@ ol.notes li:target {
     outline: 1px solid #333;
 }
 
+.description-box {
+    display:inline;
+    font-style:italic;
+    font-family:serif;
+    margin-left:1em;
+    cursor:help;
+}
+
+.description-box:before {
+    content:"i";
+    background:#aaa;
+    color:#fff;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    padding:0px 7px 0px 6px;
+    font-size:80%;
+}
+
+.description-box:hover:before {
+    background:#333;
+}
+
+.description-box:hover p{
+    display:block;
+}
+
+.description-box {
+    position:absolute;
+}
+
+.description-box p {
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    position:relative;
+    top:-50px;
+    left:20px;
+    width:350px;
+    line-height:115%;
+    background: #333;
+    background: rgba(0,0,0,0.75);
+    color:#fff;
+    padding:8px;
+    z-index:99;
+    display:none;
+    font-family: "Helvetica Neue", "Helvetica", sans-serif !important;
+    font-style:normal;
+    font-size:80%;
+}

@@ -36,7 +36,7 @@ jQuery(function() {
         <input type="hidden" name="dimension" value="${dimension}" />
         <ul id="question-listing">
           <li py:for="question in questions" class="question" id="question-${question['id']}">
-            <h3>${question['label']}</h3>
+            <h3>${question['label']}<div class="description-box"><p>${question['description']}</p></div></h3>
             Your weighting:
             <input type="text"
               id="weighting-${question['id']}-percent"
