@@ -1,11 +1,14 @@
-Authors: Guo Xu, Dirk Heine, Rufus Pollock, Friedrich Lindenberg
+Web app for crowdsourcing preferences about index weighting such as the Human
+Development Index. Powers YourTopia_ site - Global Development beyond GDP.
+
+.. _YourTopia: http://yourtopia.net/
 
 Install
 =======
 
-Grab the source using mercurial from http://bitbucket.org/rgrp/openhdi::
+Grab the source using git from https://github.com/okfn/openhdi::
 
-    hg clone http://bitbucket.org/rgrp/openhdi
+    git clone https://github.com/okfn/openhdi
 
 Install the requirements (in a virtualenv)::
 
@@ -20,8 +23,8 @@ Run the app::
 
     python openhdi/app.py
 
-Setup Database
-==============
+Load data into Database
+-----------------------
  
 Run the following command::
 
@@ -30,4 +33,12 @@ Run the following command::
 If you want to delete everything (WARNING: irreversible)::
 
   python openhdi/model.py delete
+
+Authors
+=======
+
+* Guo Xu
+* Dirk Heine
+* Rufus Pollock
+* Friedrich Lindenberg
 
