@@ -9,7 +9,7 @@
 
 .components li {
 	position: relative;
-	padding: 2px 20px 2px 2px;
+	padding: 2px;
 	cursor: pointer;
 }
 
@@ -17,15 +17,31 @@
 	background-color: #efefef;
 }
 
+.universe li {
+	padding-right: 30px;
+}
+.selection li {
+	padding-left: 30px;
+}
+
 .components li:after {
-	content: '+';
 	font-family: HeydingsCommonIconsRegular;
 	font-size: 20px;
 	position: absolute;
-	right: 5px;
 	top: 50%;
 	line-height: 0;
+}
+
+.universe li:after {
+	right: 5px;
+	content: '+';
 	color: rgba(0,200,0,0.7);
+}
+
+.selection li:after {
+	left: 5px;
+	content: '-';
+	color: rgba(200,0,0,0.7);
 }
 
 .list {
