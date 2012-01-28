@@ -1,38 +1,58 @@
 var IndexBuilder = function () {
-	this.universe = [ // dummy variables hard-coded in for now
-		{
-			variable: 'education-spending',
+	this.page = {
+		$universeComponents: $('.universe .components'),
+		$selectionComponents: $('selection .components')
+	};
+
+	this.selection = [];
+
+	this.universe = {
+		'education-spending': {
 			label: 'Education spending (% of GDP)'
 		},
-		{
-			variable: 'infrastructure-spending',
+		'infrastructure-spending': {
 			label: 'Infrastructure spending (% of GDP)'
 		},
-		{
-			variable: 'life-expectancy',
+		'life-expectancy': {
 			label: 'Life expectancy at birth'
 		},
-		{
-			variable: 'schooling',
+		'schooling': {
 			label: 'Mean years of schooling'
 		},
-		{
-			variable: 'press-freedom',
+		'press-freedom': {
 			label: 'Press freedom index'
 		},
-		{
-			variable: 'undernourishment',
+		'undernourishment': {
 			label: 'Undernourishment (% of population)'
 		},
-		{
-			variable: 'birth-rate',
+		'birth-rate': {
 			label: 'Birth rate'
 		}
-	];
+	};
 };
 
 IndexBuilder.prototype = {
-	
+	init: function () {
+		var listHTML = '';
+
+		$.each(this.universe, function (key, value) {
+			var $li = $('<li>' + value.label + '</li>');
+
+			$li.data('key', key);
+
+			$li.click(function () {
+				$(this).remove();
+				
+			})
+
+
+			listHTML += '<li>' + value.label + '</li>';
+		});
+
+		this.page.$universeComponents.append(listHTML);
+	},
+
+
 
 }
 
@@ -40,4 +60,5 @@ IndexBuilder.prototype = {
 
 $(function () {
 	var ib = new IndexBuilder();
+	ib.init();
 });
