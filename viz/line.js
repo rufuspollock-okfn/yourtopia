@@ -1,5 +1,5 @@
 /* Data processing */
-var time = Array(2001, 2003, 2006, 2031);
+var time = Array(2001, 2003, 2006, 2031	);
 var min_year = d3.min(time);
 var max_year = d3.max(time);
 
@@ -50,14 +50,14 @@ rules.append("text")
     .attr("y", h + 3)
     .attr("dy", ".71em")
     .attr("text-anchor", "middle")
-    .text(x.tickFormat(10));
+    .text(x.tickFormat(1));
 
 rules.append("text")
     .attr("y", y)
     .attr("x", -3)
     .attr("dy", ".35em")
     .attr("text-anchor", "end")
-    .text(y.tickFormat(10));
+    .text(y.tickFormat(1));
 
 vis.append("path")
     .attr("class", "line")
