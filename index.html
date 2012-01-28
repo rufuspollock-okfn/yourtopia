@@ -13,7 +13,7 @@
 		<![endif]-->
 
 		<!-- Le styles -->
-		<link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css">
+		<link rel="stylesheet" href="vendor/bootstrap/1.4.0/bootstrap.css">
 		<link rel="stylesheet" href="styles/yourtopia.css">
 		<link rel="stylesheet" href="styles/heydings/heydings.css">
 
@@ -102,23 +102,18 @@
 
 			<div class="content">
 				<div class="page-header">
-					<h1>Create your index <small>choose the indicators you want to include</small></h1>
+					<h1>Create your index</h1>
 				</div>
 				<div class="row">
-					<div class="span10">
+					<div class="span14">
 						
+						<h2>Pick the components for your index</h2>
 						<div class="createIndex">
-							<div class="universe list">
-								<input type="search" class="filter" placeholder="Filter (e.g. 'infrastructure'" />
+							<input type="search" class="filter" placeholder="Filter (e.g. 'infrastructure'" />
 
+							<div class="universe list">
 								<ul class="components">
-									<li>Public spending on education (% of GDP)</li>
-									<li>Public spending on infrastructure (% of GDP)
-									<li>Life expectancy at birth</li>
-									<li>Mean years of schooling</li>
-									<li>Press freedom index</li>
-									<li>Prevalence of undernourishment (% of population)</li>
-									<li>Birth rate</li>
+									
 								</ul>
 							</div>
 
@@ -129,8 +124,18 @@
 							</div>
 						</div>
 					</div>
-					<div class="span4">
-						<h3>Secondary content</h3>
+					
+				</div>
+
+				<div class="row">
+					<div class="span14">
+						
+						<h2>Set the weightings</h2>
+						<div class="createIndex">
+							<ul id="weightings">
+
+							</ul>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -142,4 +147,12 @@
 		</div> <!-- /container -->
 
 	</body>
+
+	<!-- libraries -->
+	<script src="vendor/json2.js"></script>
+	<script src="vendor/jquery/1.7.1/jquery.js"></script>
+	<script src="vendor/underscore/1.2.2/underscore.js"></script>
+	<script src="vendor/backbone/0.5.3/backbone.js"></script>
+
+	<script src="scripts/yourtopia.js"></script>
 </html>
