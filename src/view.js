@@ -14,8 +14,7 @@ my.SeriesListing = Backbone.View.extend({
   },
 
   events: {
-    'click .universe li': 'selectSeries',
-    'click .selection li': 'removeSeries'
+    'click .universe li': 'selectSeries'
   },
 
   selectSeries: function(e) {
@@ -24,17 +23,6 @@ my.SeriesListing = Backbone.View.extend({
     var selected = this.collection.get($target.data('key'));
     if (!(this.selected.include(selected))) {
       this.selected.add(selected);
-    }
-  },
-
-  removeSeries: function(e) {
-    console.log('removeSeries');
-
-    e.preventDefault();
-    var $target = $(e.target);
-    var selected = this.collection.get($target.data('key'));
-    if ((this.selected.include(selected))) {
-      this.selected.remove(selected);
     }
   },
 
@@ -50,12 +38,27 @@ my.SelectedSeriesListing = Backbone.View.extend({
     this.collection.bind('remove', this.render);
   },
 
+  events: {
+    'click .selection li': 'removeSeries'
+  },
+
+  removeSeries: function(e) {
+    e.preventDefault();
+    var $target = $(e.target);
+
+    var unselected = this.collection.get($target.data('key'));
+
+    if ((this.collection.include(unselected))) {
+      this.collection.remove(unselected);
+    }
+  },
+
   render: function() {
     var self = this;
     self.el.html('');
     this.collection.each(function(series) {
       var x = $('<li />');
-      x.html(series.get('label'));
+      x.html(series.get('label')).data('key', series.get('id'));
       self.el.append(x);
     });
   }
