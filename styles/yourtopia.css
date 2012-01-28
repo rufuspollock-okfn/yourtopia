@@ -1,0 +1,88 @@
+.components {
+	list-style-type: none;
+	margin: 0 0 18px 0;
+	padding: 5px;
+	box-shadow: inset 1px 1px 5px rgba(0,0,0,0.1);
+	height: 8em;
+	overflow-y: scroll;
+}
+
+.components li:hover {
+	background-color: #efefef;
+}
+
+.list {
+	width: 47%;
+	margin-right: 3%;
+	float: left;
+}
+
+.universe {
+	
+}
+
+
+
+/*
+
+body {
+	font-family: Arial;
+	font-size: 16px;
+	background-color: #f0f0ff;
+}
+
+input {
+	font-size: 16px;
+	width: 100%;
+}
+
+ul {
+	margin: 0;
+}
+
+.createIndex {
+	width: 100%;
+}
+
+.universe, .selection {
+	float: left;
+	width: 40%;
+	padding-top: 2em;
+}
+
+.universe {
+	margin-right: 20%;
+}
+
+.componentList {
+	background-color: white;
+	padding: 0.5em;
+	box-shadow: inset 1px 1px 5px rgba(0,0,0,0.3);
+
+	list-style-type: none;
+	height: 10em;
+	overflow-y: scroll;
+}
+
+.componentList li {
+	padding: 0.1em;
+}
+
+.componentList li:hover {
+	background-color: rgba(0,0,0,0.05);
+}
+
+.universe .componentList li:after {
+	font-family: HeydingsCommonIconsRegular;
+	content: '+';
+	float: right;
+	color: rgba(0,200,0,0.8);
+}
+
+.filter {
+	position: absolute;
+	top: 0;
+}
+
+
+*/
