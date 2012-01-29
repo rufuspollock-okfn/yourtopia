@@ -7,6 +7,16 @@ my.Profile = Backbone.Model.extend({
 });
 
 my.Series = Backbone.Model.extend({
+  defaults: {
+    title: ''
+    , description: ''
+    , is_index: false
+    , transform: '' 
+    , series: []
+    // year, country, region, value
+    // pivot: year, country-a, country-b
+    , data: null
+  },
   initialize: function() {
   }
 });

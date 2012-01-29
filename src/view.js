@@ -64,6 +64,17 @@ my.SelectedSeriesListing = Backbone.View.extend({
   }
 });
 
+
+my.IndexView = Backbone.View.extend({
+  template: '',
+
+  render: function() {
+    var page_title = 'Index: ' + this.model.get('title');
+    $('.page-header h1').html(page_title);
+    this.el.html('Index view will go here');
+  }
+});
+
 return my;
 
 }(jQuery);

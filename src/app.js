@@ -43,6 +43,24 @@ YOURTOPIA.Application = Backbone.Router.extend({
   },
 
   indexView: function() {
+    var stubIndex = new YOURTOPIA.Model.Series({
+      id: 'abc'
+      , is_index: true
+      , title: 'My demo index' 
+    });
+    $el = $('.index-view');
+    var view = new YOURTOPIA.View.IndexView({
+      el: $el
+      , model: stubIndex
+    });
+    view.render();
+    this.switchView('index/view');
+  },
+
+  switchView: function(path) {
+    $('.backbone-page').hide(); 
+    var cssClass = path.replace('/', '-');
+    $('.' + cssClass).show();
   }
 });
 
