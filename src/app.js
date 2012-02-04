@@ -1,29 +1,4 @@
 jQuery(function () {
-  var series = new YOURTOPIA.Model.SeriesList([
-    {
-      id: 'education-spending'
-			, label: 'Education spending (% of GDP)'
-		},
-    {
-		  id: 'infrastructure-spending'
-			, label: 'Infrastructure spending (% of GDP)'
-    }
-  ]);
-  var selectedSeries = new YOURTOPIA.Model.SeriesList();
-
-  var $universeComponents = $('.universe .components');
-  var listingView = new YOURTOPIA.View.SeriesListing({
-    collection: series
-    , el: $universeComponents
-  });
-  listingView.selected = selectedSeries;
-
-  var $selectionComponents = $('.selection .components')
-  var selectedView = new YOURTOPIA.View.SelectedSeriesListing({
-    collection: selectedSeries
-    , el: $selectionComponents
-  });
-
   var app = new YOURTOPIA.Application();
   Backbone.history.start();
 });
@@ -39,7 +14,14 @@ YOURTOPIA.Application = Backbone.Router.extend({
   },
 
   indexCreate: function() {
-    // TODO: wire up existing view code
+    var newIndex = new YOURTOPIA.Model.Series();
+    $el = $('.index-create');
+    var view = new YOURTOPIA.View.IndexCreate({
+      el: $el
+      , model: newIndex
+    });
+    view.render();
+    this.switchView('index/create');
   },
 
   indexView: function() {

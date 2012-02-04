@@ -64,6 +64,41 @@ my.SelectedSeriesListing = Backbone.View.extend({
   }
 });
 
+my.IndexCreate = Backbone.View.extend({
+  template: '',
+  initialize: function() {
+    this.series = new YOURTOPIA.Model.SeriesList([
+      {
+        id: 'education-spending'
+        , label: 'Education spending (% of GDP)'
+      },
+      {
+        id: 'infrastructure-spending'
+        , label: 'Infrastructure spending (% of GDP)'
+      }
+    ]);
+    this.selectedSeries = new YOURTOPIA.Model.SeriesList();
+  },
+
+  render: function() {
+    var page_title = 'Create your index';
+    $('.page-header h1').html(page_title);
+
+    var $universeComponents = this.el.find('.universe .components');
+    var listingView = new YOURTOPIA.View.SeriesListing({
+      collection: this.series
+      , el: $universeComponents
+    });
+    listingView.selected = this.selectedSeries;
+
+    var $selectionComponents = this.el.find('.selection .components')
+    var selectedView = new YOURTOPIA.View.SelectedSeriesListing({
+      collection: this.selectedSeries
+      , el: $selectionComponents
+    });
+  }
+});
+
 
 my.IndexView = Backbone.View.extend({
   template: '',
