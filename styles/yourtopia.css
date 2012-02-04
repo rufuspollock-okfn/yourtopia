@@ -18,13 +18,10 @@
 }
 
 .universe li {
-	padding-right: 30px;
-}
-.selection li {
 	padding-left: 30px;
 }
 
-.components li:after {
+.components li:before {
 	font-family: HeydingsCommonIconsRegular;
 	font-size: 20px;
 	position: absolute;
@@ -32,26 +29,10 @@
 	line-height: 0;
 }
 
-.universe li:after {
+.universe li:before {
 	right: 5px;
 	content: '+';
 	color: rgba(0,200,0,0.7);
-}
-
-.selection li:after {
-	left: 5px;
-	content: '-';
-	color: rgba(200,0,0,0.7);
-}
-
-.list {
-	width: 47%;
-	margin-right: 3%;
-	float: left;
-}
-
-.universe {
-	
 }
 
 .filter {
