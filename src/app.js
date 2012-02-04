@@ -9,8 +9,13 @@ var x = function($) {
 //
 YOURTOPIA.Application = Backbone.Router.extend({
   routes: {
-    'index/create': 'indexCreate'  
+    '': 'home'
+    , 'index/create': 'indexCreate'  
     , 'index/:id':    'indexView'
+  },
+
+  home: function() {
+    this.switchView('home');
   },
 
   indexCreate: function() {
