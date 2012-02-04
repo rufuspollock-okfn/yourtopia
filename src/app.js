@@ -14,7 +14,7 @@ YOURTOPIA.Application = Backbone.Router.extend({
   },
 
   indexCreate: function() {
-    var newIndex = new YOURTOPIA.Model.Series();
+    var newIndex = new YOURTOPIA.Model.Index();
     $el = $('.index-create');
     var view = new YOURTOPIA.View.IndexCreate({
       el: $el
@@ -25,7 +25,7 @@ YOURTOPIA.Application = Backbone.Router.extend({
   },
 
   indexView: function() {
-    var stubIndex = new YOURTOPIA.Model.Series({
+    var stubIndex = new YOURTOPIA.Model.Index({
       id: 'abc'
       , is_index: true
       , title: 'My demo index' 
