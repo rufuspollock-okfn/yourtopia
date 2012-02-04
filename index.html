@@ -13,11 +13,6 @@
 
     <!-- Le styles -->
     <link href="vendor/bootstrap/2.0.0/css/bootstrap.css" rel="stylesheet">
-    <style>
-      body {
-        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
-      }
-    </style>
     <link href="vendor/bootstrap/2.0.0/css/bootstrap-responsive.css" rel="stylesheet">
 
     <link rel="stylesheet" href="styles/yourtopia.css">
@@ -55,59 +50,52 @@
     </div>
 
     <div class="container">
-
-      <h1>YourTopia v2</h1>
+    <div class="content">
+      <div class="page-header">
+        <h1>Welcome to YourTopia</h1>
+      </div>
 
       <div class="backbone-page index-create" style="display: none;">
+          <h2>Pick the components for your index</h2>
           <div class="row">
-            <div class="span12">
-              
-              <h2>Pick the components for your index</h2>
-              <div class="well createIndex">
-                <input type="search" class="filter" placeholder="Filter (e.g. 'infrastructure'" />
-
+            <div class="span6">
+              <div class="well">
+                <h3>
+                  <input type="search" class="filter" placeholder="Filter (e.g. 'infrastructure'" style="float: right" />
+                  Series
+                </h3>
+                <div class="clear" style="clear:both;"></div>
                 <div class="universe list">
                   <ul class="components">
-                    
                   </ul>
                 </div>
               </div>
             </div>
-            
-          </div>
-
-          <div class="row">
-            <div class="span12">
-              
-              <h2>Set the weightings</h2>
-              <div class="createIndex">
-                <ul id="weightings">
-
-                </ul>
+            <div class="span6">
+              <div class="well">
+                <h3>Selected</h3>
+                <div class="clear" style="clear:both;"></div>
+                <div class="selection list">
+                  <ul class="components">
+                  </ul>
+                </div>
               </div>
             </div>
+          </div>
+          <div class="row weightings">
+            <div class="span12">
+              <h2>Weightings</h2>
+            </span>
           </div>
         </div><!-- /index-create -->
         <div class="backbone-page index-view">
         </div>
       </div>
 
-
-
-      <div class="backbone-page index-visualise" style="display: none;">
-          <div class="row">
-            <div class="span12">
-              
-              <h2>Visualise your index</h2>
-              
-            </div>
-            
-          </div>
-        </div><!-- /index-visualise -->
-        <div class="backbone-page index-view">
-        </div>
+      <div class="backbone-page index-view" style="display: none">
       </div>
 
+    </div> <!-- /content -->
     </div> <!-- /container -->
 
     <!-- Le javascript
@@ -122,18 +110,7 @@
     <script src="vendor/backbone/0.5.3/backbone.js"></script>
     
     <script src="vendor/bootstrap/2.0.0/js/bootstrap-alert.js"></script>
-    <script src="vendor/bootstrap/2.0.0/js/bootstrap-modal.js"></script>
-    <script src="vendor/bootstrap/2.0.0/js/bootstrap-dropdown.js"></script>
-    <script src="vendor/bootstrap/2.0.0/js/bootstrap-scrollspy.js"></script>
-    <script src="vendor/bootstrap/2.0.0/js/bootstrap-tab.js"></script>
     <script src="vendor/bootstrap/2.0.0/js/bootstrap-tooltip.js"></script>
-    <script src="vendor/bootstrap/2.0.0/js/bootstrap-popover.js"></script>
-    <script src="vendor/bootstrap/2.0.0/js/bootstrap-button.js"></script>
-    <script src="vendor/bootstrap/2.0.0/js/bootstrap-collapse.js"></script>
-    <script src="vendor/bootstrap/2.0.0/js/bootstrap-carousel.js"></script>
-    <script src="vendor/bootstrap/2.0.0/js/bootstrap-typeahead.js"></script>
-
-    
 
     <!--script -->
     <script src="src/model.js"></script>
