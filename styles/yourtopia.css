@@ -31,7 +31,8 @@ body {
 
 .components li {
 	position: relative;
-	padding: 2px;
+	padding: 2px 2px 2px 30px;
+	clear: both;
 	cursor: pointer;
 }
 
@@ -39,28 +40,23 @@ body {
 	background-color: #efefef;
 }
 
-.universe li {
-	padding-left: 30px;
-}
-
 .components li:before {
 	font-family: HeydingsCommonIconsRegular;
 	font-size: 20px;
 	position: absolute;
+	left: 5px;
 	top: 50%;
 	line-height: 0;
 }
 
 .universe li:before {
-	left: 5px;
 	content: '+';
 	color: rgba(0,200,0,0.7);
 }
 
-.universe li.selected:before {
-	left: 5px;
+.selection li:before {
 	content: '-';
-	color: rgba(0,200,0,0.7);
+	color: rgba(200,0,0,0.7);
 }
 
 .filter {
@@ -72,6 +68,8 @@ body {
   font-weight: bold;
 }
 
-.selection .components li select {
+.selection .components li .rate {
   float: right;
+  font-size: 2em;
+  line-height: 0.6em;
 }
