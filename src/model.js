@@ -11,7 +11,7 @@ my.Series = Backbone.Model.extend({
     title: ''
     , description: ''
     // year, country, region, value, normalized_value
-    , data: null
+    , data: []
   },
   initialize: function() {
   }
@@ -26,9 +26,12 @@ my.Index= Backbone.Model.extend({
     title: ''
     , description: ''
     , series: []
-    , weightings: []
+    , weightings: {}
     , data: null
   },
+
+  initialize: function() {
+  }
 });
 
 return my;

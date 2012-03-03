@@ -71,3 +71,11 @@ body {
 .selection .components li select {
   float: right;
 }
+
+/******************* Index View **********************/
+
+.index-view .description {
+  font-size: 130%;
+  margin-bottom: 30px;
+}
+

@@ -106,12 +106,44 @@ my.IndexCreate = Backbone.View.extend({
 
 
 my.IndexView = Backbone.View.extend({
-  template: '',
+  template: ' \
+    <div class="description"> \
+      {{description}} \
+    </div> \
+    <div class="data-explorer-here"></div> \
+  ',
 
   render: function() {
     var page_title = 'Index: ' + this.model.get('title');
     $('.page-header h1').html(page_title);
-    this.el.html('Index view will go here');
+    var tmplData = this.model.toJSON();
+    var templated = Mustache.render(this.template, tmplData);
+    this.el.html(templated);
+    var backend = new recline.Backend.Memory();
+    var docs = _.filter(this.model.get('data'), function(row) {
+      return row.Region == 'Lombardia';
+    });
+    var inData = {
+      metadata: {
+        id: 'xyz'
+      }
+      , fields: [{id: 'Year'}, {id: 'value'}, {id: 'Region'}]
+      , documents: docs
+    };
+    backend.addDataset(inData);
+    var dataset = new recline.Model.Dataset({id: 'xyz'}, backend);
+    dataset.fetch();
+    var grid = new recline.View.DataGrid({
+      model: dataset
+    });
+    var flot = new recline.View.FlotGraph({
+      model: dataset
+    });
+    this.el.find('.data-explorer-here').append(flot.el);
+    this.el.find('.data-explorer-here').append(grid.el);
+    this.el.addClass('read-only');
+    grid.render();
+    dataset.query();
   }
 });
 
