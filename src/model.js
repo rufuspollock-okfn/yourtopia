@@ -21,7 +21,7 @@ my.SeriesList = Backbone.Collection.extend({
   model: my.Series
 });
 
-my.Index= Backbone.Model.extend({
+my.Index = Backbone.Model.extend({
   defaults: {
     title: ''
     , description: ''

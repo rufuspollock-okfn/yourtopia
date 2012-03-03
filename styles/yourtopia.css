@@ -68,8 +68,10 @@ body {
   font-weight: bold;
 }
 
-.selection .components li select {
+.selection .components li .rate {
   float: right;
+  font-size: 2em;
+  line-height: 0.6em;
 }
 
 /******************* Index View **********************/
