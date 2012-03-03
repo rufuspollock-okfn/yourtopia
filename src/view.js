@@ -45,7 +45,7 @@ my.SelectedSeriesListing = Backbone.View.extend({
 
   removeSeries: function(e) {
     e.preventDefault();
-    var $target = $(e.target);
+    var $target = $(e.target).closest('li');
 
     var unselected = this.model.series.get($target.data('key'));
 
