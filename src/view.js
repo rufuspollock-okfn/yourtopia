@@ -5,6 +5,7 @@ var my = {};
 my.SeriesListing = Backbone.View.extend({
   initialize: function() {
     var self = this;
+    _.bindAll(this, 'selectSeries');
     this.el = $(this.el);
     _.each(this.collection.models, function(series) {
 			var $li = $('<li>' + series.get('label') + '</li>');
@@ -34,8 +35,8 @@ my.SelectedSeriesListing = Backbone.View.extend({
   initialize: function() {
     this.el = $(this.el);
     _.bindAll(this, 'render');
-    this.collection.bind('add', this.render);
-    this.collection.bind('remove', this.render);
+    this.model.series.bind('add', this.render);
+    this.model.series.bind('remove', this.render);
   },
 
   events: {
@@ -46,24 +47,36 @@ my.SelectedSeriesListing = Backbone.View.extend({
     e.preventDefault();
     var $target = $(e.target);
 
-    var unselected = this.collection.get($target.data('key'));
+    var unselected = this.model.series.get($target.data('key'));
 
-    if ((this.collection.include(unselected))) {
-      this.collection.remove(unselected);
+    if ((this.model.series.include(unselected))) {
+      this.model.series.remove(unselected);
     }
   },
 
   render: function() {
     var self = this;
     self.el.html('');
-    this.collection.each(function(series, idx) {
+    this.model.series.each(function(series, idx) {
       var $li = $('<li />').data('key', series.get('id'));
       $li.append($('<span class="title" />').text(series.get('label')));
+      
+      /*
       var $select = $('<select class="span1" />');
       for(var ii=1;ii<6;ii++) {
         $select.append($('<option />').text(ii));
       }
       $li.append($select);
+      */
+
+      var weighting = 3, $rate = $('<span class="rate" />').data('weighting', weighting);
+      for(var ii=1;ii<6;ii++) {
+        var char = (ii <= weighting) ? '&#x25CF;' : '&#9675;'; // replace with something prettier
+        var $option = $('<span data-weighting="' + ii + '"/>').html(char);
+        $rate.append($option);
+      }
+      $li.append($rate);
+      
       self.el.append($li);
     });
   }
@@ -72,6 +85,7 @@ my.SelectedSeriesListing = Backbone.View.extend({
 my.IndexCreate = Backbone.View.extend({
   template: '',
   initialize: function() {
+    var self = this;
     this.series = new YOURTOPIA.Model.SeriesList([
       {
         id: 'education-spending'
@@ -82,7 +96,7 @@ my.IndexCreate = Backbone.View.extend({
         , label: 'Infrastructure spending (% of GDP)'
       }
     ]);
-    this.selectedSeries = new YOURTOPIA.Model.SeriesList();
+    this.model.series = new YOURTOPIA.Model.SeriesList();
   },
 
   render: function() {
@@ -94,11 +108,11 @@ my.IndexCreate = Backbone.View.extend({
       collection: this.series
       , el: $universeComponents
     });
-    listingView.selected = this.selectedSeries;
+    listingView.selected = this.model.series;
 
     var $selectionComponents = this.el.find('.selection .components')
     var selectedView = new YOURTOPIA.View.SelectedSeriesListing({
-      collection: this.selectedSeries
+      model: this.model
       , el: $selectionComponents
     });
   }
