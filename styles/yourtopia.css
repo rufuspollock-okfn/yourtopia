@@ -67,3 +67,11 @@ body {
 	display: block;
 	margin: 0 0 18px 0;
 }
+
+.selection .components li {
+  font-weight: bold;
+}
+
+.selection .components li select {
+  float: right;
+}

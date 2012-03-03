@@ -56,10 +56,15 @@ my.SelectedSeriesListing = Backbone.View.extend({
   render: function() {
     var self = this;
     self.el.html('');
-    this.collection.each(function(series) {
-      var x = $('<li />');
-      x.html(series.get('label')).data('key', series.get('id'));
-      self.el.append(x);
+    this.collection.each(function(series, idx) {
+      var $li = $('<li />').data('key', series.get('id'));
+      $li.append($('<span class="title" />').text(series.get('label')));
+      var $select = $('<select class="span1" />');
+      for(var ii=1;ii<6;ii++) {
+        $select.append($('<option />').text(ii));
+      }
+      $li.append($select);
+      self.el.append($li);
     });
   }
 });
