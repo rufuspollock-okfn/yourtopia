@@ -5,13 +5,9 @@ var my = {};
 my.SeriesListing = Backbone.View.extend({
   initialize: function() {
     var self = this;
-    _.bindAll(this, 'selectSeries');
     this.el = $(this.el);
-    _.each(this.collection.models, function(series) {
-			var $li = $('<li>' + series.get('label') + '</li>');
-			$li.data('key', series.id);
-      self.el.append($li);
-    });
+    _.bindAll(this, 'selectSeries', 'render');
+    this.collection.bind('add', this.render);
   },
 
   events: {
@@ -28,6 +24,13 @@ my.SeriesListing = Backbone.View.extend({
   },
 
   render: function() {
+    var self = this;
+    this.el.empty();
+    _.each(this.collection.models, function(series) {
+			var $li = $('<li>' + series.get('label') + '</li>');
+			$li.data('key', series.id);
+      self.el.append($li);
+    });
   }
 });
  
@@ -84,18 +87,9 @@ my.SelectedSeriesListing = Backbone.View.extend({
 
 my.IndexCreate = Backbone.View.extend({
   template: '',
-  initialize: function() {
+  initialize: function(config) {
     var self = this;
-    this.series = new YOURTOPIA.Model.SeriesList([
-      {
-        id: 'education-spending'
-        , label: 'Education spending (% of GDP)'
-      },
-      {
-        id: 'infrastructure-spending'
-        , label: 'Infrastructure spending (% of GDP)'
-      }
-    ]);
+    this.series = config.allSeries;
     this.model.series = new YOURTOPIA.Model.SeriesList();
   },
 
