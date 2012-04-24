@@ -1,0 +1,69 @@
+string_id,en,it
+category_headline_education,Education,TO BE TRANSLATED
+category_headline_employment,Employment,Lavoro
+category_headline_environment,Environment,Ambiente
+category_headline_gdp,Gross Domestic Product,PIL
+category_headline_health,Health,Salute
+category_headline_safety,Public Safety,Sicurezza
+category_headline_science,Science and Research,Scienze e Ricerca
+category_headline_wealth,Wealth and Equality,Ricchezza ed eguaglianza
+saveshare_button,Save & Share,TO BE TRANSLATED
+saveshare_bar_line1,"When you're done, <strong>share your priorities</strong> with others, let them <strong>explore</strong>",TO BE TRANSLATED
+saveshare_bar_line2,Italy's progress</strong> according to your priorities and <strong>define their own</strong>!,TO BE TRANSLATED
+map_ranking_tab,Map/Ranking,TO BE TRANSLATED
+timeline_tab,Timeline,TO BE TRANSLATED
+index_create_headline,What is important in the world you want to live in?,TO BE TRANSLATED
+menu_create_index,Create Your Own,TO BE TRANSLATED
+menu_browse,Browse All,TO BE TRANSLATED
+menu_about,Learn More,TO BE TRANSLATED
+logo_tagline,"Progress in Italy, defined by You.",TO BE TRANSLATED
+progress_wait_while_loading,Please wait while data is loaded...,TO BE TRANSLATED
+language_switch,Language,TO BE TRANSLATED
+breadcrumb_home,Yourtopia Home,TO BE TRANSLATED
+breadcrumb_about,Learn More,TO BE TRANSLATED
+breadcrumb_browse,Browse All,TO BE TRANSLATED
+data_source_link_label,Data source,TO BE TRANSLATED
+about_headline,Learn more about Yourtopia,TO BE TRANSLATED
+about_section1_headline,Overview: How does it work?,
+about_section1_text,"Measuring social progress is difficult -- so many variables to consider! And all methodologies for integrating all these variables into tracktable indices are methodologically-skrewd (Stiglitz et al 2009, Ravallion 2010). But the internet community has a strength that previous initiatives lacked: it has you! Users' collective intelligence -- if one could just feasibly bring everyone together -- can solve complex economic issues. Yourtopia is such a collaborative approach. 
+
+Yourtopia ranks the regions of Italy by a mix of social indicators that you -- as the user -- determine yourself. It allows you to see what divides us, where we have progressed and what social issues need addressing. By picking indicators and telling Yourtopia how important they are in relation to each other, you collaborate with all other users in building the world's first composite index of regional progress without arbitrary weighting assumptions.
+
+You furthermore help analyse social progress at a time in which Italy is undergoing substantial reforms and in which it is crucial to keep track of social divides across our country.",TO BE TRANSLATED
+about_section2_headline,Need to widen our perspective on progress indicators,TO BE TRANSLATED
+about_section2_text,"Given the intensity of the current crisis, and the extent of the structural reforms needed, it is essential to keep track of social imbalances in Italy. This track-keeping is important for Italians in the North and South to make sure inequalities are not getting out of control while reforming, and it is equally important for other Europeans to follow a wider set of Italian social indicators - not exclusively its budget headlines. ",TO BE TRANSLATED
+about_section3_headline,No track-keeping across regions without better accessibility,TO BE TRANSLATED
+about_section3_text,"We need a wider collaboration, and that means we need trust for cooperation in wider economic policies. But trust will not come without transparency; it must be easier for Italians in the North to understand and trace development in the South, and it is equally important that Northern Europeans can more easily comprehend the situation in which Italy is in, to build mutual understanding on needs and abilities. Open Data has an important role to play in establishing such trust-building transparency and bridge our double North-South divide, for a united way forward.",TO BE TRANSLATED
+about_section4_headline,From Open Data to Open Knowledge,TO BE TRANSLATED
+about_section4_text,"But opening data is just a first step: to turn openness into transparency, the data needs to be comprehensible. This is not just about visualisation. The sheer number of datapoints in dashboards of key progress indicators is too much for the average user; he needs tools to manage that information and integrate it to see the big picture.",TO BE TRANSLATED
+about_section5_headline,Previous initiatives to provide composites all fall into the same trap,TO BE TRANSLATED
+about_section5_text,"Recent political initiatives sought to address these problems using composite indices (Netherlands [1], UK [2], UNDP [5], OECD [4], Germany [5]). The idea was to present several dimensions of social progress while still not massively over-complexifying analysis by pressing all data series into one central index. Yet such methodology has been criticised as exactly not increasing transparency, because the construction of compositite indices requires assumptions to be made on how to weigh the data series that go into an index and on many other aspects of index construction. These assumptions “are either arbitrary or reflect value judgements on which there is not broad consensus” [6]. 
+
+On the macro level, transparency of policies may then not increase as much as we would have hoped to achieve through open data. Data chunks themselves are too much to swallow, and compressing several social trends into one number assumes value judgement that leave the data ""open"" but that make their production process closed knowledge for most citizens.",TO BE TRANSLATED
+about_section6_headline,How Yourtopia solves these problems,TO BE TRANSLATED
+about_section6_text,"Also Yourtopia constructs a composite index -combining multiple dimensions of the state of affairs in Italy-  but without the arbitrary assumptions! 
+
+[Figure here: Picture of marriage between ""Big open datasets"" and ""transparancy required for open data"", Caption: ""We marry the accessibility of big open datasets to the transparency required for open knowledge, by harnessing the collective intelligence of users for complex weighting  decisions.""]
+
+Our approach is to build a composite index together with the user, adopting the user's assumptions. The choice of indicators and their weightings is determined through the collective intelligence of the web. The user determines the indicators and their weightings in a playful quiz, generating individualised results for regions all across the country. With the viewer and constructor of the index coinciding, we circumvent the traditional issues of composite indices: all assumptions are now open and by construction understandable by the user since he chose those items he recognises and prefers.",TO BE TRANSLATED
+about_section7_headline,Assumptions democratically -not arbitrarily- determined,TO BE TRANSLATED
+about_section7_text,"Yourtopia asks the user which indicator he prefers and how much, so the indicators that get assembled in the index reflect the users' assumptions on what is important - not some preset decisions based on the subjective preferences of the programmer. The decisions of all users are then combined, on a one-man-one-vote basis, to give a global ranking by all participating Italians on Italy's multidimensional progress for all regions!",TO BE TRANSLATED
+about_section8_headline,Research opportunity,TO BE TRANSLATED
+about_section8_text,"Yourtopia also  generates anonymous high-frequency data depicting regional variation in  the public's understanding of development and their preferred  indicators, with potential policy messages.
+
+The  user is hence not just a dump for information but two-way communication  becomes possible. The user participates in a research-project that  allows us to gauge the extent to which society can be engaged in  measuring its progress.
+
+[Find out more about Yourtopia's innovation to economic theory: Link to http://wiki.okfn.org/ProgressVote]",TO BE TRANSLATED
+about_section9_headline,Conclusion,TO BE TRANSLATED
+about_section9_text,"At a time in which many European governments build progress indices that fall into old traps of arbitrary methodological assumptions [7], Yourtopia equips Italy with a measure of social progress across all regions that is methodologically robust and democratically founded. 
+
+Yourtopia furthermore presents us with a chance to get to grips with what divided our regions in the past and what we need to address beyond what the newspaper headlines tell us. It furthermore provides our Northern neighbours with an insight that we now need a real collaboration, because besides all financial indicators there are further social trends here that are divisive, hold back total progress and that we need to address together.",TO BE TRANSLATED
+about_section10_headline,Next steps,TO BE TRANSLATED
+about_section10_text,"Yourtopia so far can show trends before the current reforms. With the help of Apps4Italy we hope to be able to continuously engage with the user on a search for progress on a much wider geographic and economic resolution than normally considered in the media.
+
+Next steps planned would be to extend Yourtopia to the whole of Europe, to show how our whole continent went into  the crisis; which trends divide regions; and help identify what issues we need to tackle to jointly emerge again. Together with the users' votes we will furthermore trace and provide an innovative measure of how this progress is proceeding.",TO BE TRANSLATED
+about_whomade_headline,Who Made Yourtopia,TO BE TRANSLATED
+about_whomade_text,"TO BE WRITTEN: Names of all people involved, including function.",TO BE TRANSLATED
+about_furtherreading_headline,Further reading,TO BE TRANSLATED
+about_furtherreading_text,TO BE WRITTEN: Sources referenced in the texts above have to be named.,TO BE TRANSLATED
+about_indicators_headline,The Indicators,TO BE TRANSLATED

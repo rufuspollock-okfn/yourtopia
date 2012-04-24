@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}About Yourtopia{% endblock %}
+
+{% block body %}
+<div class="backbone-page about">
+  
+  <h1>{{ 'about_headline'|i18n(session.lang) }}</h1>
+
+  <div class="row">
+    <div class="span8 offset2 centered">
+      
+
+      <h2>{{ 'about_section1_headline'|i18n(session.lang) }}</h2>
+      {{ 'about_section1_text'|i18n(session.lang)|nl2br }}
+
+      <h3>{{ 'about_section2_headline'|i18n(session.lang) }}</h3>
+      {{ 'about_section2_text'|i18n(session.lang)|nl2br }}
+
+      <h3>{{ 'about_section3_headline'|i18n(session.lang) }}</h3>
+      {{ 'about_section3_text'|i18n(session.lang)|nl2br }}
+    </div>
+  </div>
+
+  <div class="row">
+    <h2>{{ 'about_indicators_headline'|i18n(session.lang) }}</h2>
+  </div>
+
+  <div class="row indicators">
+    {% for id in metadata %}
+      <div class="span4">
+        <h4>{{ metadata[id]['label'][session.lang] }}</h4>
+        <p>{{ metadata[id]['description'][session.lang] }} <a href="{{ metadata[id]['source_url'] }}" target="_blank">{{ 'data_source_link_label'|i18n(session.lang) }}</a></p>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="row">
+    <div class="span8 offset2">
+      <h2>{{ 'about_section4_headline'|i18n(session.lang) }}</h2>
+      {{ 'about_section4_text'|i18n(session.lang)|nl2br }}
+      
+      <h3>{{ 'about_section5_headline'|i18n(session.lang) }}</h3>
+      {{ 'about_section5_text'|i18n(session.lang)|nl2br }}
+      
+      <h3>{{ 'about_section6_headline'|i18n(session.lang) }}</h3>
+      {{ 'about_section6_text'|i18n(session.lang)|nl2br }}
+      
+      <h3>{{ 'about_section7_headline'|i18n(session.lang) }}</h3>
+      {{ 'about_section7_text'|i18n(session.lang)|nl2br }}
+      
+      <h3>{{ 'about_section8_headline'|i18n(session.lang) }}</h3>
+      {{ 'about_section8_text'|i18n(session.lang)|nl2br }}
+      
+      <h3>{{ 'about_section9_headline'|i18n(session.lang) }}</h3>
+      {{ 'about_section9_text'|i18n(session.lang)|nl2br }}
+      
+      <h3>{{ 'about_section10_headline'|i18n(session.lang) }}</h3>
+      {{ 'about_section10_text'|i18n(session.lang)|nl2br }}
+      
+      <h2>{{ 'about_whomade_headline'|i18n(session.lang) }}</h2>
+      {{ 'about_whomade_text'|i18n(session.lang)|nl2br }}
+      
+      <h2>{{ 'about_furtherreading_headline'|i18n(session.lang) }}</h2>
+      {{ 'about_furtherreading_text'|i18n(session.lang)|nl2br }}
+    </div>
+  </div>
+  
+</div>
+{% endblock body %}
