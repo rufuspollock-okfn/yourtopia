@@ -223,3 +223,7 @@ body {
   text-align: center;
 }
 
+/* About page */
+.about .indicator {
+  margin-bottom: 2em;
+}

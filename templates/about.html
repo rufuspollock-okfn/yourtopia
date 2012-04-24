@@ -27,8 +27,12 @@
 
   <div class="row indicators">
     {% for id in metadata %}
-      <div class="span4">
-        <h4>{{ metadata[id]['label'][session.lang] }}</h4>
+      {% if loop.index0 % 3 == 0 %}
+      </div>
+      <div class="row indicators">
+      {% endif %}
+      <div class="span4 indicator">
+        <h4>{{ loop.index }}. {{ metadata[id]['label'][session.lang] }}</h4>
         <p>{{ metadata[id]['description'][session.lang] }} <a href="{{ metadata[id]['source_url'] }}" target="_blank">{{ 'data_source_link_label'|i18n(session.lang) }}</a></p>
       </div>
     {% endfor %}
