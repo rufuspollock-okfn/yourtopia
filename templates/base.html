@@ -17,6 +17,12 @@
 
     <link rel="stylesheet" href="/static/vendor/bootstrap/2.0.0/css/bootstrap.css" />
     <link rel="stylesheet" href="/static/styles/yourtopia.css" />
+
+    {% if session.lang == "en" %}
+      <link rel="alternate" href="./?lang=it" title="This page in Italian" />
+    {% else %}
+      <link rel="alternate" href="./?lang=en" title="This page in English" />
+    {% endif %}
     <!--
     <link rel="stylesheet" href="static/compact_201204231150.css" />
     -->
