@@ -13,6 +13,9 @@ import unicodecsv
 from jinja2 import evalcontextfilter, Markup, escape
 import re
 import simplejson as json
+import sqlite3
+from contextlib import closing
+import datetime
 
 # dev mode
 DEV_MODE = True
@@ -22,6 +25,8 @@ LANG_PRIORITIES = ['it', 'en']
 
 # path to the metadata JSON file
 METADATA_PATH = 'static/data/metadata.json'
+
+DATABASE = 'static/data/database.db'
 
 _paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
 
@@ -35,7 +40,9 @@ def home():
 
 @app.route('/browse/')
 def browse():
-    return render_template('browse.html')
+    g.db = get_connection()
+    entries = get_usercreated_entries(9)
+    return render_template('browse.html', entries=entries)
 
 
 @app.route('/about/')
@@ -45,7 +52,40 @@ def about():
 
 @app.route('/i/<int:id>/')
 def details(id):
-    return render_template('details.html')
+    g.db = get_connection()
+    entry = get_usercreated_entries(id=id)
+    return render_template('details.html', entry=entry)
+
+
+def connect_db():
+    return sqlite3.connect(DATABASE)
+
+
+def get_connection():
+    db = getattr(g, '_db', None)
+    if db is None:
+        db = g._db = connect_db()
+    return db
+
+
+def get_usercreated_entries(num=1, offset=0, id=None):
+    """
+    Read a number of user-generated datasets from
+    the database
+    """
+    if id is not None:
+        entry = query_db('SELECT * FROM usercreated WHERE id=?', [id], one=True)
+        return entry
+    else:
+        entries = query_db('SELECT * FROM usercreated ORDER BY id DESC LIMIT ?, ?', [offset, num])
+        return entries
+
+
+def query_db(query, args=(), one=False):
+    cur = g.db.execute(query, args)
+    rv = [dict((cur.description[idx][0], value)
+               for idx, value in enumerate(row)) for row in cur.fetchall()]
+    return (rv[0] if rv else None) if one else rv
 
 
 def import_series_metadata(path):
@@ -154,6 +194,15 @@ def i18n_filter(s, lang="en"):
     return Markup(i18n[s][session['lang']])
 
 
+@app.template_filter('dateformat')
+def dateformat_filter(s, format='%Y-%m-%d'):
+    """
+    Output a date according to a given format
+    """
+    value = datetime.datetime.strptime(s, '%Y-%m-%d %H:%M:%S')
+    return Markup(value.strftime(format))
+
+
 @app.template_filter()
 @evalcontextfilter
 def nl2br(eval_ctx, value):
@@ -162,6 +211,12 @@ def nl2br(eval_ctx, value):
     if eval_ctx.autoescape:
         result = Markup(result)
     return result
+
+
+@app.teardown_request
+def teardown_request(exception):
+    if hasattr(g, 'db'):
+        g.db.close()
 
 
 if __name__ == '__main__':
