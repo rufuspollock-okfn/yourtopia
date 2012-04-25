@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Yourtopia #{{ entry.id }} by {{ entry.user_name }}{% endblock %}
+
+{% block body %}
+<div class="backbone-page details">
+  <h1>Yourtopia {{ 'number_prefix'|i18n(session.lang) }} {{ entry.id }} </h1>
+
+  <p class="quote">
+    {{ 'quotation_on'|i18n(session.lang) }}{{ entry.description }}{{ 'quotation_off'|i18n(session.lang) }}
+  </p>
+  <p>
+    {{ 'browse_by'|i18n(session.lang) }} <strong>{{ entry.user_name }}</strong>
+    {{ 'browse_on_date'|i18n(session.lang) }}
+    {{ entry.created_at|dateformat('dateformat_compact'|i18n(session.lang)) }}
+  </p>
+    <div class="row">
+    {% for entry in entries %}
+      {% if loop.index0 % 3 == 0 %}
+        </div>
+        <div class="row">
+      {% endif %}
+      <div class="span4 entry">
+        <div class="inner">
+          <a href="/i/{{ entry.id }}/">
+          <span class="quote">
+            {{ 'quotation_on'|i18n(session.lang) }}{{ entry.description|truncate(length=130) }}{{ 'quotation_off'|i18n(session.lang) }}
+          </span>
+          {{ 'browse_by'|i18n(session.lang) }} <b>{{ entry.user_name }}</b>
+          {{ 'browse_on_date'|i18n(session.lang) }}
+          {{ entry.created_at|dateformat('dateformat_compact'|i18n(session.lang)) }}
+          </a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock body %}
