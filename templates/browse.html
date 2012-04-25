@@ -3,7 +3,26 @@
 
 {% block body %}
 <div class="backbone-page browse">
-  <h1>Browse Yourtopia</h2>
-  <p>See what priorities others have...</p>
+  <h1>Browse Yourtopia</h1>
+    <div class="row">
+    {% for entry in entries %}
+      {% if loop.index0 % 3 == 0 %}
+        </div>
+        <div class="row">
+      {% endif %}
+      <div class="span4 entry">
+        <div class="inner">
+          <a href="/i/{{ entry.id }}/">
+          <span class="quote">
+            {{ 'quotation_on'|i18n(session.lang) }}{{ entry.description|truncate(length=130) }}{{ 'quotation_off'|i18n(session.lang) }}
+          </span>
+          {{ 'browse_by'|i18n(session.lang) }} <b>{{ entry.user_name }}</b>
+          {{ 'browse_on_date'|i18n(session.lang) }}
+          {{ entry.created_at|dateformat('dateformat_compact'|i18n(session.lang)) }}
+          </a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
 </div>
 {% endblock body %}
