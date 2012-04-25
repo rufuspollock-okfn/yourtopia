@@ -4,3 +4,4 @@
 build/*
 static/compact_*
 venv/*
+static/data/*.db
