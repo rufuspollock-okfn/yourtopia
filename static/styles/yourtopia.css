@@ -227,3 +227,39 @@ body {
 .about .indicator {
   margin-bottom: 2em;
 }
+
+/* Browse page */
+
+.entry {
+}
+.entry .inner {
+  height: 200px;
+  padding: 0.6em 1em;
+  border: 1px solid #ddd;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  border-radius: 6px;
+  display: block;
+}
+.entry .quote {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 133%;
+  display: block;
+  margin-bottom: 0.5em;
+}
+.entry a:link, .entry a:visited {
+  color: #333;
+}
+.entry a:link .quote, .entry a:visited  .quote {
+  color: #666;
+}
+
+/* detail page */
+
+.quote {
+  margin-top: 0.5em;
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 133%;
+}
