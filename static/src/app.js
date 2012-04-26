@@ -1,3 +1,27 @@
+/**
+ * Returns a translated string from
+ * the global object 'i18n_strings'
+ */
+function i18n(key) {
+  if (typeof LANG === 'undefined') {
+    console.log('WARNING: LANG global variable does not exist.');
+    return "UNDEFINED";
+  }
+  if (typeof i18nStrings === 'undefined') {
+    console.log('WARNING: i18nStrings object does not exist.');
+    return "UNDEFINED";
+  }
+  if (typeof i18nStrings[key] === 'undefined') {
+    console.log('WARNING: key 18nStrings.' + key + ' does not exist.');
+    return "UNDEFINED";
+  }
+  if (typeof i18nStrings[key][LANG] === 'undefined') {
+    console.log('WARNING: key 18nStrings.' + key + ' not translated to ' + LANG);
+    return "NOT TRANSLATED";
+  }
+  return i18nStrings[key][LANG];
+}
+
 jQuery(function () {
   var app = new YOURTOPIA.Application();
   Backbone.history.start();
@@ -5,8 +29,6 @@ jQuery(function () {
 
 var x = function($) {
 
-// ## The primary view for the entire application
-//
 YOURTOPIA.Application = Backbone.Router.extend({
 
   routes: {
@@ -32,15 +54,24 @@ YOURTOPIA.Application = Backbone.Router.extend({
     });
     // load data - that might take a while
     // See http://thedatahub.org/dataset/yourtopia-italy/
+
     //var webstore_metadata_url = 'http://thedatahub.org/api/data/fffc6388-01bc-44c4-ba0d-b860d93e6c7c/_search';
     var webstore_metadata_url = '/static/data/metadata.json';
     //var webstore_data_url = 'http://thedatahub.org/api/data/4faaef85-3b22-4ebb-ad28-fcc6bd4f5f3d/_search';
     var webstore_data_url = '/static/data/data.json';
+
     // load metadata
     jQuery.get(webstore_metadata_url, {size: 1000, dataType: 'jsonp'}, function(data){
       var mdata = {};
+      if (data.hits.hits.length === 0) {
+        console.log('WARNING: Metadata has no recognizable data rows. Empty or bad format?');
+      }
       for (var n in data.hits.hits) {
         //console.log(data.hits.hits[n]._source);
+        if (typeof data.hits.hits[n]._source.id == 'undefined') {
+          console.log('WARNING: Metadata row has no id value.');
+          continue;
+        }
         mdata[data.hits.hits[n]._source.id] = {
           'series_id': data.hits.hits[n]._source.id,
           'high_is_good': true,
@@ -67,15 +98,31 @@ YOURTOPIA.Application = Backbone.Router.extend({
       sliders.render();
       indexView.setSourceMetadata(mdata);
     });
+
     /* load and process webstore data */
     jQuery.get(webstore_data_url, {size: 6000, dataType: 'jsonp'}, function(data){
       var pdata = {};
       pdata.series = {};
       pdata.regions = {};
+      if (data.hits.hits.length === 0) {
+        console.log('WARNING: Data has no recognizable data rows. Empty or bad format?');
+      }
       for (var n in data.hits.hits) {
         var row = data.hits.hits[n]._source;
         var year = parseInt(row.year, 10);
         var series_category_key = null;
+        if (typeof row.series_id == 'undefined') {
+          console.log('WARNING: Data row has no series_id value.');
+          continue;
+        }
+        if (row.series_id === '') {
+          console.log('WARNING: Data row has empty series_id.');
+          continue;
+        }
+        if (row.value_normalized === '') {
+          console.log('WARNING: Data row has no value_normalized. Skipped.');
+          continue;
+        }
         // category keys are split into alphabetic and numeric parts
         var matches = row.series_id.match(/([a-z]+)([0-9]+)/);
         if (matches) {
@@ -104,6 +151,7 @@ YOURTOPIA.Application = Backbone.Router.extend({
       indexView.setSourceData(pdata);
     });
     
+    // create the indexView (real-time visualization of index data during weight adjustment)
     var indexView = new YOURTOPIA.View.IndexView({
       model: newIndex,
       el: '.index-create .resultview',
@@ -128,7 +176,19 @@ YOURTOPIA.Application = Backbone.Router.extend({
         indexView.delayedShowSharingBar();
       }
     });
-    this.switchView('index-create');
+    //this.switchView('index-create');
+
+    // saving / sharing
+    var indexShare;
+    jQuery('.sharing button').click(function(){
+      var json_data = JSON.stringify(newIndex);
+      console.log('data to be sent: ', {'data': json_data});
+      jQuery.post('/share/', {'data': json_data}, function(data, textStatus){
+        // success callback
+        console.log('post success:', data, textStatus);
+      });
+    });
+
   },
 
   switchView: function(path) {
