@@ -39,20 +39,21 @@ YOURTOPIA.Model = function($) {
    */
   my.Index = Backbone.Model.extend({
     defaults: {
-      username: null,
+      user_name: null,
+      user_url: null,
       description: null,
       created_at: null,
       weighted_measures: ['employment', 'education',
-        'health', 'environment', 'wealth',
-        'science', 'safety', 'gdp'],
+        'health', 'environment', 'equality',
+        'science', 'safety', 'social'],
       employment_weight: 0.5,
       education_weight: 0.5,
       health_weight: 0.5,
       environment_weight: 0.5,
-      wealth_weight: 0.5,
+      equality_weight: 0.5,
       science_weight: 0.5,
       safety_weight: 0.5,
-      gdp_weight: 0.5
+      social_weight: 0.5
     },
 
     initialize: function() {}
