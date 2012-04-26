@@ -98,14 +98,14 @@ YOURTOPIA.View = function($) {
         var div = $(document.createElement('div')).attr('class', 'details-button ' + measure);
         div.css({width: self.slider_width + 'px'});
         var a = $(document.createElement('a')).attr('href', '#');
-        a.text(measure); // TODO: i18n label
+        a.text(i18n('category_headline_' + measure));
         a.click(measure, detailPanelClickHandler);
         div.append(a);
         buttons_el.append(div);
 
         // detail panel
         var detail_panel = $(document.createElement('div')).attr('class', 'details-panel ' + measure);
-        detail_panel.append('<div class="text"><p>Here goes some text about: ' + measure + '</p></div>');
+        detail_panel.append('<div class="text">' + i18n('category_headline_' + measure) + '</div>');
         var subsliders_cnt_el = $(document.createElement('div')).addClass('subsliders-container');
         subsliders_cnt_el.css({width: self.subSliderWidth + 'px'});
         detail_panel.append(subsliders_cnt_el);
@@ -156,14 +156,14 @@ YOURTOPIA.View = function($) {
           // description text
           // TODO: make language user-selectable
           if (typeof this.sourceMetadata[submeasure_name] !== 'undefined') {
-            if (typeof this.sourceMetadata[submeasure_name].label['en'] !== 'undefined') {
-              detail_panel.find('.text').append('<p class="head '+ submeasure_name +'">'+ this.sourceMetadata[submeasure_name].label['en'] +'</p>');
-              subsliderLabels_el.append('<div class="subslider-label" style="width:'+ (self.subSliderWidth/sub_measures.length - 10) +'px">'+ this.sourceMetadata[submeasure_name].label['en'] +'</div>');
+            if (typeof this.sourceMetadata[submeasure_name].label[LANG] !== 'undefined') {
+              detail_panel.find('.text').append('<p class="head '+ submeasure_name +'">'+ this.sourceMetadata[submeasure_name].label[LANG] +'</p>');
+              subsliderLabels_el.append('<div class="subslider-label" style="width:'+ (self.subSliderWidth/sub_measures.length - 10) +'px">'+ this.sourceMetadata[submeasure_name].label[LANG] +'</div>');
             } else {
-              console.log('Undefined label: ', submeasure_name);
+              console.log('WARNING: Undefined label: ', submeasure_name);
             }
-            if (typeof this.sourceMetadata[submeasure_name].description['en'] !== 'undefined') {
-              detail_panel.find('.text').append('<p class="description '+ submeasure_name +'">'+ this.sourceMetadata[submeasure_name].description['en'] +'</p>');
+            if (typeof this.sourceMetadata[submeasure_name].description[LANG] !== 'undefined') {
+              detail_panel.find('.text').append('<p class="description '+ submeasure_name +'">'+ this.sourceMetadata[submeasure_name].description[LANG] +'</p>');
             } else {
               console.log('Undefined description: ', submeasure_name);
             }
@@ -238,9 +238,9 @@ YOURTOPIA.View = function($) {
       }
     },
     setSourceMetadata: function(data){
-      console.log('views.IndexCreate.setSourceMetadata() called.');
+      //console.log('views.IndexCreate.setSourceMetadata() called.');
       this.sourceMetadata = data;
-    },
+    }
   });
   
   /**
@@ -290,7 +290,7 @@ YOURTOPIA.View = function($) {
     // if updateAfterSetSourceData is true, setSourceData will trigger update function
     updateAfterSetSourceData: false,
     setSourceData: function(data){
-      console.log('views.IndexView.setSourceData() called.');
+      //console.log('views.IndexView.setSourceData() called.');
       this.sourceData = data;
       // remove load notification
       this.$('.result-loading').hide();
@@ -300,7 +300,7 @@ YOURTOPIA.View = function($) {
       }
     },
     setSourceMetadata: function(data){
-      console.log('views.IndexView.setSourceMetadata() called.');
+      //console.log('views.IndexView.setSourceMetadata() called.');
       this.sourceMetadata = data;
     },
     update: function() {
@@ -309,7 +309,6 @@ YOURTOPIA.View = function($) {
       /**
        Here the index calculation and display is done
        **/
-      //console.log('IndexView.update() executed!');
       //console.log(this.sourceData);
       if (typeof this.sourceData == 'undefined') {
         // queue execution for when data is available
@@ -333,17 +332,22 @@ YOURTOPIA.View = function($) {
             if (typeof this.sourceData.series[categories[c]][series_id][region_code] == 'undefined'){
               console.log('WARNING: No data for region "' + region_code + '", series "' + series_id + '"');
             } else {
+              // we use the value from the most recent year
               var years = [];
               for (var year in this.sourceData.series[categories[c]][series_id][region_code]){
                 years.push(parseInt(year, 10));
               }
-              //console.log('region:', region_code, 'series_id:', series_id, 'years:', years);
               years.sort();
               var max_year = years[years.length-1];
               //console.log('region:', region_code, 'series_id:', series_id, 'years:', years, 'max_year:', max_year);
-              //console.log(this.sourceData.series[categories[c]][series_id][region_code][max_year]);
               var value = this.sourceData.series[categories[c]][series_id][region_code][max_year].value_normalized;
-
+              if (typeof value != 'number') {
+                console.log('WARNING: series=' + series_id + ' region=' + region_code + ' year=' + max_year + ' normalized value has invalid type: ' + (typeof value));
+              } else if (isNaN(value)) {
+                console.log('WARNING: series=' + series_id + ' region=' + region_code + ' year=' + max_year + ' normalized value is NaN');
+              }
+              //console.log('region:', region_code, 'series_id:', series_id, 'years:', years, 'max_year:', max_year, 'value:', value);
+              
               var subWeight = 1.0; // default single measure factor
               if (self.model.has(series_id + '_weight')) {
                 subWeight = self.model.get(series_id + '_weight');
@@ -381,6 +385,7 @@ YOURTOPIA.View = function($) {
         row.append('<div class="rowlabel"><span>' + this.sourceData.regions[region_code] +
             '</span></div><dic class="barcontainer"></div>');
         // create bars
+        console.log('region rank value:', region_ranking[n].value);
         var color = map_color_scale.getColor(region_ranking[n].value);
         var bar_element = jQuery(document.createElement('div'))
           .addClass('bar')
@@ -447,6 +452,18 @@ YOURTOPIA.View = function($) {
       raphael_obj.g.remove();
     }
   });
+  
+  /**
+   The view for displaying an index with some data visualization
+   **/
+  views.IndexShare = Backbone.View.extend({
+    initialize: function() {},
+    render: function() {
+      var self = this;
+      console.log('views.IndexShare.render: model.hasChanged? ', self.model.hasChanged());
+    }
+  });
+  
 
   views.radius = function(value, factor) {
     if (typeof factor == 'undefined') {
