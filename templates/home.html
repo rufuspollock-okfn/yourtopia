@@ -2,6 +2,13 @@
 {% block title %}Yourtopia{% endblock %}
 
 {% block body %}
+{# <script>
+var metadata = {{ metadata|tojson|safe }};
+</script>
+#}
+<script>
+var i18nStrings = {{ i18n_strings|tojson|safe }};
+</script>
 <div class="backbone-page index-create">
   <h2>{{ 'index_create_headline'|i18n(session.lang) }}</h2>
   <div id="sharing-top" class="sharing">
@@ -43,11 +50,6 @@
     <div class="buttondiv">
       <button class="btn">{{ 'saveshare_button'|i18n(session.lang) }}</button>
     </div>
-  </div>
-  <div class="footer">
-    {% if devmode %}
-      <b>Development mode is active. If this is the production server, deactivate it!</b>
-    {% endif %}
   </div>
 </div>
 {% endblock body %}
