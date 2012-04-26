@@ -29,6 +29,10 @@
     <meta property="og:image" content="img/meta-image.png" />
     <meta property="og:type" content="non_profit" />
     <link rel="shortcut icon" href="/static/img/favicon.png" type="image/png" />
+    <script>
+    // user's selected language
+    var LANG = "{{ session.lang }}";
+    </script>
     {% endblock head %}
   </head>
 
@@ -63,6 +67,12 @@
 
       {% block body %}{% endblock %}
 
+      <div class="footer">
+      {% if devmode %}
+        <b>Development mode is active. If this is the production server, deactivate it!</b>
+      {% endif %}
+      </div>
+
     </div> <!-- /container -->
 
     <div style="height: 500px">&nbsp;</div>
@@ -81,6 +91,7 @@
     <script src="/static/src/model.js"></script>
     <script src="/static/src/view.js"></script>
     <script src="/static/src/app.js"></script>
+    <script async src="/static/vendor/json2.js"></script>
     {% endif %}
     <!--
     <script src="static/compact_201204231150.js"></script>
