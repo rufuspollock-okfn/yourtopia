@@ -18,6 +18,8 @@ import simplejson as json
 import sqlite3
 from contextlib import closing
 import datetime
+from flask import abort
+import urllib
 
 # dev mode
 DEV_MODE = True
@@ -54,18 +56,27 @@ def about():
 
 @app.route('/i/<int:id>/')
 def details(id):
+    url = request.scheme + "://" + request.host + request.path
+    category_headlines = extract_i18n_keys(i18n, r'category_headline.*')
     entry = get_usercreated_entries(id=id)
-    return render_template('details.html', entry=entry)
+    return render_template('details.html', entry=entry, i18n_strings=category_headlines, url=url)
 
 
-@app.route('/share/<int:id>/')
-def share_single(id):
+@app.route('/edit/<int:id>/')
+def edit_single(id):
+    # user can only access his own ID here
+    if 'dataset_id' not in session:
+        abort(401)
+    if session['dataset_id'] != id:
+        abort(401)
     entry = get_usercreated_entries(id=id)
-    return render_template('share.html', id=id, entry=entry)
+    i18n_strings = extract_i18n_keys(i18n, r'category_headline.*')
+    i18n_strings.update(extract_i18n_keys(i18n, r'sharing_.*'))
+    return render_template('edit.html', id=id, entry=entry, i18n_strings=i18n_strings)
 
 
-@app.route('/share/', methods=['POST'])
-def share():
+@app.route('/edit/', methods=['POST'])
+def edit():
     """
     This view function receives the user-created model
     via POST and redirects the user to finalize the
@@ -73,9 +84,33 @@ def share():
     in the session.
     """
     anonymized_ip = anonymize_ip(request.remote_addr)
-    id = add_usercreated_entry(request.form['data'], anonymized_ip)
-    session['dataset_id'] = id
-    return redirect(url_for('share_single', id=id))
+    if 'id' not in request.form:
+        # first save
+        id = add_usercreated_entry(request.form['data'], anonymized_ip)
+        session['dataset_id'] = id
+        return redirect(url_for('edit_single', id=id))
+    else:
+        # second/subsequent save (publishing/sharing)
+        id = session['dataset_id']
+        if id != int(request.form['id']):
+            # user is probably creating a second dataset
+            abort(401)
+        user_name = None
+        user_url = None
+        description = None
+        if 'description' in request.form:
+            if request.form['description'] != i18n['sharing_textfield_default'][session['lang']]:
+                description = request.form['description']
+        if 'user_name' in request.form:
+            if request.form['user_name'] != i18n['sharing_userfield_default'][session['lang']]:
+                user_name = request.form['user_name']
+        if 'user_url' in request.form:
+            user_url = request.form['user_url']
+        update_usercreated_entry(id=id,
+            user_name=user_name,
+            user_url=user_url,
+            description=description)
+        return redirect(url_for('details', id=id))
 
 
 def connect_db():
@@ -113,11 +148,8 @@ def add_usercreated_entry(json_data, ip):
     Writes the user-generated data to the database and returns the ID
     """
     data = json.loads(json_data)
-    user_name = data['user_name']
-    user_url = data['user_url']
-    description = data['description']
-    user_name = data['user_name']
-    user_name = data['user_name']
+    country = data['country']
+    version = data['version']
     weights = {}
     for key in data.keys():
         # if key ends in _weight, it is used
@@ -128,13 +160,23 @@ def add_usercreated_entry(json_data, ip):
     g.db = get_connection()
     cur = g.db.cursor()
     cur.execute('''INSERT INTO usercreated
-        (user_name, user_url, description, weights, created_at, user_ip)
-        VALUES(?, ?, ?, ?, DATETIME("NOW"), ?)''', [user_name, user_url, description,
-        json.dumps(weights), ip])
+        (weights, created_at, user_ip, country, version)
+        VALUES(?, DATETIME("NOW"), ?, ?, ?)''', [json.dumps(weights), ip, country, version])
     g.db.commit()
     id = cur.lastrowid
     cur.close()
     return id
+
+
+def update_usercreated_entry(id, user_name, user_url, description):
+    """
+    Extends a previously created user-generated dataset
+    """
+    g.db = get_connection()
+    g.db.execute('''UPDATE usercreated
+        SET user_name=?, user_url=?, description=?
+        WHERE id=?''', [user_name, user_url, description, id])
+    g.db.commit()
 
 
 def query_db(query, args=(), one=False):
@@ -154,7 +196,6 @@ def import_series_metadata(path):
     """
     Reads metadata information from JSON file
     """
-    app.logger.debug('import_series_metadata() called')
     try:
         f = open(path)
     except:
@@ -273,6 +314,7 @@ def i18n_filter(s, lang="en"):
     if session['lang'] == '':
         app.logger.debug("Key is empty: " + s)
         return 'Key "' + s + '" in "' + session['lang'] + '" is empty'
+    #app.logger.debug(['i18n_filter', i18n[s][session['lang']]])
     return Markup(i18n[s][session['lang']])
 
 
@@ -293,6 +335,16 @@ def nl2br(eval_ctx, value):
     if eval_ctx.autoescape:
         result = Markup(result)
     return result
+
+
+@app.template_filter('urlencode')
+def urlencode_filter(s):
+    if type(s) == 'Markup':
+        s = s.unescape()
+    s = s.encode('utf8')
+    s = urllib.quote_plus(s)
+    #app.logger.debug(['urlencode', s])
+    return Markup(s)
 
 
 @app.teardown_request
