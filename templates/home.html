@@ -6,9 +6,6 @@
 var metadata = {{ metadata|tojson|safe }};
 </script>
 #}
-<script>
-var i18nStrings = {{ i18n_strings|tojson|safe }};
-</script>
 <div class="backbone-page index-create">
   <h2>{{ 'index_create_headline'|i18n(session.lang) }}</h2>
   <div id="sharing-top" class="sharing">
