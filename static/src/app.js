@@ -22,85 +22,54 @@ function i18n(key) {
   return i18nStrings[key][LANG];
 }
 
-jQuery(function () {
-  var app = new YOURTOPIA.Application();
-  Backbone.history.start();
-});
-
-var x = function($) {
-
-YOURTOPIA.Application = Backbone.Router.extend({
-
-  routes: {
-    '': 'indexCreate',
-    'all': 'indexList',
-    'about': 'about'
-  },
-
-  indexview_update_timeout: null,
-
-  about: function(){
-    var view = new YOURTOPIA.View.About();
-    view.render();
-    this.switchView('about');
-  },
-
-  indexCreate: function() {
-    var sharing_bar_visible = false;
-    var newIndex = new YOURTOPIA.Model.Index();
-    var sliders = new YOURTOPIA.View.IndexCreate({
-      model: newIndex,
-      el: '.index-create .sliders'
-    });
-    // load data - that might take a while
-    // See http://thedatahub.org/dataset/yourtopia-italy/
-
-    //var webstore_metadata_url = 'http://thedatahub.org/api/data/fffc6388-01bc-44c4-ba0d-b860d93e6c7c/_search';
-    var webstore_metadata_url = '/static/data/metadata.json';
-    //var webstore_data_url = 'http://thedatahub.org/api/data/4faaef85-3b22-4ebb-ad28-fcc6bd4f5f3d/_search';
-    var webstore_data_url = '/static/data/data.json';
-
-    // load metadata
-    jQuery.get(webstore_metadata_url, {size: 1000, dataType: 'jsonp'}, function(data){
-      var mdata = {};
-      if (data.hits.hits.length === 0) {
-        console.log('WARNING: Metadata has no recognizable data rows. Empty or bad format?');
+/**
+ * Loads the series metadata, parses it, and passes it
+ * as one object to the callback function.
+ */
+function loadMetadata(url, callback) {
+  jQuery.get(url, {size: 1000, dataType: 'jsonp'}, function(data){
+    var mdata = {};
+    if (data.hits.hits.length === 0) {
+      console.log('WARNING: Metadata has no recognizable data rows. Empty or bad format?');
+    }
+    for (var n in data.hits.hits) {
+      //console.log(data.hits.hits[n]._source);
+      if (typeof data.hits.hits[n]._source.id == 'undefined') {
+        console.log('WARNING: Metadata row has no id value.');
+        continue;
       }
-      for (var n in data.hits.hits) {
-        //console.log(data.hits.hits[n]._source);
-        if (typeof data.hits.hits[n]._source.id == 'undefined') {
-          console.log('WARNING: Metadata row has no id value.');
+      mdata[data.hits.hits[n]._source.id] = {
+        'series_id': data.hits.hits[n]._source.id,
+        'high_is_good': true,
+        'label': {},
+        'description': {}
+      };
+      if (data.hits.hits[n]._source.high_is_good == 'FALSE') {
+        mdata[data.hits.hits[n]._source.id].high_is_good = false;
+      }
+      // grab content by key
+      for (var key in data.hits.hits[n]._source) {
+        var val = data.hits.hits[n]._source[key];
+        if (val === "") {
           continue;
         }
-        mdata[data.hits.hits[n]._source.id] = {
-          'series_id': data.hits.hits[n]._source.id,
-          'high_is_good': true,
-          'label': {},
-          'description': {}
-        };
-        if (data.hits.hits[n]._source.high_is_good == 'FALSE') {
-          mdata[data.hits.hits[n]._source.id].high_is_good = false;
-        }
-        // grab content by key
-        for (var key in data.hits.hits[n]._source) {
-          var val = data.hits.hits[n]._source[key];
-          if (val === "") {
-            continue;
-          }
-          if (key.indexOf('@') > -1) {
-            // i18n strings
-            var parts = key.split('@');
-            mdata[data.hits.hits[n]._source.id][parts[0]][parts[1]] = val;
-          }
+        if (key.indexOf('@') > -1) {
+          // i18n strings
+          var parts = key.split('@');
+          mdata[data.hits.hits[n]._source.id][parts[0]][parts[1]] = val;
         }
       }
-      sliders.setSourceMetadata(mdata);
-      sliders.render();
-      indexView.setSourceMetadata(mdata);
-    });
+    }
+    callback(mdata);
+  });
+}
 
-    /* load and process webstore data */
-    jQuery.get(webstore_data_url, {size: 6000, dataType: 'jsonp'}, function(data){
+/**
+ * Loads the data series data, parses it and
+ * passes it as one object to the callback function.
+ */
+function loadSourceData(url, callback) {
+  jQuery.get(url, {size: 6000, dataType: 'jsonp'}, function(data){
       var pdata = {};
       pdata.series = {};
       pdata.regions = {};
@@ -148,7 +117,88 @@ YOURTOPIA.Application = Backbone.Router.extend({
         }
       }
       // hand parsed data over to the index view object
-      indexView.setSourceData(pdata);
+      callback(pdata);
+    });
+}
+
+jQuery(function () {
+
+  // we select page by page which app to start
+  var app;
+  // home page
+  if ($('.backbone-page.index-create').length) {
+    app = new YOURTOPIA.Home();
+  }
+  else if ($('.backbone-page.edit').length) {
+    app = new YOURTOPIA.Edit();
+  }
+  else if ($('.backbone-page.details').length) {
+    app = new YOURTOPIA.Details();
+  }
+  if (typeof app != 'undefined') {
+    Backbone.history.start();
+  }
+});
+
+
+YOURTOPIA.config = {};
+
+// will mark the resulting dataset's country field
+// (ue two- or three-letter code)
+YOURTOPIA.config.country = 'IT';
+
+// will be written to the dataset as version field
+// and should be changed whenever the source data criteria
+// change. Use Integer.
+YOURTOPIA.config.version = 1;
+
+// These are the main categories the user can adjust weights for.
+// They can have sub-categories.
+YOURTOPIA.config.indicator_categories = ['employment',
+    'education', 'health', 'environment', 'equality',
+    'science', 'safety', 'social'];
+
+// The default value for main category weights
+YOURTOPIA.config.category_value_default = 0.5;
+
+// Data source: http://thedatahub.org/dataset/yourtopia-italy/
+//var YOURTOPIA.config.webstore_metadata_url = 'http://thedatahub.org/api/data/fffc6388-01bc-44c4-ba0d-b860d93e6c7c/_search';
+YOURTOPIA.config.webstore_metadata_url = '/static/data/metadata.json';
+//var YOURTOPIA.config.webstore_data_url = 'http://thedatahub.org/api/data/4faaef85-3b22-4ebb-ad28-fcc6bd4f5f3d/_search';
+YOURTOPIA.config.webstore_data_url = '/static/data/data.json';
+
+var x = function($) {
+
+YOURTOPIA.Home = Backbone.Router.extend({
+
+  routes: {
+    '': 'indexCreate'
+  },
+
+  indexview_update_timeout: null,
+
+  /**
+   * indexCreate reflects the start page. Allows user to adjust
+   * weights of various criteria and hit save to progress.
+   */
+  indexCreate: function() {
+    var sharing_bar_visible = false;
+    var newIndex = new YOURTOPIA.Model.Index();
+    var sliders = new YOURTOPIA.View.IndexCreate({
+      model: newIndex,
+      el: '.index-create .sliders'
+    });
+
+    // load metadata
+    loadMetadata(YOURTOPIA.config.webstore_metadata_url, function(data){
+      indexView.setSourceMetadata(data);
+      sliders.setSourceMetadata(data);
+      sliders.render();
+    });
+
+    // load data series
+    loadSourceData(YOURTOPIA.config.webstore_data_url, function(data){
+      indexView.setSourceData(data);
     });
     
     // create the indexView (real-time visualization of index data during weight adjustment)
@@ -161,14 +211,14 @@ YOURTOPIA.Application = Backbone.Router.extend({
     indexView.delayedUpdate = function() {
       // delaying the result view update so that it's only
       // called after the user stops dragging the sliders
-      window.clearTimeout(YOURTOPIA.Application.indexview_update_timeout);
-      YOURTOPIA.Application.indexview_update_timeout = window.setTimeout(function(){indexView.update();}, 250);
+      window.clearTimeout(YOURTOPIA.Home.indexview_update_timeout);
+      YOURTOPIA.Home.indexview_update_timeout = window.setTimeout(function(){indexView.update();}, 250);
     };
     indexView.delayedShowSharingBar = function() {
       sharing_bar_visible = true;
       window.setTimeout(function(){
         jQuery('#sharing-top').slideDown('700', 'swing');
-      }, 3000);
+      }, 1000);
     };
     newIndex.on('change', function(){
       indexView.delayedUpdate();
@@ -176,25 +226,83 @@ YOURTOPIA.Application = Backbone.Router.extend({
         indexView.delayedShowSharingBar();
       }
     });
-    //this.switchView('index-create');
 
-    // saving / sharing
-    var indexShare;
-    jQuery('.sharing button').click(function(){
-      var json_data = JSON.stringify(newIndex);
-      console.log('data to be sent: ', {'data': json_data});
-      jQuery.post('/share/', {'data': json_data}, function(data, textStatus){
-        // success callback
-        console.log('post success:', data, textStatus);
-      });
+  }
+
+});
+
+
+/**
+ * Share allows the user to add his user details to a dataset and
+ * share it via different channels
+ */
+YOURTOPIA.Edit = Backbone.Router.extend({
+  routes: {
+    '': 'edit'
+  },
+  edit: function() {
+    var savedIndex = new YOURTOPIA.Model.Index(userDataset);
+    var saveForm = new YOURTOPIA.View.SaveForm({
+      el: '#saveform',
+      model: savedIndex
+    });
+    saveForm.render();
+    var sliders = new YOURTOPIA.View.IndexCreate({
+      model: savedIndex,
+      el: '.sliders'
+    });
+    sliders.readOnly = true;
+    var indexView = new YOURTOPIA.View.IndexView({
+      model: savedIndex,
+      el: '.resultview',
+      sourceData: null
     });
 
-  },
+    indexView.render();
+    loadMetadata(YOURTOPIA.config.webstore_metadata_url, function(data){
+      indexView.setSourceMetadata(data);
+      sliders.setSourceMetadata(data);
+      sliders.render();
+    });
+    loadSourceData(YOURTOPIA.config.webstore_data_url, function(data){
+      indexView.setSourceData(data);
+      indexView.update();
+    });
 
-  switchView: function(path) {
-    $('.backbone-page').hide();
-    var cssClass = path.replace('/', '-');
-    $('.' + cssClass).show();
+  }
+});
+
+/**
+ * Share allows the user to add his user details to a dataset and
+ * share it via different channels
+ */
+YOURTOPIA.Details = Backbone.Router.extend({
+  routes: {
+    '': 'details'
+  },
+  details: function() {
+    var savedIndex = new YOURTOPIA.Model.Index(userDataset);
+    var sliders = new YOURTOPIA.View.IndexCreate({
+      model: savedIndex,
+      el: '.sliders'
+    });
+    sliders.readOnly = true;
+    var indexView = new YOURTOPIA.View.IndexView({
+      model: savedIndex,
+      el: '.resultview',
+      sourceData: null
+    });
+    indexView.render();
+    loadMetadata(YOURTOPIA.config.webstore_metadata_url, function(data){
+      indexView.setSourceMetadata(data);
+      sliders.setSourceMetadata(data);
+      sliders.render();
+    });
+    loadSourceData(YOURTOPIA.config.webstore_data_url, function(data){
+      indexView.setSourceData(data);
+      indexView.update();
+    });
+
   }
 });
 
