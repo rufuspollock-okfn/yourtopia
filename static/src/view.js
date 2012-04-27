@@ -2,15 +2,8 @@ YOURTOPIA.View = function($) {
 
   var views = {};
 
-  views.About= Backbone.View.extend({
-    initialize: function() {},
-    render: function() {
-      var page_title = 'About page headline h1';
-      $('.page-header h1').html(page_title);
-    }
-  });
-
   views.IndexCreate = Backbone.View.extend({
+    readOnly: false,
     initialize: function() {},
     render: function() {
       //var page_title = 'This is Yourtopia';
@@ -61,26 +54,22 @@ YOURTOPIA.View = function($) {
           'M' + parseInt(x_middle, 10) + ' ' + self.sliderPaddingTop +
           'L' + parseInt(x_middle, 10) + ' ' + (self.sliderRange + self.sliderPaddingTop))
           .attr({'stroke': '#666', 'stroke-width': '1'});
-        // draw text label
-        // TODO: replace with i18n label
-        /*
-        self.svg.text(x_middle, self.sliderPadding + self.sliderRange + 40, this.model.attributes.weighted_measures[m])
-          .attr({'font-size': '13px'});
-          */
         // draw slider handle
         self.handle = self.svg.circle(
           x_middle,
           self.sliderRange - (this.model.get(measure_name) * self.sliderRange) + self.sliderPaddingTop,
           views.radius(this.model.get(measure_name)))
           .attr({
-              'cursor': 'pointer',
               'fill': 'white',
               'stroke': '#666',
               'stroke-width': '2'
           });
         self.handle.id = measure_name;
-        self.handle.drag(onMoveSliderHandler, startDragSliderHandler);
-        self.handle.hover(onMouseEnterSliderHandler, onMouseOutSliderHandler);
+        if (!this.readOnly) {
+          self.handle.attr('cursor', 'pointer');
+          self.handle.drag(onMoveSliderHandler, startDragSliderHandler);
+          self.handle.hover(onMouseEnterSliderHandler, onMouseOutSliderHandler);
+        }
         slider_count++;
       }  // end: iterate main index categories
 
@@ -105,7 +94,7 @@ YOURTOPIA.View = function($) {
 
         // detail panel
         var detail_panel = $(document.createElement('div')).attr('class', 'details-panel ' + measure);
-        detail_panel.append('<div class="text">' + i18n('category_headline_' + measure) + '</div>');
+        detail_panel.append('<div class="text"></div>');
         var subsliders_cnt_el = $(document.createElement('div')).addClass('subsliders-container');
         subsliders_cnt_el.css({width: self.subSliderWidth + 'px'});
         detail_panel.append(subsliders_cnt_el);
@@ -145,14 +134,16 @@ YOURTOPIA.View = function($) {
             self.subSliderPaddingTop, // default = max
             views.radius(1.0, self.subSliderSizeFactor))
             .attr({
-                'cursor': 'pointer',
                 'fill': 'white',
                 'stroke': '#666',
                 'stroke-width': '2'
             });
           self.handle.id = submeasure_name + '_weight';
-          self.handle.drag(onMoveSubSliderHandler, startDragSubSliderHandler);
-          self.handle.hover(onMouseEnterSliderHandler, onMouseOutSliderHandler);
+          if (!this.readOnly) {
+            self.handle.attr('cursor', 'pointer');
+            self.handle.drag(onMoveSubSliderHandler, startDragSubSliderHandler);
+            self.handle.hover(onMouseEnterSliderHandler, onMouseOutSliderHandler);
+          }
           // description text
           // TODO: make language user-selectable
           if (typeof this.sourceMetadata[submeasure_name] !== 'undefined') {
@@ -176,6 +167,18 @@ YOURTOPIA.View = function($) {
       }
       details_el.append(buttons_el);
       details_el.append(panels_el);
+
+      // saving / sharing
+      if (!this.readOnly) {
+        jQuery('.sharing button').click(function(){
+          var json_data = JSON.stringify(self.model);
+          // create a form on the page
+          $('body').append('<form id="saveform" action="/edit/" method="post"><input type="hidden" class="input-data" name="data" /></form>');
+          $('#saveform .input-data').val(json_data);
+          // form is submitted and user redirected to /edit/<id>/
+          $('#saveform').trigger('submit');
+        });
+      }
 
       // mouse enter/out
       function onMouseEnterSliderHandler() {
@@ -385,7 +388,7 @@ YOURTOPIA.View = function($) {
         row.append('<div class="rowlabel"><span>' + this.sourceData.regions[region_code] +
             '</span></div><dic class="barcontainer"></div>');
         // create bars
-        console.log('region rank value:', region_ranking[n].value);
+        //console.log('region rank value:', region_ranking[n].value);
         var color = map_color_scale.getColor(region_ranking[n].value);
         var bar_element = jQuery(document.createElement('div'))
           .addClass('bar')
@@ -456,11 +459,26 @@ YOURTOPIA.View = function($) {
   /**
    The view for displaying an index with some data visualization
    **/
-  views.IndexShare = Backbone.View.extend({
+  views.SaveForm = Backbone.View.extend({
     initialize: function() {},
     render: function() {
       var self = this;
-      console.log('views.IndexShare.render: model.hasChanged? ', self.model.hasChanged());
+      // set characters left plugin
+      //console.log(jQuery('.description-textarea'));
+      //console.log(this.$('.description-textarea'));
+      
+      this.$('.description-textarea').charsLeft({
+          maxChars: 200,
+          charPrefix: "",
+          charSuffix: i18n('sharing_url_charsleft')
+      });
+
+      // saving
+      jQuery('#save').click(function(evt){
+        evt.preventDefault();
+        jQuery('#saveform').trigger('submit');
+      });
+      
     }
   });
   
