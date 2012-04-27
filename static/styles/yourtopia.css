@@ -1,14 +1,9 @@
 body {
-  padding-top: 20px; /* 60px to make the container go all the way to the bottom of the topbar */
+  padding-top: 20px;
 }
 
 #header {
-  overflow: auto;
-}
-#header #logo {
-  float: left;
-  width: 240px;
-  padding-right: 20px;
+  padding-bottom: 2em;
 }
 #header .tagline {
   font-size: 88%;
@@ -16,20 +11,32 @@ body {
   position: relative;
   top: -8px;
 }
-#header ul.nav {
-  width: 550px;
-  float: left;
-}
 #header .lang {
-  float: left;
-  width: 130px;
+  padding-top: 8px;
+  text-align: right;
 }
 
+/* footer */
+footer {
+  font-size: 88%;
+  margin-bottom: 10em;
+}
+footer .firstrow {
+  margin-top: 3em;
+  border-top: 1px solid #ddd;
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+footer .secondrow {
+  border-top: 1px solid #ddd;
+  padding-top: 1em;
+}
 
+/* Home page */
 #sharing-top {
   display: none;
 }
-.sharing {
+.index-create .sharing {
   border-top: 1px solid #ccc;
   border-bottom: 1px solid #ccc;
   padding: 14px 0;
@@ -37,24 +44,32 @@ body {
   overflow: auto;
   height: 48px;
 }
-.sharing .text {
+.index-create .sharing .text {
   float: left;
   text-align: center;
   width: 70%;
   font-size: 112%;
 }
-.sharing .buttondiv {
+.index-create .sharing .text.note {
+  float: left;
+  text-align: left;
+  width: 66%;
+  padding-left: 1em;
+  padding-right: 3em;
+  font-size: 88%;
+}
+.index-create .sharing .buttondiv {
   float: left;
   text-align: left;
   width: 28%;
 }
 
-.sharing button, .sharing a {
+.index-create .sharing button, .index-create .sharing a, #save {
   padding: 8px 35px;
   font-size: 112%;
 }
 
-.index-create .sliders {
+.sliders {
 	height: 180px;
 }
 
@@ -263,3 +278,79 @@ body {
   font-style: italic;
   font-size: 133%;
 }
+.sharing-functions {
+  border: 1px solid #ddd;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  border-radius: 6px;
+  padding: 1.2em 1.5em;
+  margin-top: 1.5em;
+}
+.socmedia-sharing {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  border-top: 1px solid #ccc;
+  padding-top: 1em;
+}
+.email-sharing {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  border-top: 1px solid #ccc;
+  padding-top: 1em;
+}
+.socmedia-sharing {
+  padding-top: 1em;
+}
+.manual-sharing {
+  margin-top: 1em;
+  border-top: 1px solid #ccc;
+  padding-top: 1em;
+}
+.manual-sharing input {
+  width: 50em;
+}
+.btn.fbook {
+  background-color: #3b5998;
+  linear-gradient(#5670a6, #344f86);
+  background-image: -webkit-linear-gradient(top, #5670a6, #344f86);
+  color: #fff;
+}
+.btn.twitter {
+  background-color: #33ccff;
+  linear-gradient(#47d0ff, #2db3e1);
+  background-image: -webkit-linear-gradient(top, #47d0ff, #2db3e1);
+}
+.btn.gplus {
+  background-color: #d74a2d;
+  linear-gradient(#de6145, #ba3d25);
+  background-image: -webkit-linear-gradient(top, #de6145, #ba3d25);
+  color: #fff;
+}
+
+/* edit page */
+.edit h1 {
+  margin-top: 0.3em;
+  margin-bottom: 0.4em;
+}
+.edit .description-textarea {
+  width: 99%;
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 133%;
+  margin-bottom: 3px;
+}
+.edit .charsLeft {
+  font-size: 88%;
+  text-align: right;
+}
+.edit .saveshare {
+  margin-top: 1em;
+  padding-top: 1em;
+  padding-bottom: 1em;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+}
+
+
+
+
