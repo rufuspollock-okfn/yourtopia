@@ -1,0 +1,8 @@
+Flask==0.8
+Jinja2==2.6
+Werkzeug==0.8.3
+cssmin==0.1.4
+jsmin==2.0.2
+simplejson==2.5.0
+unicodecsv==0.9.0
+wsgiref==0.1.2

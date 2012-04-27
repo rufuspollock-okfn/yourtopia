@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Save &amp; Share your Yourtopia{% endblock %}
+
+{% block body %}
+<div class="backbone-page edit">
+  
+  <form id="saveform" action="{{ url_for('edit') }}" method="post">
+
+    <input type="hidden" id="input-id" name="id" value="{{ entry.id }}" />
+    <input type="hidden" name="user_url" />
+    
+    <div class="row">
+      <div class="span12">
+        {{ 'sharing_instruction'|i18n(session.lang) }}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="span12">
+        <h1>{{ 'details_headline'|i18n(session.lang) }}</h1>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="span12">
+        {{ 'browse_by'|i18n(session.lang) }} <input id="input-username" type="text" value="{{ 'sharing_userfield_default'|i18n(session.lang) }}" name="user_name" /> {{ 'browse_on_date'|i18n(session.lang) }} {{ entry.created_at|dateformat('dateformat_compact'|i18n(session.lang)) }}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="span12">
+        <textarea id="description-textarea" class="description-textarea" name="description">{{ 'sharing_textfield_default'|i18n(session.lang) }}</textarea>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="span12 saveshare">
+        <div class="span8 text">
+          {{ 'sharing_privacy_note'|i18n(session.lang) }}
+        </div>
+        <div class="span3 buttondiv">
+          <button id="save" class="btn">{{ 'saveshare_button'|i18n(session.lang) }}</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sliders"></div>
+    <div class="measure-details"></div>
+    <div class="resultview" style="display: none;">
+    <div class="result-loading">{{ 'progress_wait_while_loading'|i18n(session.lang) }}</div>
+    <div class="result-available" style="display: none;">
+      <ul class="nav nav-tabs">
+        <li class="active"><a href="#rankmap" data-toggle="tab">{{ 'map_ranking_tab'|i18n(session.lang) }}</a></li>
+        <li><a href="#timeline" data-toggle="tab">{{ 'timeline_tab'|i18n(session.lang) }}</a></li>
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane active" id="rankmap">
+          <div class="rankmap-container">
+            <div id="map">
+              <div class="svgmap"></div>
+            </div>
+            <div id="rank"></div>
+          </div>
+        </div>
+        <div class="tab-pane" id="timeline"></div>
+      </div>
+    </div>
+
+  
+  </form>
+
+
+</div>
+{% endblock body %}
