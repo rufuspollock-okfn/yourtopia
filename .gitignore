@@ -5,3 +5,4 @@ build/*
 static/compact_*
 venv/*
 static/data/*.db
+static/data/series_data.csv
