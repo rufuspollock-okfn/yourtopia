@@ -71,9 +71,11 @@ def save_image_versions(img, id, root_path):
         os.makedirs(folder)
     # preview image for browse page
     browse_img = img.resize((270, 100), Image.ANTIALIAS)
+    browse_img = browse_img.convert("L")
     browse_img.save(folder + os.sep + 'pv.png', 'PNG')
     # opengraph / facebook image
     og_img = img.resize((130, 48), Image.ANTIALIAS)
+    og_img = og_img.convert("L")
     og_img.save(folder + os.sep + 'og.png', 'PNG')
 
 
