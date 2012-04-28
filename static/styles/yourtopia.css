@@ -2,6 +2,10 @@ body {
   padding-top: 20px;
 }
 
+h1 {
+  margin-bottom: 0.4em;
+}
+
 #header {
   padding-bottom: 2em;
 }
@@ -31,23 +35,26 @@ footer .secondrow {
   border-top: 1px solid #ddd;
   padding-top: 1em;
 }
+footer .okfnlogo {
+  background: url(/static/img/okfn-logo.png) no-repeat;
+  padding-left: 40px;
+}
 
 /* Home page */
 #sharing-top {
   display: none;
 }
-.index-create .sharing {
+.index-create .sharing, .details .create-your-own {
   border-top: 1px solid #ccc;
   border-bottom: 1px solid #ccc;
   padding: 14px 0;
   margin-top: 10px;
-  overflow: auto;
+}
+.index-create .sharing {
   height: 48px;
 }
-.index-create .sharing .text {
-  float: left;
+.index-create .sharing .text, .details .create-your-own .text {
   text-align: center;
-  width: 70%;
   font-size: 112%;
 }
 .index-create .sharing .text.note {
@@ -58,13 +65,11 @@ footer .secondrow {
   padding-right: 3em;
   font-size: 88%;
 }
-.index-create .sharing .buttondiv {
-  float: left;
-  text-align: left;
-  width: 28%;
-}
 
-.index-create .sharing button, .index-create .sharing a, #save {
+.index-create .sharing button,
+.index-create .sharing a,
+#save,
+.details .create-your-own .btn {
   padding: 8px 35px;
   font-size: 112%;
 }
@@ -207,29 +212,6 @@ footer .secondrow {
   color: #ffffff;
 }
 
-
-#bubble {
-  position: absolute;
-  top: 1;
-  left: 1;
-  font-size: 76%;
-  background-color: rgba(245, 245, 245, 0.93);
-  width: 200px;
-  padding: 7px;
-  -moz-box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.2);
-  -webkit-box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.2);
-  box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.2);
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
-  border-radius: 4px;
-  border-top: 1px solid rgba(255, 255, 255, 0.3);
-  border-right: 1px solid rgba(0, 0, 0, 0.3);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.3);
-  border-left: 1px solid rgba(255, 255, 255, 0.3);
-  z-index: 100;
-  display: none;
-}
-
 .footer {
   margin-top: 2em;
   padding-top: 1em;
@@ -247,9 +229,10 @@ footer .secondrow {
 
 /* Browse page */
 
-.entry .inner {
-  height: 200px;
+.browse .inner {
+  height: 220px;
   padding: 0.6em 1em;
+  padding-top: 1.2em;
   border: 1px solid #ddd;
   -moz-border-radius: 6px;
   -webkit-border-radius: 6px;
@@ -269,11 +252,28 @@ footer .secondrow {
 .entry a:link .quote, .entry a:visited  .quote {
   color: #666;
 }
+.browse .paddingbottom {
+  padding-bottom: 1em;
+}
+
+.browse .paging {
+  padding-top: 2em;
+}
+.paging .btn-group {
+  text-align: center;
+}
+.paging .btn {
+  padding-left: 30px;
+  padding-right: 30px;
+  display: inline-block;
+  float: none;
+}
 
 /* detail page */
 
-.quote {
+.details .quote {
   margin-top: 0.5em;
+  margin-bottom: 0.5em;
   font-family: Georgia, serif;
   font-style: italic;
   font-size: 133%;

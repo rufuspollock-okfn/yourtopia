@@ -3,48 +3,64 @@
 
 {% block body %}
 <div class="backbone-page details">
-  
-  <h1>{{ 'details_headline'|i18n(session.lang) }}</h1>
+    
+  <div class="row">
+    <div class="span12">
+      <h1>{{ 'details_headline'|i18n(session.lang) }}</h1>
+    </div>
+  </div>
 
-  <p>
-    Yourtopia {{ 'number_prefix'|i18n(session.lang) }} {{ entry.id }}, {{ 'browse_by'|i18n(session.lang)|lower }} <strong>{{ entry.user_name }}</strong>
-    {{ 'browse_on_date'|i18n(session.lang) }}
-    {{ entry.created_at|dateformat('dateformat_compact'|i18n(session.lang)) }}
-  </p>
-  <p class="quote">
-    {{ 'quotation_on'|i18n(session.lang) }}{{ entry.description }}{{ 'quotation_off'|i18n(session.lang) }}
-  </p>
+  <div class="row">
+    <div class="span12">
+      <div>
+        Yourtopia {{ 'number_prefix'|i18n(session.lang) }} {{ entry.id }}, {{ 'browse_by'|i18n(session.lang)|lower }} <strong>{{ entry.user_name }}</strong>
+        {{ 'browse_on_date'|i18n(session.lang) }}
+        {{ entry.created_at|dateformat('dateformat_compact'|i18n(session.lang)) }}
+      </div>
+      {% if entry.description %}
+      <div class="quote">
+        {{ 'quotation_on'|i18n(session.lang) }}{{ entry.description }}{{ 'quotation_off'|i18n(session.lang) }}
+      </div>
+      {% endif %}
+    </div>
+  </div>
   
   {% if session.dataset_id == entry.id %}
-    <div class="sharing-functions">
-      <h3>{{ 'sharing_dialog_title'|i18n(session.lang) }}</h3>
-      <div class="socmedia-sharing">
-        <p>{{ 'sharing_dialog_claim'|i18n(session.lang) }}</p>
-        <div class="sharing-buttons">
-          <a class="btn-large btn fbook" target="_blank" href="http://www.facebook.com/sharer.php?u={{ url|urlencode }}&amp;t={{ 'details_headline'|i18n(session.lang)|urlencode }}">{{ 'sharing_dialog_facebook_button'|i18n(session.lang) }}</a>
-          <a class="btn-large btn twitter" target="_blank" href="https://twitter.com/intent/tweet?url={{ url|urlencode }}&amp;via=OKFN&amp;text={{ 'details_headline'|i18n(session.lang)|urlencode }}{{ ':'|urlencode }}+{{ url|urlencode }}&amp;source=tweetbutton">{{ 'sharing_dialog_twitter_button'|i18n(session.lang) }}</a>
-          <a class="btn-large btn gplus" target="_blank" href="https://plusone.google.com/_/+1/confirm?hl={{ session.lang }}&amp;url={{ url|urlencode }}">{{ 'sharing_dialog_gplus_button'|i18n(session.lang) }}</a>
+  <div class="row">
+    <div class="span12">
+      <div class="sharing-functions">
+        <h3>{{ 'sharing_dialog_title'|i18n(session.lang) }}</h3>
+        <div class="socmedia-sharing">
+          <p>{{ 'sharing_dialog_claim'|i18n(session.lang) }}</p>
+          <div class="sharing-buttons">
+            <a class="btn-large btn fbook" target="_blank" href="http://www.facebook.com/sharer.php?u={{ url|urlencode }}&amp;t={{ 'details_headline'|i18n(session.lang)|urlencode }}">{{ 'sharing_dialog_facebook_button'|i18n(session.lang) }}</a>
+            <a class="btn-large btn twitter" target="_blank" href="https://twitter.com/intent/tweet?url={{ url|urlencode }}&amp;via=OKFN&amp;text={{ 'details_headline'|i18n(session.lang)|urlencode }}{{ ':'|urlencode }}+{{ url|urlencode }}&amp;source=tweetbutton">{{ 'sharing_dialog_twitter_button'|i18n(session.lang) }}</a>
+            <a class="btn-large btn gplus" target="_blank" href="https://plusone.google.com/_/+1/confirm?hl={{ session.lang }}&amp;url={{ url|urlencode }}">{{ 'sharing_dialog_gplus_button'|i18n(session.lang) }}</a>
+          </div>
         </div>
-      </div>
-      <div class="email-sharing">
-        <p>{{ 'sharing_dialog_email_comment'|i18n(session.lang) }}</p>
-        <div class="addthis_toolbox addthis_default_style addthis_32x32_style">
-          <a class="addthis_button_email">Via E-Mail</a>
+        <div class="email-sharing">
+          <p>{{ 'sharing_dialog_email_comment'|i18n(session.lang) }}</p>
+          <div class="addthis_toolbox addthis_default_style addthis_32x32_style">
+            <a class="addthis_button_email">Via E-Mail</a>
+          </div>
         </div>
-      </div>
-      <div class="manual-sharing">
-        <p>{{ 'sharing_dialog_url_comment'|i18n(session.lang) }}:</p>
-        <input id="input-sharing-url" type="text" value="{{ url }}" readonly />
+        <div class="manual-sharing">
+          <p>{{ 'sharing_dialog_url_comment'|i18n(session.lang) }}:</p>
+          <input id="input-sharing-url" type="text" value="{{ url }}" readonly />
+        </div>
       </div>
     </div>
+  </div>
   {% else %}
-  <div class="create-your-own">
-    <div class="text">
-      {{ 'createown_bar_line1'|i18n(session.lang) }}
-      <br />{{ 'createown_bar_line2'|i18n(session.lang) }}
-    </div>
-    <div class="buttondiv">
-      <a class="btn" href="/">{{ 'createown_bar_button'|i18n(session.lang) }}</a>
+  <div class="row">
+    <div class="span12 create-your-own">
+      <div class="text span7">
+        {{ 'createown_bar_line1'|i18n(session.lang) }}
+        <br />{{ 'createown_bar_line2'|i18n(session.lang) }}
+      </div>
+      <div class="buttondiv span4">
+        <a class="btn" href="/">{{ 'createown_bar_button'|i18n(session.lang) }}</a>
+      </div>
     </div>
   </div>
   {% endif %}
@@ -71,7 +87,7 @@
       <div class="tab-pane" id="timeline"></div>
     </div>
   </div>
-  
+
 
 </div>
 {% endblock body %}

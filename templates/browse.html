@@ -1,21 +1,35 @@
 {% extends "base.html" %}
-{% block title %}Browse Yourtopia{% endblock %}
+{% block title %}{{ 'browse_title'|i18n(session.lang) }}{% endblock %}
+{% block meta %}
+  {% if page > 1 %}
+  <meta name="robots" content="noindex,follow" />
+  {% endif %}
+{% endblock %}
 
 {% block body %}
 <div class="backbone-page browse">
-  <h1>Browse Yourtopia</h1>
-    <div class="row">
+
+  <div class="row">
+    <div class="span12">
+      <h1>Browse Yourtopia</h1>
+    </div>
+  </div>
+
+  <div class="row paddingbottom">
     {% for entry in entries %}
-      {% if loop.index0 % 3 == 0 %}
+      {% if (loop.index0 % 3 == 0) and (loop.index0 > 0) %}
         </div>
-        <div class="row">
+        <div class="row paddingbottom">
       {% endif %}
       <div class="span4 entry">
         <div class="inner">
           <a href="/i/{{ entry.id }}/">
+          <img src="/static/img/index-thumb-placeholder.png" width="270" height="100" alt="" /><br />
+          {% if entry.description %}
           <span class="quote">
-            {{ 'quotation_on'|i18n(session.lang) }}{{ entry.description|truncate(length=130) }}{{ 'quotation_off'|i18n(session.lang) }}
+            {{ 'quotation_on'|i18n(session.lang) }}{{ entry.description|truncate(length=110) }}{{ 'quotation_off'|i18n(session.lang) }}
           </span>
+          {% endif %}
           {{ 'browse_by'|i18n(session.lang) }} <b>{{ entry.user_name }}</b>
           {{ 'browse_on_date'|i18n(session.lang) }}
           {{ entry.created_at|dateformat('dateformat_compact'|i18n(session.lang)) }}
@@ -24,5 +38,19 @@
       </div>
     {% endfor %}
   </div>
-</div>
+
+  {% if show_next or show_prev %}
+  <div class="row">
+    <div class="span12 paging">
+      <div class="btn-group">
+        {% if show_prev %}
+        <a class="btn" href="{{ url_for('browse', page=(page - 1)) }}">&larr; {{ 'paging_prev'|i18n(session.lang) }}</a>
+        {% endif %}
+        {% if show_next %}
+        <a class="btn" href="{{ url_for('browse', page=(page + 1)) }}">{{ 'paging_next'|i18n(session.lang) }} &rarr;</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
 {% endblock body %}
