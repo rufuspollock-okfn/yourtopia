@@ -11,7 +11,7 @@ Installing
 2. Install the requirements into a virtualenv:
 
       virtualenv ~/venv-yourtopia
-      pip install -E ~/venv-yourtopia -r requirements.txt
+      pip install -e . 
 
 3. Run the web application:
 
