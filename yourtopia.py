@@ -1,4 +1,11 @@
 # encoding: utf-8
+import os
+import re
+import sqlite3
+from contextlib import closing
+import datetime
+import urllib
+import json
 
 from flask import Flask
 from flask import Markup
@@ -13,13 +20,7 @@ import unicodecsv
 from jinja2 import evalcontextfilter
 from jinja2 import Markup
 from jinja2 import escape
-import re
-import simplejson as json
-import sqlite3
-from contextlib import closing
-import datetime
 from flask import abort
-import urllib
 
 # dev mode
 DEV_MODE = True
@@ -27,10 +28,30 @@ DEV_MODE = True
 # languages available, sorted by priority
 LANG_PRIORITIES = ['it', 'en']
 
+__HERE__ = os.path.dirname(__file__)
 # path to the metadata JSON file
-METADATA_PATH = 'static/data/metadata.json'
+METADATA_PATH = os.path.join(__HERE__, 'static/data/metadata.json')
+DATABASE = os.path.join(__HERE__, 'static/data/database.db')
 
-DATABASE = 'static/data/database.db'
+# initialize the database if not already created
+if not os.path.exists(DATABASE):
+    db = connect_db()
+    sql = '''CREATE TABLE usercreated ( 
+        id          INTEGER         PRIMARY KEY ASC AUTOINCREMENT,
+        user_name   VARCHAR( 100 ),
+        user_url    VARCHAR( 150 ),
+        description TEXT( 300 ),
+        weights     TEXT( 1000 ),
+        created_at  DATETIME        NOT NULL,
+        user_ip     VARCHAR( 15 ),
+        country     VARCHAR( 3 ),
+        version     INTEGER 
+    );'''
+    cur = db.cursor()
+    cur.execute(sql)
+    db.commit()
+    cur.close()
+
 
 _paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
 
