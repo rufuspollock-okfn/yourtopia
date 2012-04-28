@@ -2,6 +2,10 @@ body {
   padding-top: 20px;
 }
 
+h1 {
+  margin-bottom: 0.4em;
+}
+
 #header {
   padding-bottom: 2em;
 }
@@ -221,9 +225,10 @@ footer .secondrow {
 
 /* Browse page */
 
-.entry .inner {
-  height: 200px;
+.browse .inner {
+  height: 220px;
   padding: 0.6em 1em;
+  padding-top: 1.2em;
   border: 1px solid #ddd;
   -moz-border-radius: 6px;
   -webkit-border-radius: 6px;
@@ -242,6 +247,22 @@ footer .secondrow {
 }
 .entry a:link .quote, .entry a:visited  .quote {
   color: #666;
+}
+.browse .paddingbottom {
+  padding-bottom: 1em;
+}
+
+.browse .paging {
+  padding-top: 2em;
+}
+.paging .btn-group {
+  text-align: center;
+}
+.paging .btn {
+  padding-left: 30px;
+  padding-right: 30px;
+  display: inline-block;
+  float: none;
 }
 
 /* detail page */

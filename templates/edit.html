@@ -23,7 +23,7 @@
 
     <div class="row">
       <div class="span12">
-        {{ 'browse_by'|i18n(session.lang) }} <input id="input-username" type="text" value="{{ 'sharing_userfield_default'|i18n(session.lang) }}" name="user_name" /> {{ 'browse_on_date'|i18n(session.lang) }} {{ entry.created_at|dateformat('dateformat_compact'|i18n(session.lang)) }}
+        {{ 'browse_by'|i18n(session.lang) }} <input id="input-username" type="text" value="{{ 'sharing_userfield_default'|i18n(session.lang) }}" name="user_name" maxlength="100" /> {{ 'browse_on_date'|i18n(session.lang) }} {{ entry.created_at|dateformat('dateformat_compact'|i18n(session.lang)) }}
       </div>
     </div>
 

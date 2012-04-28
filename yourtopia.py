@@ -32,6 +32,8 @@ METADATA_PATH = 'static/data/metadata.json'
 
 DATABASE = 'static/data/database.db'
 
+BROWSE_PERPAGE = 9
+
 _paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
 
 app = Flask(__name__)
@@ -43,10 +45,27 @@ def home():
     return render_template('home.html', metadata=metadata, i18n_strings=category_headlines)
 
 
-@app.route('/browse/')
-def browse():
-    entries = get_usercreated_entries(9)
-    return render_template('browse.html', entries=entries)
+@app.route('/browse/', defaults={'page': 1})
+@app.route('/browse/<int:page>/')
+def browse(page):
+    offset = 0
+    if page > 1:
+        offset = (page - 1) * BROWSE_PERPAGE
+    entries = get_usercreated_entries(BROWSE_PERPAGE + 1, offset)
+    if len(entries):
+        show_prev = False
+        show_next = False
+        if (len(entries) > BROWSE_PERPAGE):
+            entries.pop()
+            show_next = True
+        if offset > 0:
+            show_prev = True
+        return render_template('browse.html',
+            entries=entries, page=page,
+            show_next=show_next,
+            show_prev=show_prev)
+    else:
+        abort(404)
 
 
 @app.route('/about/')
