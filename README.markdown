@@ -3,8 +3,7 @@ Development Index. Powers [YourTopia][] site - Global Development beyond GDP.
 
 [YourTopia]: http://yourtopia.net/
 
-Installing
-==========
+## Installing
 
 1. Install Python and pip
 
@@ -16,4 +15,16 @@ Installing
 3. Run the web application:
 
       python yourtopia/web.py
+
+### Configuration
+
+If you want to modify the default settings:
+
+1. Copy and paste settings\_local.py.tmpl
+
+   * You must locate the file either at settings\_local.py or at a location of
+     your choosing and set YOURTOPIA\_SETTINGS environment variable to point to
+     your file.
+
+2. Add or amend settings (see instructions in the file)
 

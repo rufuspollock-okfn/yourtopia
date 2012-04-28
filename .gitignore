@@ -7,3 +7,4 @@ venv/*
 yourtopia/static/data/*.db
 yourtopia/static/data/series_data.csv
 *.egg-info
+settings_local.py
