@@ -7,45 +7,69 @@ var metadata = {{ metadata|tojson|safe }};
 </script>
 #}
 <div class="backbone-page index-create">
-  <h2>{{ 'index_create_headline'|i18n(session.lang) }}</h2>
-  <div id="sharing-top" class="sharing">
-    <div class="text">
-      {{ 'saveshare_bar_line1'|i18n(session.lang) }}
-      <br />{{ 'saveshare_bar_line2'|i18n(session.lang) }}
-    </div>
-    <div class="buttondiv">
-      <button class="btn">{{ 'saveshare_button'|i18n(session.lang) }}</button>
+
+  <div class="row">
+    <div class="span12">
+      <h2>{{ 'index_create_headline'|i18n(session.lang) }}</h2>
     </div>
   </div>
-  <div class="sliders"></div>
-  <div class="measure-details"></div>
-  <div class="resultview" style="display: none;">
-    <div class="result-loading">{{ 'progress_wait_while_loading'|i18n(session.lang) }}</div>
-    <div class="result-available" style="display: none;">
-      <ul class="nav nav-tabs">
-        <li class="active"><a href="#rankmap" data-toggle="tab">{{ 'map_ranking_tab'|i18n(session.lang) }}</a></li>
-        <li><a href="#timeline" data-toggle="tab">{{ 'timeline_tab'|i18n(session.lang) }}</a></li>
-      </ul>
-      <div class="tab-content">
-        <div class="tab-pane active" id="rankmap">
-          <div class="rankmap-container">
-            <div id="map">
-              <div class="svgmap"></div>
-            </div>
-            <div id="rank"></div>
-          </div>
-        </div>
-        <div class="tab-pane" id="timeline"></div>
+
+  <div class="row">
+    <div id="sharing-top" class="span12 sharing">
+      <div class="text span8">
+        {{ 'saveshare_bar_line1'|i18n(session.lang) }}
+        <br />{{ 'saveshare_bar_line2'|i18n(session.lang) }}
+      </div>
+      <div class="buttondiv span4">
+        <button class="btn">{{ 'saveshare_button'|i18n(session.lang) }}</button>
       </div>
     </div>
   </div>
-  <div class="sharing">
-    <div class="text">
-      {{ 'saveshare_bar_line1'|i18n(session.lang) }}
-      <br />{{ 'saveshare_bar_line2'|i18n(session.lang) }}
+
+  <div class="row">
+    <div class="span12">
+      <div class="sliders"></div>
     </div>
-    <div class="buttondiv">
-      <button class="btn">{{ 'saveshare_button'|i18n(session.lang) }}</button>
+  </div>
+
+  <div class="row">
+    <div class="span12">
+      <div class="measure-details"></div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="span12 resultview" style="display: none;">
+      <div class="result-loading">{{ 'progress_wait_while_loading'|i18n(session.lang) }}</div>
+      <div class="result-available" style="display: none;">
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#rankmap" data-toggle="tab">{{ 'map_ranking_tab'|i18n(session.lang) }}</a></li>
+          <li><a href="#timeline" data-toggle="tab">{{ 'timeline_tab'|i18n(session.lang) }}</a></li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="rankmap">
+            <div class="rankmap-container">
+              <div id="map">
+                <div class="svgmap"></div>
+              </div>
+              <div id="rank"></div>
+            </div>
+          </div>
+          <div class="tab-pane" id="timeline"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="span12 sharing">
+      <div class="text span8">
+        {{ 'saveshare_bar_line1'|i18n(session.lang) }}
+        <br />{{ 'saveshare_bar_line2'|i18n(session.lang) }}
+      </div>
+      <div class="buttondiv span4">
+        <button class="btn">{{ 'saveshare_button'|i18n(session.lang) }}</button>
+      </div>
     </div>
   </div>
 </div>
