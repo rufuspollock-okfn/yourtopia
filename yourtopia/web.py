@@ -23,6 +23,8 @@ from jinja2 import escape
 from flask import abort
 from flask import send_from_directory
 
+import indexpreview
+
 _paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
 
 app = Flask(__name__)
@@ -120,16 +122,34 @@ def edit():
         return redirect(url_for('details', id=id))
 
 
-@app.route('/thumbs/<path:path>')
-def thumb(path):
-    THUMBS_PATH = 'static/thumbs'  # TODO: to config
-    file_path = THUMBS_PATH + os.sep + path
-    if os.access(file_path, os.F_OK):
-        app.logger.debug(file_path + ' is accessible!')
-        return send_from_directory(os.path.dirname(file_path), os.path.basename(file_path), mimetype="image/png")
-    else:
-        app.logger.debug(file_path + " not accessible")
-        return abort(500)
+@app.route('/thumbs/<int:id>/<string:filename>')
+def thumb(id, filename):
+    folder_path = indexpreview.get_folder_path(id, app.config['THUMBS_PATH'])
+    file_path = os.path.join(folder_path, filename)
+    if not os.access(file_path, os.F_OK):
+        create_preview_images(id)
+    return send_from_directory(folder_path, filename, mimetype="image/png")
+
+
+def create_preview_images(id):
+    """
+    This creates the preview image fora usercreated entry
+    """
+    entry = get_usercreated_entries(id=id)
+    weight_tuples = []
+    # weed through weights and use only those for main categories
+    # If the last character is a number, we skip the key.
+    weights = json.loads(entry['weights'])
+    for w in weights.keys():
+        if w[-1].isdigit():
+            continue
+        weight_tuples.append((w, weights[w]))
+    weight_tuples = sorted(weight_tuples, key=lambda item: item[0])
+    weight_values = []
+    for t in weight_tuples:
+        weight_values.append(t[1])
+    img = indexpreview.create_preview_image(weight_values)
+    indexpreview.save_image_versions(img, id, app.config['THUMBS_PATH'])
 
 
 def connect_db():
@@ -387,7 +407,7 @@ configure_app(app)
 # initialize the database if not already created
 if not os.path.exists(app.config['DATABASE']):
     db = connect_db()
-    sql = '''CREATE TABLE usercreated ( 
+    sql = '''CREATE TABLE usercreated (
         id          INTEGER         PRIMARY KEY ASC AUTOINCREMENT,
         user_name   VARCHAR( 100 ),
         user_url    VARCHAR( 150 ),
@@ -396,7 +416,7 @@ if not os.path.exists(app.config['DATABASE']):
         created_at  DATETIME        NOT NULL,
         user_ip     VARCHAR( 15 ),
         country     VARCHAR( 3 ),
-        version     INTEGER 
+        version     INTEGER
     );'''
     cur = db.cursor()
     cur.execute(sql)
@@ -412,4 +432,3 @@ metadata = import_series_metadata(app.config['METADATA_PATH'])
 if __name__ == '__main__':
     app.run(debug=app.config['DEBUG'], host=app.config['HOST'],
             port=app.config['PORT'])
-
