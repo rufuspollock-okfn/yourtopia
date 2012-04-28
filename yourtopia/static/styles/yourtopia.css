@@ -36,7 +36,7 @@ footer .secondrow {
   padding-top: 1em;
 }
 footer .okfnlogo {
-  background: url(/static/img/okfn-logo.png) no-repeat;
+  background: url(http://assets.okfn.org/p/okfn/img/logo_28x30.png) no-repeat;
   padding-left: 40px;
 }
 
