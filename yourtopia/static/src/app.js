@@ -27,7 +27,7 @@ function i18n(key) {
  * as one object to the callback function.
  */
 function loadMetadata(url, callback) {
-  jQuery.get(url, {size: 1000, dataType: 'jsonp'}, function(data){
+  jQuery.getJSON(url, function(data){
     var mdata = {};
     if (data.hits.hits.length === 0) {
       console.log('WARNING: Metadata has no recognizable data rows. Empty or bad format?');
@@ -69,7 +69,7 @@ function loadMetadata(url, callback) {
  * passes it as one object to the callback function.
  */
 function loadSourceData(url, callback) {
-  jQuery.get(url, {size: 6000, dataType: 'jsonp'}, function(data){
+  jQuery.getJSON(url, function(data){
       var pdata = {};
       pdata.series = {};
       pdata.regions = {};
