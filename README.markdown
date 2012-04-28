@@ -15,5 +15,5 @@ Installing
 
 3. Run the web application:
 
-      python yourtopia.py
+      python yourtopia/web.py
 
