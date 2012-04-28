@@ -40,14 +40,16 @@ footer .secondrow {
 #sharing-top {
   display: none;
 }
-.index-create .sharing {
+.index-create .sharing, .details .create-your-own {
   border-top: 1px solid #ccc;
   border-bottom: 1px solid #ccc;
   padding: 14px 0;
   margin-top: 10px;
+}
+.index-create .sharing {
   height: 48px;
 }
-.index-create .sharing .text {
+.index-create .sharing .text, .details .create-your-own .text {
   text-align: center;
   font-size: 112%;
 }
@@ -59,13 +61,16 @@ footer .secondrow {
   padding-right: 3em;
   font-size: 88%;
 }
-.index-create .sharing .buttondiv {
+/*
+.index-create .sharing .buttondiv, .details .create-your-own .buttondiv {
   float: left;
   text-align: left;
-  width: 28%;
-}
+}*/
 
-.index-create .sharing button, .index-create .sharing a, #save {
+.index-create .sharing button,
+.index-create .sharing a,
+#save,
+.details .create-your-own .btn {
   padding: 8px 35px;
   font-size: 112%;
 }
@@ -267,8 +272,9 @@ footer .secondrow {
 
 /* detail page */
 
-.quote {
+.details .quote {
   margin-top: 0.5em;
+  margin-bottom: 0.5em;
   font-family: Georgia, serif;
   font-style: italic;
   font-size: 133%;
