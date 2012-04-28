@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}About Yourtopia{% endblock %}
+{% block title %}{{ 'about_title'|i18n(session.lang) }}{% endblock %}
 
 {% block body %}
 <div class="backbone-page about">

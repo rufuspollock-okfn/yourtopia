@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Yourtopia{% endblock %}
+{% block title %}{{ 'home_title'|i18n(session.lang) }}{% endblock %}
 
 {% block body %}
 {# <script>

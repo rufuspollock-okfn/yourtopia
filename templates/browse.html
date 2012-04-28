@@ -1,5 +1,10 @@
 {% extends "base.html" %}
-{% block title %}Browse Yourtopia{% endblock %}
+{% block title %}{{ 'browse_title'|i18n(session.lang) }}{% endblock %}
+{% block meta %}
+  {% if page > 1 %}
+  <meta name="robots" content="noindex,follow" />
+  {% endif %}
+{% endblock %}
 
 {% block body %}
 <div class="backbone-page browse">
@@ -39,10 +44,10 @@
     <div class="span12 paging">
       <div class="btn-group">
         {% if show_prev %}
-        <a class="btn" href="{{ url_for('browse', page=(page - 1)) }}">&larr; Back</a>
+        <a class="btn" href="{{ url_for('browse', page=(page - 1)) }}">&larr; {{ 'paging_prev'|i18n(session.lang) }}</a>
         {% endif %}
         {% if show_next %}
-        <a class="btn" href="{{ url_for('browse', page=(page + 1)) }}">More &rarr;</a>
+        <a class="btn" href="{{ url_for('browse', page=(page + 1)) }}">{{ 'paging_next'|i18n(session.lang) }} &rarr;</a>
         {% endif %}
       </div>
     </div>

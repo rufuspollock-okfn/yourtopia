@@ -29,6 +29,7 @@
     <meta property="og:image" content="img/meta-image.png" />
     <meta property="og:type" content="non_profit" />
     <link rel="shortcut icon" href="/static/img/favicon.png" type="image/png" />
+    {% block meta %}{% endblock %}
     <script>
     // user's selected language
     var LANG = "{{ session.lang }}";
@@ -95,13 +96,16 @@
         </div>
         <div class="secondrow row">
           <div class="span4">
-            First column
+            <div class="okfnlogo">
+              An <a href="http://okfn.org/" target="_blank">Open Knowledge Foundation</a> Project
+              <br />&copy; Open Knowledge Foundation
+            </div>
           </div>
           <div class="span4">
-            Second column
+            This application is based on <a href="http://opendefinition.org/" target="_blank">Open Data</a>
           </div>
           <div class="span4">
-            Third column
+            <a href="/about/">Learn more</a> about this application and its creators
           </div>
         </div>
       </footer>
