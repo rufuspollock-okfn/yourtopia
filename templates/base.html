@@ -6,7 +6,7 @@
   <head>
     {% block head %}
     <meta charset="utf-8">
-    <title>{{ title }}</title>
+    <title>{% block title %}{% endblock %}</title>
     <meta name="description" content="{% block description %}{% endblock %}">
     <meta name="author" content="Open Knowledge Foundation (OKFN)" />
 
