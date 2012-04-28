@@ -21,6 +21,7 @@ from jinja2 import evalcontextfilter
 from jinja2 import Markup
 from jinja2 import escape
 from flask import abort
+from flask import send_from_directory
 
 # dev mode
 DEV_MODE = True
@@ -130,6 +131,18 @@ def edit():
             user_url=user_url,
             description=description)
         return redirect(url_for('details', id=id))
+
+
+@app.route('/thumbs/<path:path>')
+def thumb(path):
+    THUMBS_PATH = 'static/thumbs'  # TODO: to config
+    file_path = THUMBS_PATH + os.sep + path
+    if os.access(file_path, os.F_OK):
+        app.logger.debug(file_path + ' is accessible!')
+        return send_from_directory(os.path.dirname(file_path), os.path.basename(file_path), mimetype="image/png")
+    else:
+        app.logger.debug(file_path + " not accessible")
+        return abort(500)
 
 
 def connect_db():
