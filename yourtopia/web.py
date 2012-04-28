@@ -96,6 +96,7 @@ def edit():
     if 'id' not in request.form:
         # first save
         id = add_usercreated_entry(request.form['data'], anonymized_ip)
+        create_preview_images(id)
         session['dataset_id'] = id
         return redirect(url_for('edit_single', id=id))
     else:
