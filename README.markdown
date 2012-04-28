@@ -28,3 +28,11 @@ If you want to modify the default settings:
 
 2. Add or amend settings (see instructions in the file)
 
+## Deployment
+
+Use Fabric and the fabfile:
+
+    fab deploy:{service-name}[,{port}] --host ... --user ...
+
+This can be used for both initial deployment and upgrades.
+
