@@ -24,7 +24,7 @@
       <div class="span4 entry">
         <div class="inner">
           <a href="/i/{{ entry.id }}/">
-          <img src="/static/thumbs/3/2/1/123/pv.png" width="270" height="100" alt="" /><br />
+          <img src="/thumbs/{{ entry.id }}/pv.png" width="270" height="100" alt="" /><br />
           {% if entry.description %}
           <span class="quote">
             {{ 'quotation_on'|i18n(session.lang) }}{{ entry.description|truncate(length=110) }}{{ 'quotation_off'|i18n(session.lang) }}
