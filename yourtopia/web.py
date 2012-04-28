@@ -22,19 +22,6 @@ from jinja2 import Markup
 from jinja2 import escape
 from flask import abort
 
-# dev mode
-DEV_MODE = True
-
-# languages available, sorted by priority
-LANG_PRIORITIES = ['it', 'en']
-
-__HERE__ = os.path.dirname(__file__)
-# path to the metadata JSON file
-METADATA_PATH = os.path.join(__HERE__, 'static/data/metadata.json')
-DATABASE = os.path.join(__HERE__, 'static/data/database.db')
-
-BROWSE_PERPAGE = 9
-
 _paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
 
 app = Flask(__name__)
@@ -50,12 +37,12 @@ def home():
 def browse(page):
     offset = 0
     if page > 1:
-        offset = (page - 1) * BROWSE_PERPAGE
-    entries = get_usercreated_entries(BROWSE_PERPAGE + 1, offset)
+        offset = (page - 1) * app.config['BROWSE_PERPAGE']
+    entries = get_usercreated_entries(app.config['BROWSE_PERPAGE'] + 1, offset)
     if len(entries):
         show_prev = False
         show_next = False
-        if (len(entries) > BROWSE_PERPAGE):
+        if (len(entries) > app.config['BROWSE_PERPAGE']):
             entries.pop()
             show_next = True
         if offset > 0:
@@ -133,7 +120,7 @@ def edit():
 
 
 def connect_db():
-    return sqlite3.connect(DATABASE)
+    return sqlite3.connect(app.config['DATABASE'])
 
 
 def get_connection():
@@ -296,13 +283,13 @@ def set_language():
     says it supports
     """
     lang_url_param = request.args.get('lang', '')
-    if lang_url_param != '' and lang_url_param in LANG_PRIORITIES:
+    if lang_url_param != '' and lang_url_param in app.config['LANG_PRIORITIES']:
         lang = lang_url_param
     elif 'lang' not in session:
-        lang = LANG_PRIORITIES[0]
+        lang = app.config['LANG_PRIORITIES'][0]
         ua_languages = request.accept_languages
         for user_lang, quality in ua_languages:
-            for offered_lang in LANG_PRIORITIES:
+            for offered_lang in app.config['LANG_PRIORITIES']:
                 if user_lang == offered_lang:
                     lang = offered_lang
     else:
@@ -372,8 +359,20 @@ def teardown_request(exception):
         g.db.close()
 
 
+def configure_app(app):
+    '''Configure the app from available sources'''
+    import default_settings
+    here = os.path.dirname(os.path.abspath(__file__))
+    app.config.from_object(default_settings)
+    app.config.from_envvar('YOURTOPIA_SETTINGS', silent=True)
+    config_path = os.path.join(os.path.dirname(here), 'settings_local.py')
+    if os.path.exists(config_path):
+        app.config.from_pyfile(config_path)
+
+
+configure_app(app)
 # initialize the database if not already created
-if not os.path.exists(DATABASE):
+if not os.path.exists(app.config['DATABASE']):
     db = connect_db()
     sql = '''CREATE TABLE usercreated ( 
         id          INTEGER         PRIMARY KEY ASC AUTOINCREMENT,
@@ -393,12 +392,11 @@ if not os.path.exists(DATABASE):
 app.before_request(set_language)
 app.secret_key = 'A0ZrhkdsjhkjlksgnkjnsdgkjnmN]LWX/,?RT'
 
-i18n = import_i18n_strings(os.path.join(__HERE__, 'static/data/i18n.csv'))
-metadata = import_series_metadata(METADATA_PATH)
+i18n = import_i18n_strings(app.config['I18N_STRINGS_PATH'])
+metadata = import_series_metadata(app.config['METADATA_PATH'])
 
 
 if __name__ == '__main__':
-    if DEV_MODE:
-        app.run(debug=True)
-    else:
-        app.run(debug=False, host='0.0.0.0')
+    app.run(debug=app.config['DEBUG'], host=app.config['HOST'],
+            port=app.config['PORT'])
+
