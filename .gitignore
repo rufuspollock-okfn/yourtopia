@@ -2,8 +2,8 @@
 *.pyc
 .DS_Store
 build/*
-static/compact_*
+yourtopia/static/compact_*
 venv/*
-static/data/*.db
-static/data/series_data.csv
+yourtopia/static/data/*.db
+yourtopia/static/data/series_data.csv
 *.egg-info
