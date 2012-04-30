@@ -182,10 +182,10 @@ YOURTOPIA.Model = function($) {
      * This calcualates the weighted index values.
      */
     update: function() {
-      console.log('AllRegionsTimeSeries.update() called!');
+      //console.log('AllRegionsTimeSeries.update() called!');
       if (this.sourceData === null || this.sourceMetaData === null || this.weights === null) {
         // too early for this.
-        console.log('Exiting AllRegionsTimeSeries.update() - incomplete data');
+        //console.log('Exiting AllRegionsTimeSeries.update() - incomplete data');
         return;
       }
       var self = this;

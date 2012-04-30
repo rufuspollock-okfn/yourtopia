@@ -4,19 +4,19 @@
  */
 function i18n(key) {
   if (typeof LANG === 'undefined') {
-    console.log('WARNING: LANG global variable does not exist.');
+    //onsole.log('WARNING: LANG global variable does not exist.');
     return "UNDEFINED";
   }
   if (typeof i18nStrings === 'undefined') {
-    console.log('WARNING: i18nStrings object does not exist.');
+    //console.log('WARNING: i18nStrings object does not exist.');
     return "UNDEFINED";
   }
   if (typeof i18nStrings[key] === 'undefined') {
-    console.log('WARNING: key 18nStrings.' + key + ' does not exist.');
+    //console.log('WARNING: key 18nStrings.' + key + ' does not exist.');
     return "UNDEFINED";
   }
   if (typeof i18nStrings[key][LANG] === 'undefined') {
-    console.log('WARNING: key 18nStrings.' + key + ' not translated to ' + LANG);
+    //console.log('WARNING: key 18nStrings.' + key + ' not translated to ' + LANG);
     return "NOT TRANSLATED";
   }
   return i18nStrings[key][LANG];
@@ -30,12 +30,12 @@ function loadMetadata(url, callback) {
   jQuery.getJSON(url, function(data){
     var mdata = {};
     if (data.hits.hits.length === 0) {
-      console.log('WARNING: Metadata has no recognizable data rows. Empty or bad format?');
+      //console.log('WARNING: Metadata has no recognizable data rows. Empty or bad format?');
     }
     for (var n in data.hits.hits) {
       //console.log(data.hits.hits[n]._source);
       if (typeof data.hits.hits[n]._source.id == 'undefined') {
-        console.log('WARNING: Metadata row has no id value.');
+        //console.log('WARNING: Metadata row has no id value.');
         continue;
       }
       mdata[data.hits.hits[n]._source.id] = {
@@ -74,22 +74,22 @@ function loadSourceData(url, callback) {
       pdata.series = {};
       pdata.regions = {};
       if (data.hits.hits.length === 0) {
-        console.log('WARNING: Data has no recognizable data rows. Empty or bad format?');
+        //console.log('WARNING: Data has no recognizable data rows. Empty or bad format?');
       }
       for (var n in data.hits.hits) {
         var row = data.hits.hits[n]._source;
         var year = parseInt(row.year, 10);
         var series_category_key = null;
         if (typeof row.series_id == 'undefined') {
-          console.log('WARNING: Data row has no series_id value.');
+          //console.log('WARNING: Data row has no series_id value.');
           continue;
         }
         if (row.series_id === '') {
-          console.log('WARNING: Data row has empty series_id.');
+          //console.log('WARNING: Data row has empty series_id.');
           continue;
         }
         if (row.value_normalized === '') {
-          console.log('WARNING: Data row has no value_normalized. Skipped.');
+          //console.log('WARNING: Data row has no value_normalized. Skipped.');
           continue;
         }
         // category keys are split into alphabetic and numeric parts

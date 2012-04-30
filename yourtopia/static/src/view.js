@@ -34,7 +34,7 @@ YOURTOPIA.View = function($) {
       for (var n in this.model.attributes.weighted_measures) {
         measure = this.model.attributes.weighted_measures[n];
         if (!this.model.has(measure + '_weight')) {
-          console.log('Warning: ' + measure + ' is not defined in model.');
+          //console.log('Warning: ' + measure + ' is not defined in model.');
           continue;
         }
         measures_shuffled.push(measure);
@@ -151,15 +151,15 @@ YOURTOPIA.View = function($) {
               detail_panel.find('.text').append('<p class="head '+ submeasure_name +'">'+ this.sourceMetadata[submeasure_name].label[LANG] +'</p>');
               subsliderLabels_el.append('<div class="subslider-label" style="width:'+ (self.subSliderWidth/sub_measures.length - 10) +'px">'+ this.sourceMetadata[submeasure_name].label[LANG] +'</div>');
             } else {
-              console.log('WARNING: Undefined label: ', submeasure_name);
+              //console.log('WARNING: Undefined label: ', submeasure_name);
             }
             if (typeof this.sourceMetadata[submeasure_name].description[LANG] !== 'undefined') {
               detail_panel.find('.text').append('<p class="description '+ submeasure_name +'">'+ this.sourceMetadata[submeasure_name].description[LANG] +'</p>');
             } else {
-              console.log('Undefined description: ', submeasure_name);
+              //console.log('Undefined description: ', submeasure_name);
             }
           } else {
-            console.log('Undefined metadata: ', submeasure_name);
+            //console.log('Undefined metadata: ', submeasure_name);
           }
         } // end for sub_measures iteration
         panels_el.append(detail_panel);
@@ -266,7 +266,7 @@ YOURTOPIA.View = function($) {
       }
     },
     initialize: function() {
-      console.log('IndexView initialize()');
+      //console.log('IndexView initialize()');
       var self = this;
       this.model.on('change', function(){
         if (!self.isRendered) {
@@ -277,7 +277,7 @@ YOURTOPIA.View = function($) {
       });
     },
     render: function() {
-      console.log('IndexView render()');
+      //console.log('IndexView render()');
       var self = this;
       // load SVG map and place it's region shapes in the DOM
       // as Raphael objects
@@ -328,7 +328,7 @@ YOURTOPIA.View = function($) {
       self.isRendered = true;
     },
     renderTimeline: function() {
-      console.log('IndexView renderTimeline()');
+      //console.log('IndexView renderTimeline()');
       // render timeline view
       var self = this;
       var tl_el = self.$('#timeline');
@@ -463,7 +463,7 @@ YOURTOPIA.View = function($) {
       self.timelineIsRendered = true;
     },
     update: function() {
-      console.log('IndexView update()');
+      //console.log('IndexView update()');
       if (!this.isMapInitialized) {
         // too early yet
         return;
