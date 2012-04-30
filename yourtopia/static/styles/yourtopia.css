@@ -212,6 +212,11 @@ footer .okfnlogo {
   color: #ffffff;
 }
 
+#timeline {
+  width: 940px;
+  height: 400px;
+}
+
 .footer {
   margin-top: 2em;
   padding-top: 1em;
