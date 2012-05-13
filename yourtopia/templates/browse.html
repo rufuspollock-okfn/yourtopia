@@ -44,10 +44,10 @@
     <div class="span12 paging">
       <div class="btn-group">
         {% if show_prev %}
-        <a class="btn" href="{{ url_for('browse', page=(page - 1)) }}">&larr; {{ 'paging_prev'|i18n(session.lang) }}</a>
+        <a class="btn" href="{{ url_for('browse', page=(page - 1)) }}">&larr; {{ 'pagination_prev'|i18n(session.lang) }}</a>
         {% endif %}
         {% if show_next %}
-        <a class="btn" href="{{ url_for('browse', page=(page + 1)) }}">{{ 'paging_next'|i18n(session.lang) }} &rarr;</a>
+        <a class="btn" href="{{ url_for('browse', page=(page + 1)) }}">{{ 'pagination_next'|i18n(session.lang) }} &rarr;</a>
         {% endif %}
       </div>
     </div>
