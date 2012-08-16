@@ -16,8 +16,10 @@ METADATA_PATH = os.path.join(__HERE__, 'static/data/metadata.json')
 # Path to SQLite DB file
 DATABASE = os.path.join(__HERE__, 'static/data/database.db')
 
+THUMBS_PATH = os.path.join(__HERE__, 'static/thumbs')
+
 # languages available, sorted by priority
 LANG_PRIORITIES = ['it', 'en']
 
+# Number of elements per page on the Browse All page
 BROWSE_PERPAGE = 9
-

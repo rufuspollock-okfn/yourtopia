@@ -13,11 +13,11 @@ pagination_next,Next,Avanti
 browse_title,Browse Yourtopia,Esplora Yourtopia
 home_title,Yourtopia Italy,Yourtopia Italia
 about_title,Learn More About Yourtopia,Per saperne di più su Yourtopia
-details_title,Yourtopia #%s by %s,Yourtopia n. %s da %s
-edit_title,Save and Share Your Yourtopia,TO BE TRANSLATED
+details_title,Yourtopia #%s by %s,Yourtopia n. %s creata da %s
+edit_title,Save and Share Your Yourtopia,Salva e Condividi la tua Yourtopia
 saveshare_button,Save & Share,Salva e Condividi
-saveshare_bar_line1,"When you're done, <strong>share your priorities</strong> with others, let them <strong>explore</strong>","Quando hai finito, <strong>condividi la tua Yourtopia</strong> con i tuoi amici e fagli <strong>esplorare</strong>"
-saveshare_bar_line2,<strong>Italy's progress</strong> according to your priorities and <strong>define their own</strong>!,le diverse concezioni del <strong> progresso in italia</strong> e di <strong> decidere la loro</strong>!
+saveshare_bar_line1,"When you're done, <strong>share your priorities</strong> with others, let them <strong>explore</strong>","Quando hai finito, <strong>condividi la tua Yourtopia</strong> con i tuoi amici, fagli <strong>esplorare</strong>"
+saveshare_bar_line2,<strong>Italy's progress</strong> according to your priorities and <strong>define their own</strong>!,le diverse concezioni del <strong> progresso in italia</strong> e permettigli di <strong> creare la loro</strong>!
 createown_bar_line1,Define <strong>your own priorities</strong> to see how Italy,Definisci <strong>le tue priorità</strong> per vedere come vanno le cose
 createown_bar_line2,is doing and <strong>share them</strong> with others!,in Italia e <strong>condividile</strong> con i tuoi amici!
 createown_bar_button,Create Your Own,Crea la tua Yourtopia!
@@ -25,7 +25,7 @@ map_ranking_tab,Map/Ranking,Mappa/Ranking
 timeline_tab,Timeline,Timeline
 index_create_headline,What is important in the world you want to live in?,Cos'è più importante nel mondo in cui vorresti vivere?
 menu_create_index,Create Your Own,Crea la tua Yourtopia!
-menu_browse,Browse All,Esplora!
+menu_browse,Browse All,Browse
 menu_about,Learn More,Per saperne di più
 logo_tagline,"Progress in Italy, defined by You.","Il progresso in Italia, secondo Te"
 progress_wait_while_loading,Please wait while data is loaded...,"Aspetta, stiamo caricando i dati"
@@ -38,7 +38,7 @@ details_headline,"Progress in italy, according to my priorities","Il progresso i
 sharing_notchanged_info,"Please adjust the importance of the criteria by moving the controls up and down, according to your priorities.","Dicci quanto sono importanti i vari criteri spostando su e giù i cursori, secondo le tue priorità"
 sharing_instruction,"Save + Share: Give your name/pseudonym. To make it more intersting, you can write a few words about your priorities.","Salva e Condividi: inserisci il tuo nome o nickname, e dicci qualcosa sulla tua Yourtopia! "
 sharing_textfield_default,Some words about your Yourtopia...,Descrivi la tua Yourtopia
-sharing_userfield_default,your name/alias,TO BE TRANSLATED
+sharing_userfield_default,your name/alias,Il tuo nome o nickname
 sharing_url_instruction,"If you want to, you can give us a URL of yours and we link it with your user name.","Se vuoi, puoi personalizzare la tua Yourtopia con l'indirizzo del tuo blog o della tua pagina facebook"
 sharing_url_charsleft,characters left,caratteri rimasti
 details_priorities_headline,%s's priorities,Le priorità di %s

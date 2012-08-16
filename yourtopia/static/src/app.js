@@ -4,19 +4,19 @@
  */
 function i18n(key) {
   if (typeof LANG === 'undefined') {
-    console.log('WARNING: LANG global variable does not exist.');
+    //onsole.log('WARNING: LANG global variable does not exist.');
     return "UNDEFINED";
   }
   if (typeof i18nStrings === 'undefined') {
-    console.log('WARNING: i18nStrings object does not exist.');
+    //console.log('WARNING: i18nStrings object does not exist.');
     return "UNDEFINED";
   }
   if (typeof i18nStrings[key] === 'undefined') {
-    console.log('WARNING: key 18nStrings.' + key + ' does not exist.');
+    //console.log('WARNING: key 18nStrings.' + key + ' does not exist.');
     return "UNDEFINED";
   }
   if (typeof i18nStrings[key][LANG] === 'undefined') {
-    console.log('WARNING: key 18nStrings.' + key + ' not translated to ' + LANG);
+    //console.log('WARNING: key 18nStrings.' + key + ' not translated to ' + LANG);
     return "NOT TRANSLATED";
   }
   return i18nStrings[key][LANG];
@@ -30,12 +30,12 @@ function loadMetadata(url, callback) {
   jQuery.getJSON(url, function(data){
     var mdata = {};
     if (data.hits.hits.length === 0) {
-      console.log('WARNING: Metadata has no recognizable data rows. Empty or bad format?');
+      //console.log('WARNING: Metadata has no recognizable data rows. Empty or bad format?');
     }
     for (var n in data.hits.hits) {
       //console.log(data.hits.hits[n]._source);
       if (typeof data.hits.hits[n]._source.id == 'undefined') {
-        console.log('WARNING: Metadata row has no id value.');
+        //console.log('WARNING: Metadata row has no id value.');
         continue;
       }
       mdata[data.hits.hits[n]._source.id] = {
@@ -74,22 +74,22 @@ function loadSourceData(url, callback) {
       pdata.series = {};
       pdata.regions = {};
       if (data.hits.hits.length === 0) {
-        console.log('WARNING: Data has no recognizable data rows. Empty or bad format?');
+        //console.log('WARNING: Data has no recognizable data rows. Empty or bad format?');
       }
       for (var n in data.hits.hits) {
         var row = data.hits.hits[n]._source;
         var year = parseInt(row.year, 10);
         var series_category_key = null;
         if (typeof row.series_id == 'undefined') {
-          console.log('WARNING: Data row has no series_id value.');
+          //console.log('WARNING: Data row has no series_id value.');
           continue;
         }
         if (row.series_id === '') {
-          console.log('WARNING: Data row has empty series_id.');
+          //console.log('WARNING: Data row has empty series_id.');
           continue;
         }
         if (row.value_normalized === '') {
-          console.log('WARNING: Data row has no value_normalized. Skipped.');
+          //console.log('WARNING: Data row has no value_normalized. Skipped.');
           continue;
         }
         // category keys are split into alphabetic and numeric parts
@@ -182,45 +182,58 @@ YOURTOPIA.Home = Backbone.Router.extend({
    * weights of various criteria and hit save to progress.
    */
   indexCreate: function() {
+
     var sharing_bar_visible = false;
-    var newIndex = new YOURTOPIA.Model.Index();
+    var newWeights = new YOURTOPIA.Model.Weights();
     var sliders = new YOURTOPIA.View.IndexCreate({
-      model: newIndex,
+      model: newWeights,
       el: '.index-create .sliders'
     });
 
+    var resultIndex = new YOURTOPIA.Model.AllRegionsTimeSeries();
+    resultIndex.setWeights(newWeights);
+
     // load metadata
     loadMetadata(YOURTOPIA.config.webstore_metadata_url, function(data){
-      indexView.setSourceMetadata(data);
+      resultIndex.setSourceMetaData(data);
+      //indexView.setSourceMetadata(data);
       sliders.setSourceMetadata(data);
       sliders.render();
     });
 
     // load data series
     loadSourceData(YOURTOPIA.config.webstore_data_url, function(data){
-      indexView.setSourceData(data);
+      //indexView.setSourceData(data);
+      resultIndex.setSourceData(data);
     });
     
     // create the indexView (real-time visualization of index data during weight adjustment)
     var indexView = new YOURTOPIA.View.IndexView({
-      model: newIndex,
-      el: '.index-create .resultview',
-      sourceData: null
+      //model: newWeights,
+      model: resultIndex,
+      el: '.index-create .resultview'
+      //sourceData: null
     });
     indexView.render();
+
     indexView.delayedUpdate = function() {
       // delaying the result view update so that it's only
       // called after the user stops dragging the sliders
       window.clearTimeout(YOURTOPIA.Home.indexview_update_timeout);
-      YOURTOPIA.Home.indexview_update_timeout = window.setTimeout(function(){indexView.update();}, 250);
+      YOURTOPIA.Home.indexview_update_timeout = window.setTimeout(function(){
+        resultIndex.update();
+        //indexView.update();
+      }, 250);
     };
+
     indexView.delayedShowSharingBar = function() {
       sharing_bar_visible = true;
       window.setTimeout(function(){
         jQuery('#sharing-top').slideDown('700', 'swing');
       }, 1000);
     };
-    newIndex.on('change', function(){
+    // propagate slider change events
+    newWeights.on('change', function(){
       indexView.delayedUpdate();
       if (!sharing_bar_visible) {
         indexView.delayedShowSharingBar();
@@ -241,32 +254,37 @@ YOURTOPIA.Edit = Backbone.Router.extend({
     '': 'edit'
   },
   edit: function() {
-    var savedIndex = new YOURTOPIA.Model.Index(userDataset);
+    var savedWeights = new YOURTOPIA.Model.Weights(userDataset);
+
     var saveForm = new YOURTOPIA.View.SaveForm({
       el: '#saveform',
-      model: savedIndex
+      model: savedWeights
     });
     saveForm.render();
+
+    var resultIndex = new YOURTOPIA.Model.AllRegionsTimeSeries();
+    resultIndex.setWeights(savedWeights);
+
     var sliders = new YOURTOPIA.View.IndexCreate({
-      model: savedIndex,
+      model: savedWeights,
       el: '.sliders'
     });
     sliders.readOnly = true;
+
     var indexView = new YOURTOPIA.View.IndexView({
-      model: savedIndex,
+      model: resultIndex,
       el: '.resultview',
       sourceData: null
     });
 
     indexView.render();
     loadMetadata(YOURTOPIA.config.webstore_metadata_url, function(data){
-      indexView.setSourceMetadata(data);
+      resultIndex.setSourceMetaData(data);
       sliders.setSourceMetadata(data);
       sliders.render();
     });
     loadSourceData(YOURTOPIA.config.webstore_data_url, function(data){
-      indexView.setSourceData(data);
-      indexView.update();
+      resultIndex.setSourceData(data);
     });
 
   }
@@ -281,26 +299,31 @@ YOURTOPIA.Details = Backbone.Router.extend({
     '': 'details'
   },
   details: function() {
-    var savedIndex = new YOURTOPIA.Model.Index(userDataset);
+    var savedWeights = new YOURTOPIA.Model.Weights(userDataset);
     var sliders = new YOURTOPIA.View.IndexCreate({
-      model: savedIndex,
+      model: savedWeights,
       el: '.sliders'
     });
     sliders.readOnly = true;
+    
+    var resultIndex = new YOURTOPIA.Model.AllRegionsTimeSeries();
+    resultIndex.setWeights(savedWeights);
+
     var indexView = new YOURTOPIA.View.IndexView({
-      model: savedIndex,
-      el: '.resultview',
-      sourceData: null
+      //model: savedWeights,
+      model: resultIndex,
+      el: '.resultview'
+      //sourceData: null
     });
     indexView.render();
+
     loadMetadata(YOURTOPIA.config.webstore_metadata_url, function(data){
-      indexView.setSourceMetadata(data);
+      resultIndex.setSourceMetaData(data);
       sliders.setSourceMetadata(data);
       sliders.render();
     });
     loadSourceData(YOURTOPIA.config.webstore_data_url, function(data){
-      indexView.setSourceData(data);
-      indexView.update();
+      resultIndex.setSourceData(data);
     });
 
   }

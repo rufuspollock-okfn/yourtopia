@@ -18,13 +18,13 @@ METADATA_CSV_URL = 'https://docs.google.com/spreadsheet/pub?key=0AogGMvffTHrgdFF
 
 # i18n data
 I18N_CSV_URL = 'https://docs.google.com/spreadsheet/pub?key=0AogGMvffTHrgdFFjQy1qVWJGT1IteEhPallQbGlpbmc&single=true&gid=5&output=csv'
-I18N_CSV_PATH = 'static/data/i18n.csv'
+I18N_CSV_PATH = 'yourtopia/static/data/i18n.csv'
 
 
 def transfer_data(label, csv_url, datahub_id):
     # download
     print "Getting CSV data for " + label + "..."
-    urllib.urlretrieve(csv_url, 'static/data/' + label + '.csv')
+    urllib.urlretrieve(csv_url, 'yourtopia/static/data/' + label + '.csv')
     print 'Retrieved latest data for ' + label
     # empty target repository
     datahub_url = 'http://thedatahub.org/api/data/' + datahub_id
@@ -39,7 +39,7 @@ def transfer_data(label, csv_url, datahub_id):
     #client.mapping_update(mapping)
 
     print 'Start uploading data for ' + label + '...'
-    client.upload('static/data/' + label + '.csv')
+    client.upload('yourtopia/static/data/' + label + '.csv')
     print 'Finished uploading data for ' + label
 
 
