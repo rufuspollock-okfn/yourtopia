@@ -26,7 +26,11 @@
     <!--
     <link rel="stylesheet" href="static/compact_201204231150.css" />
     -->
-    <meta property="og:image" content="img/meta-image.png" />
+    {% if entry and entry.id %}
+    <meta property="og:image" content="/thumbs/{{ entry.id }}/pv.png" />
+    {% else %}
+    <meta property="og:image" content="/static/img/meta-image.png" />
+    {% endif %}
     <meta property="og:type" content="non_profit" />
     <link rel="shortcut icon" href="/static/img/favicon.png" type="image/png" />
     {% block meta %}{% endblock %}
@@ -128,5 +132,16 @@
     <script async src="/static/vendor/json2.js"></script>
     <script src="/static/vendor/jquery.charsleft-0.1.js"></script>
     <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js"></script>
+    <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-8271754-49']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script');
+      ga.type = 'text/javascript';
+      ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s); })();
+    </script>
   </body>
 </html>
