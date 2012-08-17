@@ -361,7 +361,7 @@ YOURTOPIA.View = function($) {
         var lineYPosEnd = self.config.timeline.height - self.config.timeline.paddingBottom;
         tl_svg.text(slotXOffset, textYPos, labelText)
           .attr({
-            'font-family':'Helvetica Neue',
+            'font-family':'Helvetica Neue, Arial, sans-serif',
             'fill':'#333'
           });
         tl_svg.path('M' + slotXOffset + ',' + lineYPosTop + 'L' + slotXOffset + ',' + lineYPosEnd)
@@ -424,7 +424,7 @@ YOURTOPIA.View = function($) {
         var labelY = positions[(positions.length - 1)][1];
         self.timelineLabelObjects[series.id] = tl_svg.text(labelX + 7, labelY, series.get('region_label'))
           .attr({
-            'font-family': 'Helvetica Neue',
+            'font-family': 'Helvetica Neue, Arial, sans-serif',
             'font-size': '12px',
             'fill': '#fff',
             'text-anchor': 'start'
