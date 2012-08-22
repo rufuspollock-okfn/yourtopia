@@ -16,6 +16,9 @@ METADATA_PATH = os.path.join(__HERE__, 'static/data/metadata.json')
 # Path to SQLite DB file
 DATABASE = os.path.join(__HERE__, 'static/data/database.db')
 
+# Database URI for SQLAlchemy
+SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(__HERE__, 'static/data/database.db')
+
 THUMBS_PATH = os.path.join(__HERE__, 'static/thumbs')
 
 # languages available, sorted by priority

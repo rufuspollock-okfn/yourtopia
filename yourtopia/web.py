@@ -22,12 +22,52 @@ from jinja2 import Markup
 from jinja2 import escape
 from flask import abort
 from flask import send_from_directory
+from flask.ext.sqlalchemy import SQLAlchemy
 
 import indexpreview
 
 _paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
 
 app = Flask(__name__)
+db = SQLAlchemy(app)
+
+
+class Usercreated(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_name = db.Column(db.String(100))
+    user_url = db.Column(db.String(150))
+    description = db.Column(db.Text)
+    weights = db.Column(db.Text)
+    created_at = db.Column(db.DateTime)
+    user_ip = db.Column(db.String(15))
+    country = db.Column(db.String(3))
+    version = db.Column(db.Integer)
+
+    def __init__(self, weights, user_ip, country, version):
+        self.created_at = datetime.datetime.utcnow()
+        self.weights = json.dumps(weights)
+        self.user_ip = user_ip
+        self.country = country
+        self.version = version
+
+    def __repr__(self):
+        return '<Usercreated %s>' % self.id
+
+    def to_dict(self):
+        """Return a JSON-encodable dict of the data in this object"""
+        print self.created_at.isoformat(' ')
+        return {
+            'id': self.id,
+            'user_name': self.user_name,
+            'user_url': self.user_url,
+            'description': self.description,
+            'weights': self.weights,
+            'created_at': self.created_at.isoformat(' '),
+            'user_ip': self.user_ip,
+            'country': self.country,
+            'version': self.version
+        }
+
 
 @app.route('/')
 def home():
@@ -68,7 +108,7 @@ def details(id):
     url = request.scheme + "://" + request.host + request.path
     category_headlines = extract_i18n_keys(i18n, r'category_headline.*')
     entry = get_usercreated_entries(id=id)
-    return render_template('details.html', entry=entry, i18n_strings=category_headlines, url=url)
+    return render_template('details.html', entry=entry.to_dict(), i18n_strings=category_headlines, url=url)
 
 
 @app.route('/edit/<int:id>/')
@@ -81,7 +121,7 @@ def edit_single(id):
     entry = get_usercreated_entries(id=id)
     i18n_strings = extract_i18n_keys(i18n, r'category_headline.*')
     i18n_strings.update(extract_i18n_keys(i18n, r'sharing_.*'))
-    return render_template('edit.html', id=id, entry=entry, i18n_strings=i18n_strings)
+    return render_template('edit.html', id=id, entry=entry.to_dict(), i18n_strings=i18n_strings)
 
 
 @app.route('/edit/', methods=['POST'])
@@ -136,7 +176,7 @@ def create_preview_images(id):
     """
     This creates the preview image fora usercreated entry
     """
-    entry = get_usercreated_entries(id=id)
+    entry = get_usercreated_entries(id=id).to_dict()
     weight_tuples = []
     # weed through weights and use only those for main categories
     # If the last character is a number, we skip the key.
@@ -153,33 +193,16 @@ def create_preview_images(id):
     indexpreview.save_image_versions(img, id, app.config['THUMBS_PATH'])
 
 
-def connect_db():
-    return sqlite3.connect(app.config['DATABASE'])
-
-
-def get_connection():
-    """
-    Return the current database connection. If not yet
-    connected, it connects first.
-    """
-    db = getattr(g, '_db', None)
-    if db is None:
-        db = g._db = connect_db()
-    return db
-
-
 def get_usercreated_entries(num=1, offset=0, id=None):
     """
     Read a number of user-generated datasets from
     the database
     """
     if id is not None:
-        entry = query_db('SELECT * FROM usercreated WHERE id=?', [id], one=True)
+        entry = Usercreated.query.get(id)
         return entry
     else:
-        entries = query_db('''SELECT * FROM usercreated
-            WHERE user_name IS NOT NULL
-            ORDER BY id DESC LIMIT ?, ?''', [offset, num])
+        entries = Usercreated.query.order_by('id').limit(num).offset(offset).all()
         return entries
 
 
@@ -196,40 +219,21 @@ def add_usercreated_entry(json_data, ip):
         keyparts = key.split('_')
         if keyparts[len(keyparts) - 1] == 'weight':
             weights[key] = data[key]
-    #app.logger.debug(weights)
-    g.db = get_connection()
-    cur = g.db.cursor()
-    cur.execute('''INSERT INTO usercreated
-        (weights, created_at, user_ip, country, version)
-        VALUES(?, DATETIME("NOW"), ?, ?, ?)''', [json.dumps(weights), ip, country, version])
-    g.db.commit()
-    id = cur.lastrowid
-    cur.close()
-    return id
+    uc = Usercreated(weights, ip, country, version)
+    db.session.add(uc)
+    db.session.commit()
+    return uc.id
 
 
 def update_usercreated_entry(id, user_name, user_url, description):
     """
     Extends a previously created user-generated dataset
     """
-    g.db = get_connection()
-    g.db.execute('''UPDATE usercreated
-        SET user_name=?, user_url=?, description=?
-        WHERE id=?''', [user_name, user_url, description, id])
-    g.db.commit()
-
-
-def query_db(query, args=(), one=False):
-    """
-    General database query function. Use parameter one=True to
-    return one dict instead of a list of dicts.
-    See get_usercreated_entries() for an example.
-    """
-    g.db = get_connection()
-    cur = g.db.execute(query, args)
-    rv = [dict((cur.description[idx][0], value)
-               for idx, value in enumerate(row)) for row in cur.fetchall()]
-    return (rv[0] if rv else None) if one else rv
+    entry = Usercreated.query.get(id)
+    entry.user_name = user_name
+    entry.user_url = user_url
+    entry.description = description
+    db.session.commit()
 
 
 def import_series_metadata(path):
@@ -363,8 +367,9 @@ def dateformat_filter(s, format='%Y-%m-%d'):
     """
     Output a date according to a given format
     """
-    value = datetime.datetime.strptime(s, '%Y-%m-%d %H:%M:%S')
-    return Markup(value.strftime(format))
+    if not isinstance(s, datetime.datetime):
+        s = datetime.datetime.strptime(s, '%Y-%m-%d %H:%M:%S.%f')
+    return Markup(s.strftime(format))
 
 
 @app.template_filter()
@@ -387,10 +392,10 @@ def urlencode_filter(s):
     return Markup(s)
 
 
-@app.teardown_request
-def teardown_request(exception):
-    if hasattr(g, 'db'):
-        g.db.close()
+#@app.teardown_request
+#def teardown_request(exception):
+#    if hasattr(g, 'db'):
+#        g.db.close()
 
 
 def configure_app(app):
@@ -405,24 +410,25 @@ def configure_app(app):
 
 
 configure_app(app)
+# TODO: Change to SQLAlchemy
 # initialize the database if not already created
-if not os.path.exists(app.config['DATABASE']):
-    db = connect_db()
-    sql = '''CREATE TABLE usercreated (
-        id          INTEGER         PRIMARY KEY ASC AUTOINCREMENT,
-        user_name   VARCHAR( 100 ),
-        user_url    VARCHAR( 150 ),
-        description TEXT( 300 ),
-        weights     TEXT( 1000 ),
-        created_at  DATETIME        NOT NULL,
-        user_ip     VARCHAR( 15 ),
-        country     VARCHAR( 3 ),
-        version     INTEGER
-    );'''
-    cur = db.cursor()
-    cur.execute(sql)
-    db.commit()
-    cur.close()
+#if not os.path.exists(app.config['DATABASE']):
+#    db = connect_db()
+#    sql = '''CREATE TABLE usercreated (
+#        id          INTEGER         PRIMARY KEY ASC AUTOINCREMENT,
+#        user_name   VARCHAR( 100 ),
+#        user_url    VARCHAR( 150 ),
+#        description TEXT( 300 ),
+#        weights     TEXT( 1000 ),
+#        created_at  DATETIME        NOT NULL,
+#        user_ip     VARCHAR( 15 ),
+#        country     VARCHAR( 3 ),
+#        version     INTEGER
+#    );'''
+#    cur = db.cursor()
+#    cur.execute(sql)
+#    db.commit()
+#    cur.close()
 app.before_request(set_language)
 app.secret_key = 'A0ZrhkdsjhkjlksgnkjnsdgkjnmN]LWX/,?RT'
 
