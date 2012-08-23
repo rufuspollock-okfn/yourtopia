@@ -368,7 +368,7 @@ def dateformat_filter(s, format='%Y-%m-%d'):
     Output a date according to a given format
     """
     if not isinstance(s, datetime.datetime):
-        s = datetime.datetime.strptime(s, '%Y-%m-%d %H:%M:%S.%f')
+        s = datetime.datetime.strptime(s, '%Y-%m-%d %H:%M:%S')
     return Markup(s.strftime(format))
 
 
