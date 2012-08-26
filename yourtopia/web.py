@@ -118,7 +118,7 @@ def edit_single(id):
         abort(401)
     if session['dataset_id'] != id:
         abort(401)
-    entry = get_usercreated_entries(id=id)
+    entry = Usercreated.query.get(id)
     i18n_strings = extract_i18n_keys(i18n, r'category_headline.*')
     i18n_strings.update(extract_i18n_keys(i18n, r'sharing_.*'))
     return render_template('edit.html', id=id, entry=entry.to_dict(), i18n_strings=i18n_strings)
@@ -368,7 +368,9 @@ def dateformat_filter(s, format='%Y-%m-%d'):
     Output a date according to a given format
     """
     if not isinstance(s, datetime.datetime):
-        s = datetime.datetime.strptime(s, '%Y-%m-%d %H:%M:%S')
+        s = datetime.datetime.strptime(s, '%Y-%m-%d %H:%M:%S.%f')
+    # strip off microseconds if they exist
+    s = s.replace(microsecond=0)
     return Markup(s.strftime(format))
 
 
