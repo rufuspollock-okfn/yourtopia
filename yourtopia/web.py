@@ -79,6 +79,7 @@ def browse(page):
     offset = 0
     if page > 1:
         offset = (page - 1) * app.config['BROWSE_PERPAGE']
+    total = Usercreated.query.count() 
     entries = get_usercreated_entries(app.config['BROWSE_PERPAGE'] + 1, offset)
     if len(entries):
         show_prev = False
@@ -91,7 +92,8 @@ def browse(page):
         return render_template('browse.html',
             entries=entries, page=page,
             show_next=show_next,
-            show_prev=show_prev)
+            show_prev=show_prev,
+            total=total)
     else:
         abort(404)
 
