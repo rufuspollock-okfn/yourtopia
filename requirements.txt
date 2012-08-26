@@ -3,3 +3,4 @@ unicodecsv
 PIL
 SQLAlchemy==0.7.8
 Flask-SQLAlchemy
+psycopg2==2.4.5
