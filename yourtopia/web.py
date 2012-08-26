@@ -367,7 +367,7 @@ def dateformat_filter(s, format='%Y-%m-%d'):
     Output a date according to a given format
     """
     if not isinstance(s, datetime.datetime):
-        s = datetime.datetime.strptime(s, '%Y-%m-%d %H:%M:%S.%f')
+        s = datetime.datetime.strptime(s, '%Y-%m-%d %H:%M:%S')
     return Markup(s.strftime(format))
 
 
@@ -396,25 +396,7 @@ def urlencode_filter(s):
 #    if hasattr(g, 'db'):
 #        g.db.close()
 
-# TODO: Change to SQLAlchemy
-# initialize the database if not already created
-#if not os.path.exists(app.config['DATABASE']):
-#    db = connect_db()
-#    sql = '''CREATE TABLE usercreated (
-#        id          INTEGER         PRIMARY KEY ASC AUTOINCREMENT,
-#        user_name   VARCHAR( 100 ),
-#        user_url    VARCHAR( 150 ),
-#        description TEXT( 300 ),
-#        weights     TEXT( 1000 ),
-#        created_at  DATETIME        NOT NULL,
-#        user_ip     VARCHAR( 15 ),
-#        country     VARCHAR( 3 ),
-#        version     INTEGER
-#    );'''
-#    cur = db.cursor()
-#    cur.execute(sql)
-#    db.commit()
-#    cur.close()
+db.create_all()
 app.before_request(set_language)
 app.secret_key = 'A0ZrhkdsjhkjlksgnkjnsdgkjnmN]LWX/,?RT'
 
