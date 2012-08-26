@@ -1,7 +1,6 @@
 # encoding: utf-8
 import os
 import re
-import sqlite3
 from contextlib import closing
 import datetime
 import urllib
