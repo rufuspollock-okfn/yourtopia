@@ -1,6 +1,7 @@
 .*.swp
 *.pyc
 .DS_Store
+sandbox
 build/*
 yourtopia/static/compact_*
 venv/*
