@@ -28,7 +28,37 @@ If you want to modify the default settings:
 
 2. Add or amend settings (see instructions in the file)
 
+
 ## Deployment
+
+### To Heroku
+
+Note that you will need to install the [Heroku toolbelt](https://toolbelt.heroku.com/) to carry out the `heroku` commands below.
+
+To create the application on Heroku (heavily based on [this
+tutorial](https://devcenter.heroku.com/articles/python#deploy-to-heroku):
+
+    # replace {app-name} with the name of your app
+    heroku create {app-name}
+    # you may want a larger db (dev is 20k rows)
+    heroku addons:add heroku-postgresql:dev
+    heroku config:set YOURTOPIA_SETTINGS=/app/heroku_settings.py
+    git push heroku master
+    heroku ps:scale web=1
+
+To deploy (already created):
+
+   git push heroku master
+
+Adding collaborators:
+
+    heroku sharing:add joe@example.com
+
+Note that collaborators will need to add the heroku remote:
+
+    git remote add heroku git@heroku.com:{app-name}.git
+
+### To OKFN servers (deprecated)
 
 Use Fabric and the fabfile:
 
