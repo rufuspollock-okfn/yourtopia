@@ -35,8 +35,12 @@ If you want to modify the default settings:
 
 Note that you will need to install the [Heroku toolbelt](https://toolbelt.heroku.com/) to carry out the `heroku` commands below.
 
-To create the application on Heroku (heavily based on [this
-tutorial](https://devcenter.heroku.com/articles/python#deploy-to-heroku):
+#### Create the application on Heroku
+
+*Skip this step if the application is already deployed*
+
+This is heavily based on [this
+tutorial](https://devcenter.heroku.com/articles/python#deploy-to-heroku).
 
     # replace {app-name} with the name of your app
     heroku create {app-name}
@@ -46,17 +50,34 @@ tutorial](https://devcenter.heroku.com/articles/python#deploy-to-heroku):
     git push heroku master
     heroku ps:scale web=1
 
-To deploy (already created):
+To have your db working correctly you may need to work out the right db to connect to e.g.:
 
-   git push heroku master
+    heroku pg:info
+    # find the db name available to you
+    heroku pg:promote {db-name}
 
-Adding collaborators:
+#### To deploy (already created):
+
+Push to heroku git repo:
+
+    git push heroku master
+
+*Note*: if didn't do the create you will need to add the heroku remote:
+
+    git remote add heroku git@heroku.com:{app-name}.git
+
+#### Adding collaborators:
 
     heroku sharing:add joe@example.com
 
-Note that collaborators will need to add the heroku remote:
+#### Setting the domain name
 
-    git remote add heroku git@heroku.com:{app-name}.git
+Do the following:
+
+    heroku domains:add {your-domain-name}
+
+Now CNAME your domain to {myapp}.herokuapp.com
+
 
 ### To OKFN servers (deprecated)
 
