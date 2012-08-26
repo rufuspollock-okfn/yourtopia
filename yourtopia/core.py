@@ -8,7 +8,6 @@ from yourtopia import default_settings
 
 
 app = Flask(__name__)
-db = SQLAlchemy(app)
 
 def configure_app(app):
     '''Configure the app from available sources'''
@@ -20,4 +19,5 @@ def configure_app(app):
         app.config.from_pyfile(config_path)
 
 configure_app(app)
+db = SQLAlchemy(app)
 
