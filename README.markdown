@@ -58,13 +58,15 @@ To have your db working correctly you may need to work out the right db to conne
 
 #### To deploy (already created):
 
-Push to heroku git repo:
+*Note: if you didn't do the create yourself you will need to add the heroku remote once, using this command:*
+
+    git remote add heroku git@heroku.com:italia-yourtopia.git
+
+Then push the git repository content to heroku:
 
     git push heroku master
 
-*Note*: if you didn't do the create you will need to add the heroku remote:
-
-    git remote add heroku git@heroku.com:italia-yourtopia.git
+This will also restart the application on the server.
 
 #### Adding collaborators:
 
