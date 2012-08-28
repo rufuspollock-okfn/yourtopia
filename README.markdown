@@ -33,7 +33,7 @@ If you want to modify the default settings:
 
 ### To Heroku
 
-Note that you will need to install the [Heroku toolbelt](https://toolbelt.heroku.com/) to carry out the `heroku` commands below.
+Note that you will need to install the [Heroku toolbelt](https://toolbelt.heroku.com/) to carry out the `heroku` commands below. In addition, you will need a Heroku account. Third, you need the git command-line client.
 
 #### Create the application on Heroku
 
@@ -42,8 +42,7 @@ Note that you will need to install the [Heroku toolbelt](https://toolbelt.heroku
 This is heavily based on [this
 tutorial](https://devcenter.heroku.com/articles/python#deploy-to-heroku).
 
-    # replace {app-name} with the name of your app
-    heroku create {app-name}
+    heroku create italia-yourtopia
     # you may want a larger db (dev is 20k rows)
     heroku addons:add heroku-postgresql:dev
     heroku config:set YOURTOPIA_SETTINGS=/app/heroku_settings.py
@@ -58,13 +57,15 @@ To have your db working correctly you may need to work out the right db to conne
 
 #### To deploy (already created):
 
-Push to heroku git repo:
+*Note: if you didn't do the create yourself you will need to add the heroku remote once, using this command:*
+
+    git remote add heroku git@heroku.com:italia-yourtopia.git
+
+Then push the git repository content to heroku:
 
     git push heroku master
 
-*Note*: if didn't do the create you will need to add the heroku remote:
-
-    git remote add heroku git@heroku.com:{app-name}.git
+This will also restart the application on the server.
 
 #### Adding collaborators:
 
