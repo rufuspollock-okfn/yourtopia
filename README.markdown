@@ -42,8 +42,7 @@ Note that you will need to install the [Heroku toolbelt](https://toolbelt.heroku
 This is heavily based on [this
 tutorial](https://devcenter.heroku.com/articles/python#deploy-to-heroku).
 
-    # replace {app-name} with the name of your app
-    heroku create {app-name}
+    heroku create italia-yourtopia
     # you may want a larger db (dev is 20k rows)
     heroku addons:add heroku-postgresql:dev
     heroku config:set YOURTOPIA_SETTINGS=/app/heroku_settings.py
