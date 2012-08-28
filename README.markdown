@@ -62,9 +62,9 @@ Push to heroku git repo:
 
     git push heroku master
 
-*Note*: if didn't do the create you will need to add the heroku remote:
+*Note*: if You didn't do the create you will need to add the heroku remote:
 
-    git remote add heroku git@heroku.com:{app-name}.git
+    git remote add heroku git@heroku.com:italia-yourtopia.git
 
 #### Adding collaborators:
 
