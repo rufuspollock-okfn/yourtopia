@@ -53,7 +53,6 @@ class Usercreated(db.Model):
 
     def to_dict(self):
         """Return a JSON-encodable dict of the data in this object"""
-        print self.created_at.isoformat(' ')
         return {
             'id': self.id,
             'user_name': self.user_name,
@@ -79,7 +78,7 @@ def browse(page):
     offset = 0
     if page > 1:
         offset = (page - 1) * app.config['BROWSE_PERPAGE']
-    total = Usercreated.query.count() 
+    total = Usercreated.query.filter(Usercreated.user_name != None).count()
     entries = get_usercreated_entries(app.config['BROWSE_PERPAGE'] + 1, offset)
     if len(entries):
         show_prev = False
@@ -202,7 +201,7 @@ def get_usercreated_entries(num=1, offset=0, id=None):
         entry = Usercreated.query.get(id)
         return entry
     else:
-        entries = Usercreated.query.order_by('id').limit(num).offset(offset).all()
+        entries = Usercreated.query.filter(Usercreated.user_name != None).order_by('id DESC').limit(num).offset(offset).all()
         return entries
 
 
