@@ -33,7 +33,7 @@ If you want to modify the default settings:
 
 ### To Heroku
 
-Note that you will need to install the [Heroku toolbelt](https://toolbelt.heroku.com/) to carry out the `heroku` commands below.
+Note that you will need to install the [Heroku toolbelt](https://toolbelt.heroku.com/) to carry out the `heroku` commands below. In addition, you will need a Heroku account.
 
 #### Create the application on Heroku
 
