@@ -1,6 +1,6 @@
 Flask==0.8
 unicodecsv
-PIL
+pillow
 SQLAlchemy==0.7.8
-Flask-SQLAlchemy
+Flask-SQLAlchemy==1.0
 psycopg2==2.4.5
